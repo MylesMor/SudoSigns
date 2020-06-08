@@ -1,0 +1,9 @@
+name: SudoSigns
+version: 1.0
+author: MylesMor
+main: dev.mylesmor.sudosigns.SudoSigns
+api-version: 1.13
+commands:
+  sudosigns:
+    description: Opens the SudoSigns help menu.
+    aliases: [sudosign, ss]
