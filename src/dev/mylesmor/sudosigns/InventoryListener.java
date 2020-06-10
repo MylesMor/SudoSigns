@@ -1,18 +1,16 @@
 package dev.mylesmor.sudosigns;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
-import org.bukkit.plugin.Plugin;
 
-import static dev.mylesmor.sudosigns.SudoSigns.editors;
-import static dev.mylesmor.sudosigns.SudoSigns.sudoSignsPlugin;
+import static dev.mylesmor.sudosigns.SudoSigns.*;
 
 public class InventoryListener implements Listener {
 
@@ -31,6 +29,18 @@ public class InventoryListener implements Listener {
                 else if (e.getCurrentItem().getType() == Material.COMMAND_BLOCK) {
                     editor.goToCommands();
                 }
+            } else if (editor.getCurrentPage().equalsIgnoreCase("COMMANDS")) {
+                if (e.getView().getTitle().equalsIgnoreCase("Player or Console command?")) {
+                    String itemName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
+                    if (itemName.equalsIgnoreCase("Player Command")) {
+                        editor.chooseCommandType(PlayerInput.PLAYER_COMMAND);
+                    } else if (itemName.equalsIgnoreCase("Console Command")) {
+                        editor.chooseCommandType(PlayerInput.CONSOLE_COMMAND);
+                    }
+                }
+                if (e.getCurrentItem().getType() == Material.WRITABLE_BOOK) {
+                    editor.prepareCommand();
+                }
             }
             if (e.getCurrentItem().getType() == Material.ARROW) {
                 editor.goToMain();
@@ -43,17 +53,14 @@ public class InventoryListener implements Listener {
     public void closeInventory(InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
         if (editors.containsKey(p)) {
-            InventoryView currentInv = p.getOpenInventory();
             Bukkit.getScheduler().scheduleSyncDelayedTask(sudoSignsPlugin, () -> {
-                p.sendMessage(currentInv.getTitle());
-                p.sendMessage(e.getView().getTitle());
-            }, 60L);
-            if (currentInv.getTitle() == e.getView().getTitle()) {
-                //editors.get(p).endEditor();
-                //editors.remove(p);
-            }
+                InventoryView currentInv = p.getOpenInventory();
+                if (currentInv.getTitle().equalsIgnoreCase("CRAFTING") && !textInput.containsKey(p)) {
+                    editors.get(p).endEditor();
+                    editors.remove(p);
+                }
+            }, 5L);
         }
-
     }
 
 }

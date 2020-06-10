@@ -1,12 +1,14 @@
 package dev.mylesmor.sudosigns;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
 public class SudoSign {
 
-    private ArrayList<String> commands = new ArrayList<>();
+    private ArrayList<SignCommand> playerCommands = new ArrayList<>();
+    private ArrayList<SignCommand> consoleCommands = new ArrayList<>();
     private org.bukkit.block.Sign sign;
     private String name;
 
@@ -18,8 +20,30 @@ public class SudoSign {
         this.sign = sign;
     }
 
-    public void addCommand(String e) {
-        commands.add(e);
+    public void addPlayerCommand(SignCommand e) {
+        playerCommands.add(e);
+    }
+
+    public void addConsoleCommand(SignCommand e) {
+        consoleCommands.add(e);
+    }
+
+
+    public ArrayList<SignCommand> getPlayerCommands() {
+        return playerCommands;
+    }
+
+    public ArrayList<SignCommand> getConsoleCommands() {
+        return consoleCommands;
+    }
+
+    public void executeCommands(Player p) {
+        for (SignCommand sc : playerCommands) {
+            p.performCommand(sc.getCommand());
+        }
+        for (SignCommand sc : consoleCommands) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), sc.getCommand());
+        }
     }
 
     public String getName() {
