@@ -7,6 +7,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -101,10 +102,12 @@ public class SignListener implements Listener {
             }
         } else {
             if (e.getClickedBlock().getState() instanceof Sign) {
-                Sign sign = (Sign) e.getClickedBlock().getState();
-                for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
-                    if (entry.getValue().getSign().equals(sign)) {
-                        entry.getValue().executeCommands(p);
+                if (p.hasPermission(selectPerm) && e.getAction() == Action.RIGHT_CLICK_BLOCK || !p.hasPermission(selectPerm)) {
+                    Sign sign = (Sign) e.getClickedBlock().getState();
+                    for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
+                        if (entry.getValue().getSign().equals(sign)) {
+                            entry.getValue().executeCommands(p);
+                        }
                     }
                 }
             }
