@@ -16,7 +16,7 @@ public class SudoSign {
         this.name = name;
     }
 
-    public void createSign(org.bukkit.block.Sign sign) {
+    public void setSign(org.bukkit.block.Sign sign) {
         this.sign = sign;
     }
 
@@ -39,10 +39,12 @@ public class SudoSign {
 
     public void executeCommands(Player p) {
         for (SignCommand sc : playerCommands) {
-            p.performCommand(sc.getCommand());
+            String cmd = sc.getCommand().replace("%PLAYER%", p.getName());
+            p.performCommand(cmd);
         }
         for (SignCommand sc : consoleCommands) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), sc.getCommand());
+            String cmd = sc.getCommand().replace("%PLAYER%", p.getName());
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
         }
     }
 

@@ -1,18 +1,14 @@
 package dev.mylesmor.sudosigns;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static dev.mylesmor.sudosigns.SudoSigns.prefix;
 import static dev.mylesmor.sudosigns.SudoSigns.textInput;
@@ -127,7 +123,7 @@ public class SignEditor {
             ItemMeta bookMeta = book.getItemMeta();
             bookMeta.setDisplayName("" + RESET + GOLD + sc.getCommand());
             bookMeta.setLore(lore);
-            book.setItemMeta(cmdBlockMeta);
+            book.setItemMeta(bookMeta);
             if (i == 27) i++;
             commandsInv.setItem(i, book);
             i++;
@@ -166,17 +162,19 @@ public class SignEditor {
 
     public void chooseCommandType(PlayerInput type) {
         p.closeInventory();
-        p.sendMessage(prefix + GRAY + " Please enter the full command in chat.");
+        p.sendMessage(prefix + GRAY + " Please enter the full command in chat. The phrase" + GOLD + " %PLAYER%" + GRAY +
+                 " will be replaced with the player who clicked the sign.");
         textInput.put(p, type);
     }
 
     public void addCommand(String cmd, PlayerInput type) {
-        SignCommand command = new SignCommand(cmd, 1, type);
+        SignCommand command = new SignCommand(cmd, type);
         if (type.equals(PlayerInput.CONSOLE_COMMAND)) {
             sign.addConsoleCommand(command);
         } else if (type.equals(PlayerInput.PLAYER_COMMAND)) {
             sign.addPlayerCommand(command);
         }
+        SudoSigns.config.addCommandToConfig(sign, command, type);
         textInput.remove(p);
         p.sendMessage(prefix + GRAY + " Command added successfully!");
         goToCommands();

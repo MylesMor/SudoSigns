@@ -1,5 +1,7 @@
 package dev.mylesmor.sudosigns;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,10 +25,11 @@ public class ChatListener implements Listener {
     public void onAsyncPlayerChat(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
         if (textInput.containsKey(p) && editors.containsKey(p)) {
-            p.sendMessage(prefix + "No command found! Cancelling...");
+            p.sendMessage(prefix + ChatColor.RED + " No command found! Cancelling...");
             textInput.remove(p);
-            editors.get(p).goToCommands();
-
+            Bukkit.getScheduler().runTask(sudoSignsPlugin, () -> {
+                editors.get(p).goToCommands();
+            });
         }
     }
 }
