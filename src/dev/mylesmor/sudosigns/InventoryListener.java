@@ -19,33 +19,36 @@ public class InventoryListener implements Listener {
         Player p = (Player) e.getWhoClicked();
         if (editors.containsKey(p)) {
             SignEditor editor = editors.get(p);
-            if (editor.getCurrentPage().equalsIgnoreCase("MAIN")) {
-                if (e.getCurrentItem().getType() == Material.BOOK) {
-                    editor.renameSign();
-                }
-                else if (e.getCurrentItem().getType() == Material.BARRIER) {
-                    editor.goToPermissions();
-                }
-                else if (e.getCurrentItem().getType() == Material.COMMAND_BLOCK) {
-                    editor.goToCommands();
-                }
-            } else if (editor.getCurrentPage().equalsIgnoreCase("COMMANDS")) {
-                if (e.getView().getTitle().equalsIgnoreCase("Player or Console command?")) {
-                    String itemName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-                    if (itemName.equalsIgnoreCase("Player Command")) {
-                        editor.chooseCommandType(PlayerInput.PLAYER_COMMAND);
-                    } else if (itemName.equalsIgnoreCase("Console Command")) {
-                        editor.chooseCommandType(PlayerInput.CONSOLE_COMMAND);
+            if (e.getCurrentItem() != null) {
+                if (editor.getCurrentPage().equalsIgnoreCase("MAIN")) {
+                    if (e.getCurrentItem().getType() == Material.BOOK) {
+                        editor.renameSign();
+                    } else if (e.getCurrentItem().getType() == Material.BARRIER) {
+                        editor.goToPermissions();
+                    } else if (e.getCurrentItem().getType() == Material.COMMAND_BLOCK) {
+                        editor.goToCommands();
+                    }
+                } else if (editor.getCurrentPage().equalsIgnoreCase("COMMANDS")) {
+                    if (e.getView().getTitle().equalsIgnoreCase("Player or Console command?")) {
+                        String itemName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
+                        if (itemName.equalsIgnoreCase("Player Command")) {
+                            editor.chooseCommandType(PlayerInput.PLAYER_COMMAND);
+                        } else if (itemName.equalsIgnoreCase("Console Command")) {
+                            editor.chooseCommandType(PlayerInput.CONSOLE_COMMAND);
+                        }
+                    }
+                    if (e.getCurrentItem().getType() == Material.WRITABLE_BOOK) {
+                        editor.prepareCommand();
+                    } else if (e.getCurrentItem().getType() == Material.BOOK) {
+                        editor.deleteCommand(ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName()));
+                        e.setCancelled(true);
                     }
                 }
-                if (e.getCurrentItem().getType() == Material.WRITABLE_BOOK) {
-                    editor.prepareCommand();
+                if (e.getCurrentItem().getType() == Material.ARROW) {
+                    editor.goToMain();
                 }
+                e.setCancelled(true);
             }
-            if (e.getCurrentItem().getType() == Material.ARROW) {
-                editor.goToMain();
-            }
-            e.setCancelled(true);
         }
     }
 

@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -81,7 +82,7 @@ public class ConfigManager {
                     ss.addPlayerCommand(new SignCommand(cmd, PlayerInput.PLAYER_COMMAND));
                 }
                 for (String cmd : cCommands) {
-                    ss.addPlayerCommand(new SignCommand(cmd, PlayerInput.CONSOLE_COMMAND));
+                    ss.addConsoleCommand(new SignCommand(cmd, PlayerInput.CONSOLE_COMMAND));
                 }
                 signs.put(key, ss);
             } catch (Exception e) {
@@ -105,20 +106,52 @@ public class ConfigManager {
         if (signConfig.isConfigurationSection("signs." + s.getName())) {
             if (type.equals(PlayerInput.PLAYER_COMMAND)) {
                 if (!signConfig.isConfigurationSection("signs." + s.getName() + ".player-commands")) {
-                    signConfig.createSection("signs." + s.getName() + ".player-commands");
+                    signConfig.set("signs." + s.getName() + ".player-commands", new ArrayList<>());
                 }
                 List<String> cmds = signConfig.getStringList("signs." + s.getName() + ".player-commands");
                 cmds.add(cmd.getCommand());
                 signConfig.set("signs." + s.getName() + ".player-commands", cmds);
             } else if (type.equals(PlayerInput.CONSOLE_COMMAND)) {
                 if (!signConfig.isConfigurationSection("signs." + s.getName() + ".console-commands")) {
-                    signConfig.createSection("signs." + s.getName() + ".console-commands");
+                    signConfig.set("signs." + s.getName() + ".console-commands", new ArrayList<>());
                 }
                 List<String> cmds = signConfig.getStringList("signs." + s.getName() + ".console-commands");
                 cmds.add(cmd.getCommand());
                 signConfig.set("signs." + s.getName() + ".console-commands", cmds);
 
             }
+        }
+        save();
+    }
+
+    public void deleteCommandFromConfig(SudoSign s, SignCommand cmd, PlayerInput type) {
+        if (signConfig.isConfigurationSection("signs." + s.getName())) {
+            Bukkit.getLogger().warning("HERE");
+            if (type.equals(PlayerInput.PLAYER_COMMAND)) {
+                Bukkit.getLogger().warning("HERE1");
+                if (signConfig.isList("signs." + s.getName() + ".player-commands")) {
+                    Bukkit.getLogger().warning("HERE2");
+                    List<String> cmds = signConfig.getStringList("signs." + s.getName() + ".player-commands");
+                    Bukkit.getLogger().warning("BEFORE: " + cmds.toString());
+                    cmds.remove(cmd.getCommand());
+                    Bukkit.getLogger().warning("AFTER: " + cmds.toString());
+                    signConfig.set("signs." + s.getName() + ".player-commands", cmds);
+                }
+            } else if (type.equals(PlayerInput.CONSOLE_COMMAND)) {
+                if (signConfig.isList("signs." + s.getName() + ".console-commands")) {
+                    List<String> cmds = signConfig.getStringList("signs." + s.getName() + ".console-commands");
+                    cmds.remove(cmd.getCommand());
+                    signConfig.set("signs." + s.getName() + ".console-commands", cmds);
+                }
+
+            }
+        }
+        save();
+    }
+
+    public void deleteSign(String name) {
+        if (signConfig.isConfigurationSection("signs." + name)) {
+            signConfig.set("signs." + name, null);
         }
         save();
     }

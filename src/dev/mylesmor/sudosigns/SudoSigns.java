@@ -202,7 +202,7 @@ public class SudoSigns extends JavaPlugin {
             p.sendMessage(ChatColor.YELLOW + "[!]" + ChatColor.LIGHT_PURPLE + " /ss tp [name]" + ChatColor.GRAY + " - Teleports to a SudoSign.");
         }
         if (p.hasPermission(createPerm)) {
-            p.sendMessage(ChatColor.YELLOW + "[!]" + ChatColor.LIGHT_PURPLE + " /ss run <name>" + ChatColor.GRAY + " - Creates a SudoSign with the specified name.");
+            p.sendMessage(ChatColor.YELLOW + "[!]" + ChatColor.LIGHT_PURPLE + " /ss create <name>" + ChatColor.GRAY + " - Creates a SudoSign with the specified name.");
         }
         if (p.hasPermission(editPerm)) {
             p.sendMessage(ChatColor.YELLOW + "[!]" + ChatColor.LIGHT_PURPLE + " /ss edit [name]" + ChatColor.GRAY + " - Displays the editor for the specified SudoSign.");
@@ -228,6 +228,7 @@ public class SudoSigns extends JavaPlugin {
             playersToClick.put(p, "DELETE");
         } else if (signs.containsKey(name)) {
             signs.remove(name);
+            config.deleteSign(name);
             p.sendMessage(prefix + ChatColor.GRAY + " Sign " + ChatColor.GOLD + name + ChatColor.GRAY + " successfully deleted!");
         }
     }
@@ -326,13 +327,8 @@ public class SudoSigns extends JavaPlugin {
 
     public void confirmDelete(Player p, String name) {
         if (p.hasPermission(deletePerm)) {
-            if (signs.containsKey(name)) {
-                signs.remove(name);
-                p.sendMessage(prefix + ChatColor.GRAY + " Sign " + ChatColor.GOLD + name + ChatColor.GRAY + " successfully deleted!");
-
-            } else {
-                p.sendMessage(prefix + ChatColor.RED + " A sign with name " + ChatColor.GOLD + name + ChatColor.RED + " doesn't exist!");
-            }
+            String message = "[\"\",{\"text\":\"[SUDOSIGNS] \",\"color\":\"yellow\"},{\"text\":\"Are you sure you want to delete sign \",\"color\":\"gray\"},{\"text\":\"" + name + "\",\"color\":\"gold\"},{\"text\":\"? \",\"color\":\"gray\"},{\"text\":\"[YES] \",\"bold\":true,\"color\":\"green\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/ss delete " + name + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[\"\",{\"text\":\"Yes, delete the sign!\",\"color\":\"green\"}]}}]";
+            p.spigot().sendMessage(ComponentSerializer.parse(message));
         }
     }
 

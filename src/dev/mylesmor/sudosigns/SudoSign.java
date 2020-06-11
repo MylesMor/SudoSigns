@@ -22,12 +22,20 @@ public class SudoSign {
 
     public void addPlayerCommand(SignCommand e) {
         playerCommands.add(e);
+
     }
 
     public void addConsoleCommand(SignCommand e) {
         consoleCommands.add(e);
     }
 
+    public void deleteConsoleCommand(SignCommand e) {
+        consoleCommands.remove(e);
+    }
+
+    public void deletePlayerCommand(SignCommand e) {
+        playerCommands.remove(e);
+    }
 
     public ArrayList<SignCommand> getPlayerCommands() {
         return playerCommands;
@@ -39,11 +47,11 @@ public class SudoSign {
 
     public void executeCommands(Player p) {
         for (SignCommand sc : playerCommands) {
-            String cmd = sc.getCommand().replace("%PLAYER%", p.getName());
+            String cmd = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());
             p.performCommand(cmd);
         }
         for (SignCommand sc : consoleCommands) {
-            String cmd = sc.getCommand().replace("%PLAYER%", p.getName());
+            String cmd = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
         }
     }

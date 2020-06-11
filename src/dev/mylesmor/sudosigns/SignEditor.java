@@ -33,6 +33,9 @@ public class SignEditor {
 
     private void createMainMenu() {
         mainInv = Bukkit.createInventory(p, 45, "Editing: " + sign.getName());
+        for (int i = 0; i < mainInv.getSize(); i++) {
+            mainInv.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
+        }
         ItemStack book = new ItemStack(Material.BOOK);
         ItemMeta bookMeta = book.getItemMeta();
         bookMeta.setDisplayName("" + RESET + LIGHT_PURPLE + "Rename Sign");
@@ -54,8 +57,11 @@ public class SignEditor {
     }
 
     private void createPermissionsMenu() {
-        permissionsInv = Bukkit.createInventory(p, 45, "Permissions: " + sign.getName());
 
+        permissionsInv = Bukkit.createInventory(p, 45, "Permissions: " + sign.getName());
+        for (int i = 0; i < permissionsInv.getSize(); i++) {
+            permissionsInv.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
+        }
         ItemStack arrow = new ItemStack(Material.ARROW);
         ItemMeta arrowMeta = arrow.getItemMeta();
         arrowMeta.setDisplayName("" + RESET + LIGHT_PURPLE + "BACK");
@@ -80,6 +86,9 @@ public class SignEditor {
 
     private void createCommandsMenu() {
         commandsInv = Bukkit.createInventory(p, 45, "Commands: " + sign.getName());
+        for (int i = 0; i < commandsInv.getSize(); i++) {
+            commandsInv.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
+        }
         ItemStack arrow = new ItemStack(Material.ARROW);
         ItemMeta arrowMeta = arrow.getItemMeta();
         arrowMeta.setDisplayName(RESET + "BACK");
@@ -140,6 +149,13 @@ public class SignEditor {
 
     public void prepareCommand() {
         Inventory choiceInv = Bukkit.createInventory(p, 45, "Player or Console command?");
+        for (int i = 0; i < choiceInv.getSize(); i++) {
+            choiceInv.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
+        }
+        ItemStack arrow = new ItemStack(Material.ARROW);
+        ItemMeta arrowMeta = arrow.getItemMeta();
+        arrowMeta.setDisplayName(RESET + "BACK");
+        arrow.setItemMeta(arrowMeta);
 
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         ItemMeta headMeta = head.getItemMeta();
@@ -156,8 +172,33 @@ public class SignEditor {
 
         choiceInv.setItem(21, head);
         choiceInv.setItem(23, cmdBlock);
+        choiceInv.setItem(36, arrow);
 
         p.openInventory(choiceInv);
+    }
+
+    public void deleteCommand(String cmd) {
+        SignCommand found = null;
+        for (SignCommand c : sign.getConsoleCommands()) {
+            if (c.getCommand().equals(cmd)) {
+                found = c;
+                SudoSigns.config.deleteCommandFromConfig(sign, c, PlayerInput.CONSOLE_COMMAND);
+            }
+        }
+        if (found != null) {
+            sign.deleteConsoleCommand(found);
+        }
+        found = null;
+        for (SignCommand c : sign.getPlayerCommands()) {
+            if (c.getCommand().equals(cmd)) {
+                found = c;
+                SudoSigns.config.deleteCommandFromConfig(sign, c, PlayerInput.PLAYER_COMMAND);
+            }
+        }
+        if (found != null) {
+            sign.deletePlayerCommand(found);
+        }
+        goToCommands();
     }
 
     public void chooseCommandType(PlayerInput type) {
@@ -171,10 +212,11 @@ public class SignEditor {
         SignCommand command = new SignCommand(cmd, type);
         if (type.equals(PlayerInput.CONSOLE_COMMAND)) {
             sign.addConsoleCommand(command);
+            SudoSigns.config.addCommandToConfig(sign, command, PlayerInput.CONSOLE_COMMAND);
         } else if (type.equals(PlayerInput.PLAYER_COMMAND)) {
             sign.addPlayerCommand(command);
+            SudoSigns.config.addCommandToConfig(sign, command, PlayerInput.PLAYER_COMMAND);
         }
-        SudoSigns.config.addCommandToConfig(sign, command, type);
         textInput.remove(p);
         p.sendMessage(prefix + GRAY + " Command added successfully!");
         goToCommands();
