@@ -9,6 +9,7 @@ public class SudoSign {
 
     private ArrayList<SignCommand> playerCommands = new ArrayList<>();
     private ArrayList<SignCommand> consoleCommands = new ArrayList<>();
+    private ArrayList<String> permissions = new ArrayList<>();
     private org.bukkit.block.Sign sign;
     private String name;
 
@@ -20,21 +21,49 @@ public class SudoSign {
         this.sign = sign;
     }
 
-    public void addPlayerCommand(SignCommand e) {
-        playerCommands.add(e);
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void addPlayerCommand(SignCommand sc) {
+        playerCommands.add(sc);
 
     }
 
-    public void addConsoleCommand(SignCommand e) {
-        consoleCommands.add(e);
+    public void addConsoleCommand(SignCommand sc) {
+        consoleCommands.add(sc);
     }
 
-    public void deleteConsoleCommand(SignCommand e) {
-        consoleCommands.remove(e);
+    public void deleteConsoleCommand(SignCommand sc) {
+        consoleCommands.remove(sc);
     }
 
-    public void deletePlayerCommand(SignCommand e) {
-        playerCommands.remove(e);
+    public void deletePlayerCommand(SignCommand sc) {
+        playerCommands.remove(sc);
+    }
+
+    public void addPermission(String s) {
+        permissions.add(s);
+    }
+
+    public void removePermission(String s) {
+        permissions.remove(s);
+    }
+
+    public ArrayList<String> getPermissions() {
+        return permissions;
+    }
+
+    public void setPlayerCommands(ArrayList<SignCommand> playerCommands) {
+        this.playerCommands = playerCommands;
+    }
+
+    public void setConsoleCommands(ArrayList<SignCommand> consoleCommands) {
+        this.consoleCommands = consoleCommands;
+    }
+
+    public void setPermissions(ArrayList<String> permissions) {
+        this.permissions = permissions;
     }
 
     public ArrayList<SignCommand> getPlayerCommands() {

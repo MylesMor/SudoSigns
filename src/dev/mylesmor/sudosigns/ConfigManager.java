@@ -156,36 +156,41 @@ public class ConfigManager {
         save();
     }
 
-    public void saveToFile(SudoSign s, Player p) {
-        String name = null;
-        for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
-            try {
-                SudoSign ss = entry.getValue();
-                name = entry.getKey();
-                if (!signConfig.isConfigurationSection("signs." + name)) {
-                    signConfig.createSection("signs." + name);
-                    ConfigurationSection locSec = signConfig.createSection("signs." + name + ".location");
-                    String world = ss.getSign().getWorld().getName();
-                    Double x = ss.getSign().getLocation().getX();
-                    Double y = ss.getSign().getLocation().getY();
-                    Double z = ss.getSign().getLocation().getZ();
-                    locSec.set("world", world);
-                    locSec.set("x", x);
-                    locSec.set("y", y);
-                    locSec.set("z", z);
-                    signConfig.createSection("signs." + s.getName() + ".player-commands");
-                    signConfig.createSection("signs." + s.getName() + ".console-commands");
-
-                }
-            } catch (Exception e) {
-                if (p != null) {
-                    p.sendMessage(prefix + ChatColor.RED + " Failed to save sign " + ChatColor.GOLD + name + ChatColor.RED + " to the config!");
-                }
-                Bukkit.getLogger().warning("[SUDOSIGNS] Failed to save " + name + " to signs.yml!");
-                e.printStackTrace();
+    public void saveToFile(SudoSign s, Boolean singular, Player p) {
+        if (singular) {
+            saveSign(s, p);
+        } else {
+            for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
+                saveSign(entry.getValue(), p);
             }
         }
         save();
+    }
+
+    public void saveSign(SudoSign s, Player p) {
+        String name = s.getName();
+        try {
+            if (!signConfig.isConfigurationSection("signs." + name)) {
+                signConfig.createSection("signs." + name);
+                ConfigurationSection locSec = signConfig.createSection("signs." + name + ".location");
+                String world = s.getSign().getWorld().getName();
+                Double x = s.getSign().getLocation().getX();
+                Double y = s.getSign().getLocation().getY();
+                Double z = s.getSign().getLocation().getZ();
+                locSec.set("world", world);
+                locSec.set("x", x);
+                locSec.set("y", y);
+                locSec.set("z", z);
+                signConfig.createSection("signs." + name + ".player-commands");
+                signConfig.createSection("signs." + name + ".console-commands");
+            }
+        } catch (Exception e) {
+            if (p != null) {
+                p.sendMessage(prefix + ChatColor.RED + " Failed to save sign " + ChatColor.GOLD + name + ChatColor.RED + " to the config!");
+            }
+            Bukkit.getLogger().warning("[SUDOSIGNS] Failed to save " + name + " to signs.yml!");
+            e.printStackTrace();
+        }
     }
 
 }

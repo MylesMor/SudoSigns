@@ -1,6 +1,8 @@
 package dev.mylesmor.sudosigns;
 
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -9,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static dev.mylesmor.sudosigns.SudoSigns.prefix;
 import static dev.mylesmor.sudosigns.SudoSigns.textInput;
@@ -41,6 +44,11 @@ public class SignEditor {
         bookMeta.setDisplayName("" + RESET + LIGHT_PURPLE + "Rename Sign");
         book.setItemMeta(bookMeta);
 
+//        ItemStack editSign = new ItemStack(Material.OAK_SIGN);
+//        ItemMeta signMeta = editSign.getItemMeta();
+//        signMeta.setDisplayName("" + RESET + LIGHT_PURPLE + "Edit sign text");
+//        editSign.setItemMeta(signMeta);
+
         ItemStack barrier = new ItemStack(Material.BARRIER);
         ItemMeta barrierMeta = barrier.getItemMeta();
         barrierMeta.setDisplayName("" + RESET + LIGHT_PURPLE + "Permissions");
@@ -51,9 +59,14 @@ public class SignEditor {
         cmdBlockMeta.setDisplayName("" + RESET + LIGHT_PURPLE + "Commands");
         cmdBlock.setItemMeta(cmdBlockMeta);
 
-        mainInv.setItem(21, book);
+        mainInv.setItem(20, book);
+        //mainInv.setItem(21, editSign);
         mainInv.setItem(22, barrier);
-        mainInv.setItem(23, cmdBlock);
+        mainInv.setItem(24, cmdBlock);
+    }
+
+    public void editSignText() {
+
     }
 
     private void createPermissionsMenu() {
@@ -228,8 +241,32 @@ public class SignEditor {
         p.openInventory(commandsInv);
     }
 
-    public void renameSign() {
+    public void prepareRename() {
+        p.sendMessage(prefix + GRAY + " Please enter the new name for the sign in chat!");
+        textInput.put(p, PlayerInput.RENAME);
+        p.closeInventory();
+    }
 
+    public void renameSign(String s) {
+        textInput.remove(p);
+        if (SudoSigns.signs.containsKey(s)) {
+            p.sendMessage(prefix + RED + "A sign with name " + GOLD + s + RED + " already exists! Cancelling...");
+        } else {
+            sign.setName(s);
+            Map.Entry<String, SudoSign> found = null;
+            for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
+                if (entry.getValue().equals(sign)) {
+                    found = entry;
+                }
+            }
+            if (found != null) {
+                SudoSigns.signs.remove(found.getKey());
+                SudoSigns.signs.put(s, sign);
+                p.sendMessage(prefix + GRAY + " Sign successfully renamed to " + GOLD + s + GRAY + ".");
+                SudoSigns.config.saveToFile(found.getValue(), true, p);
+                SudoSigns.config.deleteSign(found.getKey());
+            }
+        }
     }
 
     public void goToMain() {

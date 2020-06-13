@@ -22,7 +22,9 @@ public class InventoryListener implements Listener {
             if (e.getCurrentItem() != null) {
                 if (editor.getCurrentPage().equalsIgnoreCase("MAIN")) {
                     if (e.getCurrentItem().getType() == Material.BOOK) {
-                        editor.renameSign();
+                        editor.prepareRename();
+                    } else if (e.getCurrentItem().getType() == Material.OAK_SIGN) {
+                        editor.editSignText();
                     } else if (e.getCurrentItem().getType() == Material.BARRIER) {
                         editor.goToPermissions();
                     } else if (e.getCurrentItem().getType() == Material.COMMAND_BLOCK) {

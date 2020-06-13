@@ -16,8 +16,10 @@ public class ChatListener implements Listener {
     public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
         if (textInput.containsKey(p) && editors.containsKey(p)) {
-            e.setCancelled(true);
-            editors.get(p).addCommand(e.getMessage().substring(1), textInput.get(p));
+            if (textInput.get(p) == PlayerInput.CONSOLE_COMMAND || textInput.get(p) == PlayerInput.PLAYER_COMMAND) {
+                e.setCancelled(true);
+                editors.get(p).addCommand(e.getMessage().substring(1), textInput.get(p));
+            }
         }
     }
 
@@ -25,11 +27,16 @@ public class ChatListener implements Listener {
     public void onAsyncPlayerChat(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
         if (textInput.containsKey(p) && editors.containsKey(p)) {
-            p.sendMessage(prefix + ChatColor.RED + " No command found! Cancelling...");
-            textInput.remove(p);
-            Bukkit.getScheduler().runTask(sudoSignsPlugin, () -> {
-                editors.get(p).goToCommands();
-            });
+            if (textInput.get(p) == PlayerInput.CONSOLE_COMMAND || textInput.get(p) == PlayerInput.PLAYER_COMMAND) {
+                p.sendMessage(prefix + ChatColor.RED + " No command found! Cancelling...");
+                textInput.remove(p);
+                Bukkit.getScheduler().runTask(sudoSignsPlugin, () -> {
+                    editors.get(p).goToCommands();
+                });
+            } else if (textInput.get(p) == PlayerInput.RENAME) {
+                e.setCancelled(true);
+                editors.get(p).renameSign(ChatColor.stripColor(e.getMessage()));
+            }
         }
     }
 }
