@@ -1,24 +1,14 @@
 package dev.mylesmor.sudosigns;
 
 import net.md_5.bungee.chat.ComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import sun.security.krb5.Config;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.*;
 
 public class SudoSigns extends JavaPlugin {
@@ -41,20 +31,15 @@ public class SudoSigns extends JavaPlugin {
     public static final String prefix = ChatColor.YELLOW + "[SUDOSIGNS]";
 
     public static Map<String, SudoSign> signs = new HashMap<>();
-
-    //TODO: Make custom player class
-    public static Map<Player, String> playersToClick = new HashMap<>();
-    public static Map<Player, String> playersToCreate = new HashMap<>();
-    public static Map<Player, String> playersToCopy = new HashMap<>();
-
-    public static Map<Player, SignEditor> editors = new HashMap<>();
-
-    public static Map<Player, PlayerInput> textInput = new HashMap<>();
-
-    public static Plugin sudoSignsPlugin;
+    public static Map<UUID, SudoUser> users = new HashMap<>();
 
     public static ConfigManager config;
 
+    public static Plugin sudoSignsPlugin;
+
+    //TODO: Remove permissions.
+    //TODO: Save permissions.
+    //TODO: Load in permissions.
 
     @Override
     public void onEnable() {
@@ -75,6 +60,7 @@ public class SudoSigns extends JavaPlugin {
         if ((sender instanceof Player)) {
             final Player p = (Player) sender;
             if (cmd.getName().equalsIgnoreCase("ss") || cmd.getName().equalsIgnoreCase("sudosigns") || cmd.getName().equalsIgnoreCase("sudosign")) {
+                users.put(p.getUniqueId(), new SudoUser(p));
                 if (args.length == 0) {
                     help(p);
                     return true;
@@ -215,7 +201,7 @@ public class SudoSigns extends JavaPlugin {
             p.sendMessage(ChatColor.YELLOW + "[!]" + ChatColor.LIGHT_PURPLE + " /ss run [name]" + ChatColor.GRAY + " - Runs a SudoSigns commands remotely.");
         }
         if (p.hasPermission(tpPerm)) {
-            p.sendMessage(ChatColor.YELLOW + "[!]" + ChatColor.LIGHT_PURPLE + " /ss tp [name]" + ChatColor.GRAY + " - Teleports to a SudoSign.");
+            p.sendMessage(ChatColor.YELLOW + "[!]" + ChatColor.LIGHT_PURPLE + " /ss tp [name]" + ChatColor.GRAY + " - Teleport to a SudoSign.");
         }
         if (p.hasPermission(createPerm)) {
             p.sendMessage(ChatColor.YELLOW + "[!]" + ChatColor.LIGHT_PURPLE + " /ss create <name>" + ChatColor.GRAY + " - Creates a SudoSign with the specified name.");
@@ -235,7 +221,7 @@ public class SudoSigns extends JavaPlugin {
     private void run(Player p, String name) {
         if (name == null) {
             p.sendMessage(prefix + ChatColor.GRAY + " Please click the sign you'd like to run!");
-            playersToClick.put(p, "RUN");
+            users.get(p.getUniqueId()).setCreate(true);
         } else if (signs.containsKey(name)) {
             signs.get(name).executeCommands(p);
         }
@@ -244,7 +230,7 @@ public class SudoSigns extends JavaPlugin {
     private void deleteSign(Player p, String name) {
         if (name == null) {
             p.sendMessage(prefix + ChatColor.GRAY + " Please click the sign you'd like to delete!");
-            playersToClick.put(p, "DELETE");
+            users.get(p.getUniqueId()).setDelete(true);
         } else if (signs.containsKey(name)) {
             signs.remove(name);
             config.deleteSign(name);
@@ -262,10 +248,10 @@ public class SudoSigns extends JavaPlugin {
     private void editSign(Player p, String name) {
         if (name == null) {
             p.sendMessage(prefix + ChatColor.GRAY + " Please click the sign you'd like to edit!");
-            playersToClick.put(p, "EDIT");
+            users.get(p.getUniqueId()).setEdit(true);
         } else if (signs.containsKey(name)) {
-            SignEditor editor = new SignEditor(p, signs.get(name));
-            editors.put(p, editor);
+            SignEditor editor = new SignEditor(p, signs.get(name), users.get(p.getUniqueId()));
+            users.get(p.getUniqueId()).setEditor(editor);
         } else {
             p.sendMessage(prefix + ChatColor.RED + " A sign with name " + ChatColor.GOLD + name + ChatColor.RED + " doesn't exist!");
         }
@@ -285,12 +271,12 @@ public class SudoSigns extends JavaPlugin {
     private void viewSign(Player p, String name) {
         if (p.hasPermission(viewPerm)) {
             if (name == null) {
-                playersToClick.put(p, "VIEW");
+                users.get(p.getUniqueId()).setDelete(true);
             } else if (signs.containsKey(name)) {
                 SudoSign sign = signs.get(name);
                 Location signLoc = sign.getSign().getLocation();
                 String locString = "x=" + signLoc.getX() + " y=" + signLoc.getY() + " z=" + signLoc.getZ();
-                p.sendMessage(prefix + ChatColor.GRAY + " Displaying details for sign: " + ChatColor.GOLD + name + ChatColor.GRAY + ":");
+                p.sendMessage(prefix + ChatColor.GRAY + " Displaying details for sign " + ChatColor.GOLD + name + ChatColor.GRAY + ":");
                 p.sendMessage(prefix + ChatColor.GRAY + " Location: " + ChatColor.LIGHT_PURPLE + locString);
                 p.sendMessage(prefix + ChatColor.GRAY + " Player Commands: " + ChatColor.LIGHT_PURPLE + sign.getPlayerCommands().size());
                 p.sendMessage(prefix + ChatColor.GRAY + " Console Commands: " + ChatColor.LIGHT_PURPLE + sign.getConsoleCommands().size());
@@ -303,7 +289,8 @@ public class SudoSigns extends JavaPlugin {
 
     public void createSign(Player p, String name) {
         if (!signs.containsKey(name)) {
-            playersToCreate.put(p, name);
+            users.get(p.getUniqueId()).setCreate(true);
+            users.get(p.getUniqueId()).setPassThru(name);
             signs.put(name, new SudoSign(name));
             p.sendMessage(prefix + ChatColor.GRAY + " Please click the sign you'd like to create!");
         } else {
@@ -312,7 +299,7 @@ public class SudoSigns extends JavaPlugin {
     }
 
     public void near(Player p, String radius) {
-        int r = 0;
+        int r;
         if (radius == null) {
             r = 5;
         } else {
@@ -344,8 +331,10 @@ public class SudoSigns extends JavaPlugin {
     }
 
     public void copy(Player p, String oldName, String newName) {
+        users.get(p.getUniqueId()).setPassThru(newName);
         if (oldName == null) {
-            //TODO
+            p.sendMessage(prefix + ChatColor.GRAY + " Please click the sign you'd like to copy from!");
+            users.get(p.getUniqueId()).setSelectToCopy(true);
         } else {
             if (signs.containsKey(oldName)) {
                 if (!signs.containsKey(newName)) {
@@ -355,7 +344,7 @@ public class SudoSigns extends JavaPlugin {
                     newSign.setPermissions(oldSign.getPermissions());
                     newSign.setPlayerCommands(oldSign.getPlayerCommands());
                     newSign.setConsoleCommands(oldSign.getConsoleCommands());
-                    playersToCopy.put(p, newName);
+                    users.get(p.getUniqueId()).setCopy(true);
                     signs.put(newName, newSign);
                 } else {
                     p.sendMessage(prefix + ChatColor.RED + " A sign with name " + ChatColor.GOLD + newName + ChatColor.RED + " already exists!");

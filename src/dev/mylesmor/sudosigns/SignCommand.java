@@ -14,4 +14,9 @@ public class SignCommand {
         return command;
     }
 
+    public PlayerInput getType() {
+        return type;
+    }
+
+
 }

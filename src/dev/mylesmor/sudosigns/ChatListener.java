@@ -15,10 +15,13 @@ public class ChatListener implements Listener {
     @EventHandler
     public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
-        if (textInput.containsKey(p) && editors.containsKey(p)) {
-            if (textInput.get(p) == PlayerInput.CONSOLE_COMMAND || textInput.get(p) == PlayerInput.PLAYER_COMMAND) {
-                e.setCancelled(true);
-                editors.get(p).addCommand(e.getMessage().substring(1), textInput.get(p));
+        if (users.containsKey(p.getUniqueId())) {
+            SudoUser user = users.get(p.getUniqueId());
+            if (user.isTextInput() && user.isEditing()) {
+                if (user.getInputType() == PlayerInput.CONSOLE_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND) {
+                    e.setCancelled(true);
+                    user.getEditor().addCommand(e.getMessage().substring(1), user.getInputType());
+                }
             }
         }
     }
@@ -26,16 +29,36 @@ public class ChatListener implements Listener {
     @EventHandler
     public void onAsyncPlayerChat(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
-        if (textInput.containsKey(p) && editors.containsKey(p)) {
-            if (textInput.get(p) == PlayerInput.CONSOLE_COMMAND || textInput.get(p) == PlayerInput.PLAYER_COMMAND) {
-                p.sendMessage(prefix + ChatColor.RED + " No command found! Cancelling...");
-                textInput.remove(p);
-                Bukkit.getScheduler().runTask(sudoSignsPlugin, () -> {
-                    editors.get(p).goToCommands();
-                });
-            } else if (textInput.get(p) == PlayerInput.RENAME) {
-                e.setCancelled(true);
-                editors.get(p).renameSign(ChatColor.stripColor(e.getMessage()));
+        if (users.containsKey(p.getUniqueId())) {
+            SudoUser user = users.get(p.getUniqueId());
+            if (user.isTextInput() && user.isEditing()) {
+                if (e.getMessage().equalsIgnoreCase("cancel")) {
+                    e.setCancelled(true);
+                    user.removeTextInput();
+                    p.sendMessage(prefix + ChatColor.RED + " Cancelled!");
+                    Bukkit.getScheduler().runTask(sudoSignsPlugin, () -> {
+                        user.getEditor().goToMain();
+                    });
+                }
+                if (user.getInputType() == PlayerInput.CONSOLE_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND) {
+                    p.sendMessage(prefix + ChatColor.RED + " No command found! Cancelling...");
+                    user.removeTextInput();
+                    Bukkit.getScheduler().runTask(sudoSignsPlugin, () -> {
+                        user.getEditor().goToCommands();
+                    });
+                } else if (user.getInputType() == PlayerInput.RENAME) {
+                    e.setCancelled(true);
+                    user.getEditor().renameSign(ChatColor.stripColor(e.getMessage()));
+                    Bukkit.getScheduler().runTask(sudoSignsPlugin, () -> {
+                        user.getEditor().goToMain();
+                    });
+                } else if (user.getInputType() == PlayerInput.PERMISSION) {
+                    e.setCancelled(true);
+                    user.getEditor().addPermission(true, ChatColor.stripColor(e.getMessage()));
+                    Bukkit.getScheduler().runTask(sudoSignsPlugin, () -> {
+                        user.getEditor().goToPermissions();
+                    });
+                }
             }
         }
     }

@@ -4,4 +4,5 @@ public enum PlayerInput {
     PLAYER_COMMAND,
     CONSOLE_COMMAND,
     RENAME,
+    PERMISSION,
 }

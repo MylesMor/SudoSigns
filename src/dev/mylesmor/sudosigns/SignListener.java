@@ -1,10 +1,8 @@
 package dev.mylesmor.sudosigns;
 
 import net.md_5.bungee.chat.ComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -27,37 +25,58 @@ public class SignListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         if (e.getClickedBlock() != null) {
-            Block b = e.getClickedBlock();
-            if (playersToCreate.containsKey(p)) {
-                e.setCancelled(true);
-                create(p, b);
-            } else if (playersToCopy.containsKey(p)) {
-                e.setCancelled(true);
-                copy(p, b);
-            } else if (playersToClick.containsKey(p)) {
-                e.setCancelled(true);
-                if (b.getState() instanceof Sign) {
-                    Sign sign = (Sign) b.getState();
-                    if (playersToClick.get(p).equalsIgnoreCase("EDIT")) {
-                        edit(p, sign);
-                    } else if (playersToClick.get(p).equalsIgnoreCase("DELETE")) {
-                        delete(p, sign);
-                    } else if (playersToClick.get(p).equalsIgnoreCase("RUN")) {
-                        run_remote(p, sign);
-                    } else if (playersToClick.get(p).equalsIgnoreCase("VIEW")) {
-                        view(p, sign);
+            if (users.containsKey(p.getUniqueId())) {
+                SudoUser user = users.get(p.getUniqueId());
+                    Block b = e.getClickedBlock();
+                    if (user.isCreate()) {
+                        e.setCancelled(true);
+                        create(p, user, b);
+                    } else if (user.isSelectToCopy()) {
+                        e.setCancelled(true);
+                        selectToCopy(p, user, b);
+                    } else if (user.isCopy()) {
+                        e.setCancelled(true);
+                        copy(p, user, b);
+                    } else if (user.isEdit()) {
+                        e.setCancelled(true);
+                        edit(p, user, b);
+                    } else if (user.isDelete()) {
+                        e.setCancelled(true);
+                        delete(p, user, b);
+                    } else if (user.isRun()) {
+                        e.setCancelled(true);
+                        runRemote(p, user, b);
+                    } else if (user.isView()) {
+                        e.setCancelled(true);
+                        view(p, user, b);
+                    } else {
+                        runSign(p, e);
                     }
-                } else {
-                    p.sendMessage(prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
-                    playersToClick.remove(p);
-                }
             } else {
-                run_sign(p, e);
+                runSign(p, e);
             }
         }
     }
 
-    private void run_sign(Player p, PlayerInteractEvent e) {
+    private void selectToCopy(Player p, SudoUser user, Block b) {
+        if (b.getState() instanceof Sign) {
+            Sign sign = (Sign) b.getState();
+            for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
+                if (entry.getValue().getSign().equals(sign)) {
+                    entry.getValue().executeCommands(p);
+                    user.setSelectToCopy(false);
+                    p.performCommand("ss copy " + entry.getKey() + " " + user.getPassThru());
+                    return;
+                }
+            }
+            p.sendMessage(prefix + ChatColor.RED + " Failed to copy: this is not a SudoSign!");
+        } else {
+            p.sendMessage(prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
+        }
+        user.setSelectToCopy(false);
+    }
+
+    private void runSign(Player p, PlayerInteractEvent e) {
         if (e.getClickedBlock().getState() instanceof Sign) {
             if (p.hasPermission(selectPerm) && e.getAction() == Action.RIGHT_CLICK_BLOCK || !p.hasPermission(selectPerm)) {
                 Sign sign = (Sign) e.getClickedBlock().getState();
@@ -70,100 +89,117 @@ public class SignListener implements Listener {
         }
     }
 
-    private void create(Player p, Block b) {
+    private void create(Player p, SudoUser user, Block b) {
         if (b.getState() instanceof Sign) {
             Sign sign = (Sign) b.getState();
-            signs.get(playersToCreate.get(p)).setSign(sign);
-            SignEditor editor = new SignEditor(p, signs.get(playersToCreate.get(p)));
-            editors.put(p, editor);
-            config.saveToFile(signs.get(playersToCreate.get(p)), true, p);
-            playersToCreate.remove(p);
+            signs.get(user.getPassThru()).setSign(sign);
+            SignEditor editor = new SignEditor(p, signs.get(user.getPassThru()), user);
+            user.setEditor(editor);
+            config.saveToFile(signs.get(user.getPassThru()), true, p);
         } else {
             p.sendMessage(prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
-            signs.remove(playersToCreate.get(p));
-            playersToCreate.remove(p);
+            signs.remove(user.getPassThru());
         }
+        user.setCreate(false);
     }
 
-    private void copy(Player p, Block b) {
+    private void copy(Player p, SudoUser user, Block b) {
         if (b.getState() instanceof Sign) {
             Sign newSign = (Sign) b.getState();
-            signs.get(playersToCopy.get(p)).setSign(newSign);
-            config.saveToFile(signs.get(playersToCopy.get(p)), true, p);
-            p.sendMessage(prefix + ChatColor.GRAY + " Sign has been copied to sign " + ChatColor.GOLD + playersToCopy.get(p) + ChatColor.GRAY + " successfully!");
-            playersToCopy.remove(p);
-
+            signs.get(user.getPassThru()).setSign(newSign);
+            config.saveToFile(signs.get(user.getPassThru()), true, p);
+            p.sendMessage(prefix + ChatColor.GRAY + " Sign has been copied to sign " + ChatColor.GOLD + user.getPassThru() + ChatColor.GRAY + " successfully!");
         } else {
             p.sendMessage(prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
-            signs.remove(playersToCopy.get(p));
-            playersToCopy.remove(p);
+            signs.remove(user.getPassThru());
         }
+        user.setCopy(false);
     }
 
-    private void run_remote(Player p, Sign sign) {
-        boolean found = false;
-        for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
-            if (entry.getValue().getSign().equals(sign)) {
-                entry.getValue().executeCommands(p);
-                found = true;
-                playersToClick.remove(p);
+    private void runRemote(Player p, SudoUser user, Block b) {
+        if (b.getState() instanceof Sign) {
+            Sign sign = (Sign) b.getState();
+            boolean found = false;
+            for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
+                if (entry.getValue().getSign().equals(sign)) {
+                    entry.getValue().executeCommands(p);
+                    found = true;
+                }
             }
-        }
-        if (!found) {
-            p.sendMessage(prefix + ChatColor.RED + " This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create" + ChatColor.RED + " instead.");
-        }
-    }
-
-    private void edit(Player p, Sign sign) {
-        boolean found = false;
-        for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
-            if (entry.getValue().getSign().equals(sign)) {
-                SignEditor editor = new SignEditor(p, signs.get(entry.getKey()));
-                editors.put(p, editor);
-                playersToClick.remove(p);
-                found = true;
+            if (!found) {
+                p.sendMessage(prefix + ChatColor.RED + " This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create" + ChatColor.RED + " instead.");
             }
-        }
-        if (!found) {
-            p.sendMessage(prefix + ChatColor.RED + " This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create" + ChatColor.RED + " instead.");
-        }
-    }
-
-    private void delete(Player p, Sign sign) {
-        String name = null;
-        for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
-            if (entry.getValue().getSign().equals(sign)) {
-                name = entry.getKey();
-                playersToClick.remove(p);
-            }
-        }
-        if (name == null) {
-            p.sendMessage(prefix + ChatColor.RED + " This is not a SudoSign!");
         } else {
-            signs.remove(name);
-            config.deleteSign(name);
-            p.sendMessage(prefix + ChatColor.GRAY + " Sign " + ChatColor.GOLD + name + ChatColor.GRAY + " successfully deleted!");
+            p.sendMessage(prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
         }
+        user.setRun(false);
     }
 
-    private void view(Player p, Sign sign) {
-        boolean found = false;
-        for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
-            if (entry.getValue().getSign().equals(sign)) {
-                SudoSign ssign = signs.get(entry.getKey());
-                Location signLoc = ssign.getSign().getLocation();
-                String locString = "x=" + signLoc.getX() + " y=" + signLoc.getY() + " z=" + signLoc.getZ();
-                p.sendMessage(prefix + ChatColor.GRAY + " Displaying details for sign: " + ChatColor.GOLD + entry.getKey() + ChatColor.GRAY + ":");
-                p.sendMessage(prefix + ChatColor.GRAY + " Location: " + ChatColor.LIGHT_PURPLE + locString);
-                p.sendMessage(prefix + ChatColor.GRAY + " Player Commands: " + ChatColor.LIGHT_PURPLE + ssign.getPlayerCommands().size());
-                p.sendMessage(prefix + ChatColor.GRAY + " Console Commands: " + ChatColor.LIGHT_PURPLE + ssign.getConsoleCommands().size());
-                found = true;
-                playersToClick.remove(p);
+    private void edit(Player p, SudoUser user, Block b) {
+        if (b.getState() instanceof Sign) {
+            Sign sign = (Sign) b.getState();
+            boolean found = false;
+            for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
+                if (entry.getValue().getSign().equals(sign)) {
+                    SignEditor editor = new SignEditor(p, signs.get(entry.getKey()), user);
+                    user.setEditor(editor);
+                    found = true;
+                }
             }
+            if (!found) {
+                p.sendMessage(prefix + ChatColor.RED + " This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create" + ChatColor.RED + " instead.");
+            }
+        } else {
+            p.sendMessage(prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
         }
-        if (!found) {
-            p.sendMessage(prefix + ChatColor.RED + " This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create" + ChatColor.RED + " instead.");
+        user.setEdit(false);
+    }
+
+    private void delete(Player p, SudoUser user, Block b) {
+        if (b.getState() instanceof Sign) {
+            Sign sign = (Sign) b.getState();
+            String name = null;
+            for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
+                if (entry.getValue().getSign().equals(sign)) {
+                    name = entry.getKey();
+                }
+            }
+            if (name == null) {
+                p.sendMessage(prefix + ChatColor.RED + " This is not a SudoSign!");
+            } else {
+                signs.remove(name);
+                config.deleteSign(name);
+                p.sendMessage(prefix + ChatColor.GRAY + " Sign " + ChatColor.GOLD + name + ChatColor.GRAY + " successfully deleted!");
+            }
+        } else {
+            p.sendMessage(prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
         }
+        user.setDelete(false);
+    }
+
+    private void view(Player p, SudoUser user, Block b) {
+        if (b.getState() instanceof Sign) {
+            Sign sign = (Sign) b.getState();
+            boolean found = false;
+            for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
+                if (entry.getValue().getSign().equals(sign)) {
+                    SudoSign ssign = signs.get(entry.getKey());
+                    Location signLoc = ssign.getSign().getLocation();
+                    String locString = "x=" + signLoc.getX() + " y=" + signLoc.getY() + " z=" + signLoc.getZ();
+                    p.sendMessage(prefix + ChatColor.GRAY + " Displaying details for sign: " + ChatColor.GOLD + entry.getKey() + ChatColor.GRAY + ":");
+                    p.sendMessage(prefix + ChatColor.GRAY + " Location: " + ChatColor.LIGHT_PURPLE + locString);
+                    p.sendMessage(prefix + ChatColor.GRAY + " Player Commands: " + ChatColor.LIGHT_PURPLE + ssign.getPlayerCommands().size());
+                    p.sendMessage(prefix + ChatColor.GRAY + " Console Commands: " + ChatColor.LIGHT_PURPLE + ssign.getConsoleCommands().size());
+                    found = true;
+                }
+            }
+            if (!found) {
+                p.sendMessage(prefix + ChatColor.RED + " This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create" + ChatColor.RED + " instead.");
+            }
+        } else {
+            p.sendMessage(prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
+        }
+        user.setView(false);
     }
 
     @EventHandler
@@ -174,7 +210,6 @@ public class SignListener implements Listener {
             for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
                 if (entry.getValue().getSign().equals(sign)) {
                     e.setCancelled(true);
-                    //SudoSigns.destroySign(p, entry.getValue());
                     if (p.hasPermission(selectPerm)) {
                         String message = Util.getSelectString(p, entry.getKey());
                         p.spigot().sendMessage(ComponentSerializer.parse(message));
