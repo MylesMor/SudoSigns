@@ -2,6 +2,11 @@ package dev.mylesmor.sudosigns;
 
 import org.bukkit.entity.Player;
 
+/**
+ * SudoUser class to store all user variables.
+ * @author MylesMor
+ * @author https://mylesmor.dev
+ */
 public class SudoUser {
 
     private Player p;

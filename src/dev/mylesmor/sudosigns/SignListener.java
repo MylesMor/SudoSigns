@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import static dev.mylesmor.sudosigns.SudoSigns.*;
+import static dev.mylesmor.sudosigns.Permissions.*;
 
 public class SignListener implements Listener {
 
@@ -78,7 +79,7 @@ public class SignListener implements Listener {
 
     private void runSign(Player p, PlayerInteractEvent e) {
         if (e.getClickedBlock().getState() instanceof Sign) {
-            if (p.hasPermission(selectPerm) && e.getAction() == Action.RIGHT_CLICK_BLOCK || !p.hasPermission(selectPerm)) {
+            if (p.hasPermission(SELECT) && e.getAction() == Action.RIGHT_CLICK_BLOCK || !p.hasPermission(SELECT)) {
                 Sign sign = (Sign) e.getClickedBlock().getState();
                 for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
                     if (entry.getValue().getSign().equals(sign)) {
@@ -210,7 +211,7 @@ public class SignListener implements Listener {
             for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
                 if (entry.getValue().getSign().equals(sign)) {
                     e.setCancelled(true);
-                    if (p.hasPermission(selectPerm)) {
+                    if (p.hasPermission(SELECT)) {
                         String message = Util.getSelectString(p, entry.getKey());
                         p.spigot().sendMessage(ComponentSerializer.parse(message));
                     } else {

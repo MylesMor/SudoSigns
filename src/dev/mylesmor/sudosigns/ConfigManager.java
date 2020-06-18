@@ -17,9 +17,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
 import static dev.mylesmor.sudosigns.SudoSigns.*;
 
+/**
+ * The class for managing the plugin's config.
+ * @author MylesMor
+ * @author https://mylesmor.dev
+ */
 public class ConfigManager {
 
     private FileConfiguration signConfig;
@@ -78,11 +82,15 @@ public class ConfigManager {
                 ss.setSign(sign);
                 List<String> pCommands = signConfig.getStringList("signs." + key + ".player-commands");
                 List<String> cCommands = signConfig.getStringList("signs." + key + ".console-commands");
+                List<String> permissions = signConfig.getStringList("signs." + key + ".permissions");
                 for (String cmd : pCommands) {
                     ss.addPlayerCommand(new SignCommand(cmd, PlayerInput.PLAYER_COMMAND));
                 }
                 for (String cmd : cCommands) {
                     ss.addConsoleCommand(new SignCommand(cmd, PlayerInput.CONSOLE_COMMAND));
+                }
+                for (String perm : permissions) {
+                    ss.addPermission(perm);
                 }
                 signs.put(key, ss);
             } catch (Exception e) {
@@ -100,6 +108,27 @@ public class ConfigManager {
             e.printStackTrace();
         }
 
+    }
+
+
+    public void addPermissionToConfig(SudoSign s, String perm) {
+        if (!signConfig.isConfigurationSection("signs." + s.getName() + ".permissions")) {
+            signConfig.set("signs." + s.getName() + ".permissions", new ArrayList<>());
+        }
+        List<String> perms = signConfig.getStringList("signs." + s.getName() + ".permissions");
+        perms.add(perm);
+        signConfig.set("signs." + s.getName() + ".permissions", perms);
+        save();
+    }
+
+    public void deletePermissionFromConfig(SudoSign s, String perm) {
+        if (!signConfig.isConfigurationSection("signs." + s.getName() + ".permissions")) {
+            signConfig.set("signs." + s.getName() + ".permissions", new ArrayList<>());
+        }
+        List<String> perms = signConfig.getStringList("signs." + s.getName() + ".permissions");
+        perms.remove(perm);
+        signConfig.set("signs." + s.getName() + ".permissions", perms);
+        save();
     }
 
     public void addCommandToConfig(SudoSign s, SignCommand cmd, PlayerInput type) {
@@ -181,6 +210,7 @@ public class ConfigManager {
                 locSec.set("x", x);
                 locSec.set("y", y);
                 locSec.set("z", z);
+                signConfig.createSection("signs." + name + ".permissions");
                 signConfig.createSection("signs." + name + ".player-commands");
                 signConfig.createSection("signs." + name + ".console-commands");
             }

@@ -1,5 +1,10 @@
 package dev.mylesmor.sudosigns;
 
+/**
+ * The SignCommand class for storing sign command data.
+ * @author MylesMor
+ * @author https://mylesmor.dev
+ */
 public class SignCommand {
 
     private String command;

@@ -10,6 +10,11 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import static dev.mylesmor.sudosigns.SudoSigns.*;
 
+/**
+ * The ChatListener class for taking user input in chat.
+ * @author MylesMor
+ * @author https://mylesmor.dev
+ */
 public class ChatListener implements Listener {
 
     @EventHandler

@@ -1,8 +1,6 @@
 package dev.mylesmor.sudosigns;
 
-import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -35,6 +33,31 @@ public class SignEditor {
         p.openInventory(mainInv);
     }
 
+    public String getCurrentPage() {
+        return currentPage;
+    }
+
+    public void goToMain() {
+        p.openInventory(mainInv);
+        currentPage = "MAIN";
+    }
+
+    public void goToPermissions() {
+        currentPage = "PERMISSIONS";
+        createPermissionsMenu();
+        p.openInventory(permissionsInv);
+    }
+
+    public void goToCommands() {
+        currentPage = "COMMANDS";
+        createCommandsMenu();
+        p.openInventory(commandsInv);
+    }
+
+    public void endEditor() {
+        p.sendMessage(SudoSigns.prefix + GRAY + " Changes saved to sign " + GOLD + sign.getName() + GRAY + ".");
+    }
+
     private void createMainMenu() {
         mainInv = Bukkit.createInventory(p, 45, "Editing: " + sign.getName());
         for (int i = 0; i < mainInv.getSize(); i++) {
@@ -44,11 +67,6 @@ public class SignEditor {
         ItemMeta bookMeta = book.getItemMeta();
         bookMeta.setDisplayName("" + RESET + LIGHT_PURPLE + "Rename Sign");
         book.setItemMeta(bookMeta);
-
-//        ItemStack editSign = new ItemStack(Material.OAK_SIGN);
-//        ItemMeta signMeta = editSign.getItemMeta();
-//        signMeta.setDisplayName("" + RESET + LIGHT_PURPLE + "Edit sign text");
-//        editSign.setItemMeta(signMeta);
 
         ItemStack barrier = new ItemStack(Material.BARRIER);
         ItemMeta barrierMeta = barrier.getItemMeta();
@@ -67,7 +85,7 @@ public class SignEditor {
     }
 
     public void editSignText() {
-
+        //TODO: Add editing of sign text.
     }
 
     private void createPermissionsMenu() {
@@ -115,17 +133,62 @@ public class SignEditor {
         permissionsInv.setItem(40, bookQuill);
     }
 
-    public void goToPermissions() {
-        currentPage = "PERMISSIONS";
-        createPermissionsMenu();
-        p.openInventory(permissionsInv);
 
+    public void preparePermission() {
+        Inventory choiceInv = Bukkit.createInventory(p, 45, "Default or Custom?");
+        for (int i = 0; i < choiceInv.getSize(); i++) {
+            choiceInv.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
+        }
+        ItemStack arrow = new ItemStack(Material.ARROW);
+        ItemMeta arrowMeta = arrow.getItemMeta();
+        arrowMeta.setDisplayName(RESET + "BACK");
+        arrow.setItemMeta(arrowMeta);
 
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+        ItemMeta headMeta = head.getItemMeta();
+        List<String> lore = new ArrayList<>();
+        lore.add(GOLD + "sudosigns.sign." + sign.getName());
+        headMeta.setDisplayName("" + RESET + LIGHT_PURPLE + "Default Permission");
+        headMeta.setLore(lore);
+        head.setItemMeta(headMeta);
+
+        ItemStack cmdBlock = new ItemStack(Material.COMMAND_BLOCK);
+        ItemMeta cmdBlockMeta = cmdBlock.getItemMeta();
+        cmdBlockMeta.setDisplayName("" + RESET + LIGHT_PURPLE + "Custom Permission");
+        cmdBlock.setItemMeta(cmdBlockMeta);
+
+        choiceInv.setItem(21, head);
+        choiceInv.setItem(23, cmdBlock);
+        choiceInv.setItem(36, arrow);
+
+        p.openInventory(choiceInv);
     }
 
-    public void endEditor() {
-        p.sendMessage(SudoSigns.prefix + GRAY + " Changes saved to sign " + GOLD + sign.getName() + GRAY + ".");
+    public void addPermission(Boolean provided, String perm) {
+        if (provided) {
+            if (perm == null) {
+                sign.addPermission("sudosigns.sign." + sign.getName());
+                SudoSigns.config.addPermissionToConfig(sign, "sudosigns.sign." + sign.getName());
+                goToPermissions();
+            } else {
+                SudoSigns.config.addPermissionToConfig(sign, perm);
+                sign.addPermission(perm);
+            }
+        } else {
+            p.closeInventory();
+            p.sendMessage(prefix + GRAY + " Please enter in chat the permission which the player must have to run this sign or type " + RED + "CANCEL" + GRAY + ".");
+            su.addTextInput(PlayerInput.PERMISSION);
+        }
     }
+
+    public void deletePermission(String perm) {
+        sign.removePermission(perm);
+        SudoSigns.config.deletePermissionFromConfig(sign, perm);
+        goToPermissions();
+    }
+
+
+
 
     private void createCommandsMenu() {
         commandsInv = Bukkit.createInventory(p, 45, "Commands: " + sign.getName());
@@ -220,36 +283,6 @@ public class SignEditor {
         p.openInventory(choiceInv);
     }
 
-    public void preparePermission() {
-        Inventory choiceInv = Bukkit.createInventory(p, 45, "Default or Custom?");
-        for (int i = 0; i < choiceInv.getSize(); i++) {
-            choiceInv.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
-        }
-        ItemStack arrow = new ItemStack(Material.ARROW);
-        ItemMeta arrowMeta = arrow.getItemMeta();
-        arrowMeta.setDisplayName(RESET + "BACK");
-        arrow.setItemMeta(arrowMeta);
-
-        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-        ItemMeta headMeta = head.getItemMeta();
-        List<String> lore = new ArrayList<>();
-        lore.add(GOLD + "sudosigns.sign." + sign.getName());
-        headMeta.setDisplayName("" + RESET + LIGHT_PURPLE + "Default Permission");
-        headMeta.setLore(lore);
-        head.setItemMeta(headMeta);
-
-        ItemStack cmdBlock = new ItemStack(Material.COMMAND_BLOCK);
-        ItemMeta cmdBlockMeta = cmdBlock.getItemMeta();
-        cmdBlockMeta.setDisplayName("" + RESET + LIGHT_PURPLE + "Custom Permission");
-        cmdBlock.setItemMeta(cmdBlockMeta);
-
-        choiceInv.setItem(21, head);
-        choiceInv.setItem(23, cmdBlock);
-        choiceInv.setItem(36, arrow);
-
-        p.openInventory(choiceInv);
-    }
-
     public void deleteCommand(String cmd) {
         SignCommand found = null;
         for (SignCommand c : sign.getConsoleCommands()) {
@@ -281,21 +314,6 @@ public class SignEditor {
         su.addTextInput(type);
     }
 
-    public void addPermission(Boolean provided, String perm) {
-        if (provided) {
-            if (perm == null) {
-                sign.addPermission("sudosigns.sign." + sign.getName());
-                goToPermissions();
-            } else {
-                sign.addPermission(perm);
-            }
-        } else {
-            p.closeInventory();
-            p.sendMessage(prefix + GRAY + " Please enter in chat the permission which the player must have to run this sign or type " + RED + "CANCEL" + GRAY + ".");
-            su.addTextInput(PlayerInput.PERMISSION);
-        }
-    }
-
     public void addCommand(String cmd, PlayerInput type) {
         SignCommand command = new SignCommand(cmd, type);
         if (type.equals(PlayerInput.CONSOLE_COMMAND)) {
@@ -310,11 +328,8 @@ public class SignEditor {
         goToCommands();
     }
 
-    public void goToCommands() {
-        currentPage = "COMMANDS";
-        createCommandsMenu();
-        p.openInventory(commandsInv);
-    }
+
+
 
     public void prepareRename() {
         p.sendMessage(prefix + GRAY + " Please enter the new name for the sign in chat or type " + RED + "CANCEL" + GRAY + ".");
@@ -342,15 +357,6 @@ public class SignEditor {
                 SudoSigns.config.deleteSign(found.getKey());
             }
         }
-    }
-
-    public void goToMain() {
-        p.openInventory(mainInv);
-        currentPage = "MAIN";
-    }
-
-    public String getCurrentPage() {
-        return currentPage;
     }
 
 

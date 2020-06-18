@@ -1,10 +1,16 @@
 package dev.mylesmor.sudosigns;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
+/**
+ * The class assigned to each created sign.
+ * @author MylesMor
+ * @author https://mylesmor.dev
+ */
 public class SudoSign {
 
     private ArrayList<SignCommand> playerCommands = new ArrayList<>();
@@ -74,14 +80,28 @@ public class SudoSign {
         return consoleCommands;
     }
 
+    /**
+     * Executes all of the commands attached to the sign, if the player has the required permissions.
+     * @param p The player who is running the sign.
+     */
     public void executeCommands(Player p) {
-        for (SignCommand sc : playerCommands) {
-            String cmd = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());
-            p.performCommand(cmd);
+        boolean hasPermission = true;
+        for (String perm : permissions) {
+            if (!p.hasPermission(perm)) {
+                hasPermission = false;
+            }
         }
-        for (SignCommand sc : consoleCommands) {
-            String cmd = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+        if (hasPermission) {
+            for (SignCommand sc : playerCommands) {
+                String cmd = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());
+                p.performCommand(cmd);
+            }
+            for (SignCommand sc : consoleCommands) {
+                String cmd = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+            }
+        } else {
+            p.sendMessage(ChatColor.RED + "You don't have permission to do this!");
         }
     }
 
