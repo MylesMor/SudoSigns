@@ -31,8 +31,8 @@ public class SignListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         if (e.getClickedBlock() != null) {
-            if (SudoSigns.users.containsKey(p.getUniqueId())) {
-                SudoUser user = SudoSigns.users.get(p.getUniqueId());
+            SudoUser user = SudoSigns.users.get(p.getUniqueId());
+            if (user != null) {
                     Block b = e.getClickedBlock();
                     if (user.isCreate()) {
                         e.setCancelled(true);

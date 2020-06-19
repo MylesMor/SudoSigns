@@ -303,10 +303,10 @@ public class SudoSigns extends JavaPlugin {
      */
     private void viewSign(Player p, String name) {
         if (p.hasPermission(Permissions.VIEW)) {
+            SudoSign sign = signs.get(name);
             if (name == null) {
                 users.get(p.getUniqueId()).setDelete(true);
-            } else if (signs.containsKey(name)) {
-                SudoSign sign = signs.get(name);
+            } else if (sign != null) {
                 Location signLoc = sign.getSign().getLocation();
                 String locString = "x=" + signLoc.getX() + " y=" + signLoc.getY() + " z=" + signLoc.getZ();
                 p.sendMessage(prefix + ChatColor.GRAY + " Displaying details for sign " + ChatColor.GOLD + name + ChatColor.GRAY + ":");
@@ -389,10 +389,10 @@ public class SudoSigns extends JavaPlugin {
             p.sendMessage(prefix + ChatColor.GRAY + " Please click the sign you'd like to copy from!");
             users.get(p.getUniqueId()).setSelectToCopy(true);
         } else {
-            if (signs.containsKey(oldName)) {
+            SudoSign oldSign = signs.get(oldName);
+            if (oldSign != null) {
                 if (!signs.containsKey(newName)) {
                     p.sendMessage(prefix + ChatColor.GRAY + " Please click the sign you'd like to copy to!");
-                    SudoSign oldSign = signs.get(oldName);
                     SudoSign newSign = new SudoSign(newName);
                     newSign.setPermissions(oldSign.getPermissions());
                     newSign.setPlayerCommands(oldSign.getPlayerCommands());

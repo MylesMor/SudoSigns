@@ -25,8 +25,8 @@ public class InventoryListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        if (SudoSigns.users.containsKey(p.getUniqueId())) {
-            SudoUser user = SudoSigns.users.get(p.getUniqueId());
+        SudoUser user = SudoSigns.users.get(p.getUniqueId());
+        if (user != null) {
             if (user.isEditing()) {
                 SignEditor editor = user.getEditor();
                 if (e.getCurrentItem() != null) {
@@ -52,8 +52,8 @@ public class InventoryListener implements Listener {
     @EventHandler
     public void closeInventory(InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
-        if (SudoSigns.users.containsKey(p.getUniqueId())) {
-            SudoUser user = SudoSigns.users.get(p.getUniqueId());
+        SudoUser user = SudoSigns.users.get(p.getUniqueId());
+        if (user != null) {
             // Checks whether the user has closed the GUI.
             if (user.isEditing()) {
                 Bukkit.getScheduler().scheduleSyncDelayedTask(SudoSigns.sudoSignsPlugin, () -> {

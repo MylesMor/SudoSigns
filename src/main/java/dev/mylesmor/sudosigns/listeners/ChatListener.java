@@ -22,8 +22,8 @@ public class ChatListener implements Listener {
     @EventHandler
     public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent e) {
         Player p = e.getPlayer();
-        if (SudoSigns.users.containsKey(p.getUniqueId())) {
-            SudoUser user = SudoSigns.users.get(p.getUniqueId());
+        SudoUser user = SudoSigns.users.get(p.getUniqueId());
+        if (user != null) {
             if (user.isTextInput() && user.isEditing()) {
                 if (user.getInputType() == PlayerInput.CONSOLE_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND) {
                     e.setCancelled(true);
@@ -36,8 +36,8 @@ public class ChatListener implements Listener {
     @EventHandler
     public void onAsyncPlayerChat(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
-        if (SudoSigns.users.containsKey(p.getUniqueId())) {
-            SudoUser user = SudoSigns.users.get(p.getUniqueId());
+        SudoUser user = SudoSigns.users.get(p.getUniqueId());
+        if (user != null) {
             if (user.isTextInput() && user.isEditing()) {
                 if (e.getMessage().equalsIgnoreCase("cancel")) {
                     e.setCancelled(true);
