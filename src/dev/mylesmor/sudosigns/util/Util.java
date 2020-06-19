@@ -1,8 +1,8 @@
-package dev.mylesmor.sudosigns;
+package dev.mylesmor.sudosigns.util;
 
 import org.bukkit.entity.Player;
 
-import static dev.mylesmor.sudosigns.Permissions.*;
+import static dev.mylesmor.sudosigns.util.Permissions.*;
 
 public class Util {
 

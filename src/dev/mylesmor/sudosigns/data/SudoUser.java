@@ -1,4 +1,4 @@
-package dev.mylesmor.sudosigns;
+package dev.mylesmor.sudosigns.data;
 
 import org.bukkit.entity.Player;
 
@@ -23,7 +23,7 @@ public class SudoUser {
 
     private PlayerInput inputType;
 
-    SudoUser(Player p) {
+    public SudoUser(Player p) {
         this.p = p;
     }
 

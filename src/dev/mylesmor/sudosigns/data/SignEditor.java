@@ -1,5 +1,10 @@
-package dev.mylesmor.sudosigns;
+package dev.mylesmor.sudosigns.data;
 
+import dev.mylesmor.sudosigns.SudoSigns;
+import dev.mylesmor.sudosigns.commands.SignCommand;
+import dev.mylesmor.sudosigns.data.PlayerInput;
+import dev.mylesmor.sudosigns.data.SudoSign;
+import dev.mylesmor.sudosigns.data.SudoUser;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,7 +29,7 @@ public class SignEditor {
     private Inventory commandsInv;
     private String currentPage;
 
-    SignEditor(Player p, SudoSign s, SudoUser su) {
+    public SignEditor(Player p, SudoSign s, SudoUser su) {
         this.su = su;
         this.p = p;
         this.sign = s;

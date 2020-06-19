@@ -1,4 +1,4 @@
-package dev.mylesmor.sudosigns;
+package dev.mylesmor.sudosigns.util;
 
 /**
  * Permissions class for SudoSigns.

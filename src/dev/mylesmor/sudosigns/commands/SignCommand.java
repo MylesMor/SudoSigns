@@ -1,4 +1,6 @@
-package dev.mylesmor.sudosigns;
+package dev.mylesmor.sudosigns.commands;
+
+import dev.mylesmor.sudosigns.data.PlayerInput;
 
 /**
  * The SignCommand class for storing sign command data.
@@ -10,7 +12,7 @@ public class SignCommand {
     private String command;
     private PlayerInput type;
 
-    SignCommand(String cmd, PlayerInput type) {
+    public SignCommand(String cmd, PlayerInput type) {
         command = cmd;
         this.type = type;
     }

@@ -1,5 +1,13 @@
 package dev.mylesmor.sudosigns;
 
+import dev.mylesmor.sudosigns.config.ConfigManager;
+import dev.mylesmor.sudosigns.data.SignEditor;
+import dev.mylesmor.sudosigns.data.SudoSign;
+import dev.mylesmor.sudosigns.data.SudoUser;
+import dev.mylesmor.sudosigns.listeners.ChatListener;
+import dev.mylesmor.sudosigns.listeners.InventoryListener;
+import dev.mylesmor.sudosigns.listeners.SignListener;
+import dev.mylesmor.sudosigns.util.Util;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -10,8 +18,9 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
-import static dev.mylesmor.sudosigns.Permissions.*;
+import static dev.mylesmor.sudosigns.util.Permissions.*;
 
 /**
  * Main class for SudoSigns.
@@ -24,6 +33,7 @@ public class SudoSigns extends JavaPlugin {
 
     public static Map<String, SudoSign> signs = new HashMap<>();
     public static Map<UUID, SudoUser> users = new HashMap<>();
+    Map<String, BiConsumer<CommandSender, String[]>> commands = new HashMap<>();
 
     public static ConfigManager config;
 

@@ -1,5 +1,9 @@
-package dev.mylesmor.sudosigns;
+package dev.mylesmor.sudosigns.listeners;
 
+import dev.mylesmor.sudosigns.data.SignEditor;
+import dev.mylesmor.sudosigns.data.SudoSign;
+import dev.mylesmor.sudosigns.data.SudoUser;
+import dev.mylesmor.sudosigns.util.Util;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -18,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import static dev.mylesmor.sudosigns.SudoSigns.*;
-import static dev.mylesmor.sudosigns.Permissions.*;
+import static dev.mylesmor.sudosigns.util.Permissions.*;
 
 public class SignListener implements Listener {
 

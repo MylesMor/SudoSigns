@@ -1,5 +1,8 @@
-package dev.mylesmor.sudosigns;
+package dev.mylesmor.sudosigns.config;
 
+import dev.mylesmor.sudosigns.data.PlayerInput;
+import dev.mylesmor.sudosigns.commands.SignCommand;
+import dev.mylesmor.sudosigns.data.SudoSign;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -29,7 +32,7 @@ public class ConfigManager {
     private FileConfiguration signConfig;
     private File signConfigFile;
 
-    ConfigManager() {
+    public ConfigManager() {
         createCustomConfig();
         loadCustomConfig();
         loadSigns();

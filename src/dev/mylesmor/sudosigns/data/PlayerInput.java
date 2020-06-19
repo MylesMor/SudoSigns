@@ -1,4 +1,4 @@
-package dev.mylesmor.sudosigns;
+package dev.mylesmor.sudosigns.data;
 
 /**
  * Enum used for determing the type of player chat input.

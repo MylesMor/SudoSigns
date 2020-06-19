@@ -1,5 +1,6 @@
-package dev.mylesmor.sudosigns;
+package dev.mylesmor.sudosigns.data;
 
+import dev.mylesmor.sudosigns.commands.SignCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -19,7 +20,7 @@ public class SudoSign {
     private org.bukkit.block.Sign sign;
     private String name;
 
-    SudoSign(String name) {
+    public SudoSign(String name) {
         this.name = name;
     }
 
