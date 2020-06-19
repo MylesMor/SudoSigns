@@ -1,5 +1,6 @@
 package dev.mylesmor.sudosigns.listeners;
 
+import dev.mylesmor.sudosigns.SudoSigns;
 import dev.mylesmor.sudosigns.data.PlayerInput;
 import dev.mylesmor.sudosigns.data.SignEditor;
 import dev.mylesmor.sudosigns.data.SudoUser;
@@ -13,7 +14,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.InventoryView;
 
-import static dev.mylesmor.sudosigns.SudoSigns.*;
 
 /**
  * InventoryListener class to listen for GUI actions.
@@ -25,8 +25,8 @@ public class InventoryListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        if (users.containsKey(p.getUniqueId())) {
-            SudoUser user = users.get(p.getUniqueId());
+        if (SudoSigns.users.containsKey(p.getUniqueId())) {
+            SudoUser user = SudoSigns.users.get(p.getUniqueId());
             if (user.isEditing()) {
                 SignEditor editor = user.getEditor();
                 if (e.getCurrentItem() != null) {
@@ -52,11 +52,11 @@ public class InventoryListener implements Listener {
     @EventHandler
     public void closeInventory(InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
-        if (users.containsKey(p.getUniqueId())) {
-            SudoUser user = users.get(p.getUniqueId());
+        if (SudoSigns.users.containsKey(p.getUniqueId())) {
+            SudoUser user = SudoSigns.users.get(p.getUniqueId());
             // Checks whether the user has closed the GUI.
             if (user.isEditing()) {
-                Bukkit.getScheduler().scheduleSyncDelayedTask(sudoSignsPlugin, () -> {
+                Bukkit.getScheduler().scheduleSyncDelayedTask(SudoSigns.sudoSignsPlugin, () -> {
                     InventoryView currentInv = p.getOpenInventory();
                     if (currentInv.getTitle().equalsIgnoreCase("CRAFTING") && !user.isTextInput()) {
                         user.getEditor().endEditor();

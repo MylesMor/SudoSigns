@@ -1,5 +1,6 @@
 package dev.mylesmor.sudosigns.config;
 
+import dev.mylesmor.sudosigns.SudoSigns;
 import dev.mylesmor.sudosigns.data.PlayerInput;
 import dev.mylesmor.sudosigns.commands.SignCommand;
 import dev.mylesmor.sudosigns.data.SudoSign;
@@ -20,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static dev.mylesmor.sudosigns.SudoSigns.*;
-
 /**
  * The class for managing the plugin's config.
  * @author MylesMor
@@ -39,10 +38,10 @@ public class ConfigManager {
     }
 
     private void createCustomConfig() {
-        if (!sudoSignsPlugin.getDataFolder().exists()) {
-            sudoSignsPlugin.getDataFolder().mkdir();
+        if (!SudoSigns.sudoSignsPlugin.getDataFolder().exists()) {
+            SudoSigns.sudoSignsPlugin.getDataFolder().mkdir();
         }
-        signConfigFile = new File(sudoSignsPlugin.getDataFolder(), "signs.yml");
+        signConfigFile = new File(SudoSigns.sudoSignsPlugin.getDataFolder(), "signs.yml");
         if (!signConfigFile.exists()) {
             try {
                 signConfigFile.createNewFile();
@@ -68,7 +67,7 @@ public class ConfigManager {
     }
 
     public void loadSigns() {
-        signs.clear();
+        SudoSigns.signs.clear();
         Set<String> signSection = signConfig.getConfigurationSection("signs").getKeys(false);
         String name;
         for (String key : signSection) {
@@ -95,7 +94,7 @@ public class ConfigManager {
                 for (String perm : permissions) {
                     ss.addPermission(perm);
                 }
-                signs.put(key, ss);
+                SudoSigns.signs.put(key, ss);
             } catch (Exception e) {
                 e.printStackTrace();
                 Bukkit.getLogger().warning("[SUDOSIGNS] Failed to initialise SudoSign " + name + "!");
@@ -192,7 +191,7 @@ public class ConfigManager {
         if (singular) {
             saveSign(s, p);
         } else {
-            for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
+            for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
                 saveSign(entry.getValue(), p);
             }
         }
@@ -219,7 +218,7 @@ public class ConfigManager {
             }
         } catch (Exception e) {
             if (p != null) {
-                p.sendMessage(prefix + ChatColor.RED + " Failed to save sign " + ChatColor.GOLD + name + ChatColor.RED + " to the config!");
+                p.sendMessage(SudoSigns.prefix + ChatColor.RED + " Failed to save sign " + ChatColor.GOLD + name + ChatColor.RED + " to the config!");
             }
             Bukkit.getLogger().warning("[SUDOSIGNS] Failed to save " + name + " to signs.yml!");
             e.printStackTrace();

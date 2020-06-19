@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static dev.mylesmor.sudosigns.SudoSigns.prefix;
 import static org.bukkit.ChatColor.*;
 
 public class SignEditor {
@@ -181,7 +180,7 @@ public class SignEditor {
             }
         } else {
             p.closeInventory();
-            p.sendMessage(prefix + GRAY + " Please enter in chat the permission which the player must have to run this sign or type " + RED + "CANCEL" + GRAY + ".");
+            p.sendMessage(SudoSigns.prefix + GRAY + " Please enter in chat the permission which the player must have to run this sign or type " + RED + "CANCEL" + GRAY + ".");
             su.addTextInput(PlayerInput.PERMISSION);
         }
     }
@@ -314,7 +313,7 @@ public class SignEditor {
 
     public void chooseCommandType(PlayerInput type) {
         p.closeInventory();
-        p.sendMessage(prefix + GRAY + " Please enter the full command in chat. The phrase" + GOLD + " %PLAYER%" + GRAY +
+        p.sendMessage(SudoSigns.prefix + GRAY + " Please enter the full command in chat. The phrase" + GOLD + " %PLAYER%" + GRAY +
                  " will be replaced with the player who clicked the sign. To cancel, type " + RED + "CANCEL" + GRAY + ".");
         su.addTextInput(type);
     }
@@ -329,7 +328,7 @@ public class SignEditor {
             SudoSigns.config.addCommandToConfig(sign, command, PlayerInput.PLAYER_COMMAND);
         }
         su.removeTextInput();
-        p.sendMessage(prefix + GRAY + " Command added successfully!");
+        p.sendMessage(SudoSigns.prefix + GRAY + " Command added successfully!");
         goToCommands();
     }
 
@@ -337,7 +336,7 @@ public class SignEditor {
 
 
     public void prepareRename() {
-        p.sendMessage(prefix + GRAY + " Please enter the new name for the sign in chat or type " + RED + "CANCEL" + GRAY + ".");
+        p.sendMessage(SudoSigns.prefix + GRAY + " Please enter the new name for the sign in chat or type " + RED + "CANCEL" + GRAY + ".");
         su.addTextInput(PlayerInput.RENAME);
         p.closeInventory();
     }
@@ -345,7 +344,7 @@ public class SignEditor {
     public void renameSign(String s) {
         su.removeTextInput();
         if (SudoSigns.signs.containsKey(s)) {
-            p.sendMessage(prefix + RED + "A sign with name " + GOLD + s + RED + " already exists! Cancelling...");
+            p.sendMessage(SudoSigns.prefix + RED + "A sign with name " + GOLD + s + RED + " already exists! Cancelling...");
         } else {
             sign.setName(s);
             Map.Entry<String, SudoSign> found = null;
@@ -357,7 +356,7 @@ public class SignEditor {
             if (found != null) {
                 SudoSigns.signs.remove(found.getKey());
                 SudoSigns.signs.put(s, sign);
-                p.sendMessage(prefix + GRAY + " Sign successfully renamed to " + GOLD + s + GRAY + ".");
+                p.sendMessage(SudoSigns.prefix + GRAY + " Sign successfully renamed to " + GOLD + s + GRAY + ".");
                 SudoSigns.config.saveToFile(found.getValue(), true, p);
                 SudoSigns.config.deleteSign(found.getKey());
             }
