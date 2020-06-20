@@ -3,6 +3,7 @@ package dev.mylesmor.sudosigns.data;
 import dev.mylesmor.sudosigns.commands.SignCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
@@ -18,15 +19,22 @@ public class SudoSign {
     private ArrayList<SignCommand> playerCommands = new ArrayList<>();
     private ArrayList<SignCommand> consoleCommands = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
-    private Sign sign;
+    private String worldName;
+    private double x;
+    private double y;
+    private double z;
     private String name;
 
     public SudoSign(String name) {
         this.name = name;
     }
 
-    public void setSign(org.bukkit.block.Sign sign) {
-        this.sign = sign;
+    public void setSign(Sign sign) {
+        Location loc = sign.getLocation();
+        this.worldName = loc.getWorld().getName();
+        this.x = loc.getX();
+        this.y = loc.getY();
+        this.z = loc.getZ();
     }
 
     public void setName(String name) {
@@ -111,8 +119,12 @@ public class SudoSign {
         return name;
     }
 
-    public org.bukkit.block.Sign getSign() {
-        return sign;
+    public Sign getSign() {
+        Location loc = new Location(Bukkit.getWorld(worldName), x, y, z);
+        if (loc.getBlock().getState() instanceof Sign) {
+            return (Sign) loc.getBlock().getState();
+        }
+        Bukkit.getLogger().warning("Failed to locate sign " + name + "!");
+        return null;
     }
-
 }
