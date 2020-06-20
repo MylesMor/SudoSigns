@@ -33,7 +33,6 @@ public class InventoryListener implements Listener {
                 if (e.getCurrentItem() != null) {
                     e.setCancelled(true);
                     Material m = e.getCurrentItem().getType();
-                    String invName = ChatColor.stripColor(e.getView().getTitle());
                     String itemName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
                     if (e.getCurrentItem().getType() == Material.ARROW) {
                         editor.goToMain();
@@ -44,10 +43,10 @@ public class InventoryListener implements Listener {
                             checkForMainMenuClicks(editor, m);
                             break;
                         case COMMANDS:
-                            checkForCommandsClicks(editor, m, invName, itemName);
+                            checkForCommandsClicks(editor, m, itemName);
                             break;
                         case PERMISSIONS:
-                            checkForPermissionsClicks(editor, m, invName, itemName);
+                            checkForPermissionsClicks(editor, m, itemName);
                             break;
                         case CHOOSE_COMMAND:
                             if (itemName.equalsIgnoreCase("Player Command")) {
@@ -93,14 +92,18 @@ public class InventoryListener implements Listener {
      * @param m The material clicked on in the menu.
      */
     public void checkForMainMenuClicks(SignEditor editor, Material m) {
-        if (m == Material.BOOK) {
-            editor.prepareRename();
-        } else if (m == Material.OAK_SIGN) {
-            editor.editSignText();
-        } else if (m == Material.BARRIER) {
-            editor.goToPermissions();
-        } else if (m == Material.COMMAND_BLOCK) {
-            editor.goToCommands();
+        switch (m) {
+            case BOOK:
+                editor.prepareRename();
+                break;
+            case OAK_SIGN:
+                editor.editSignText();
+                break;
+            case BARRIER:
+                editor.goToPermissions();
+                break;
+            case COMMAND_BLOCK:
+                editor.goToCommands();
         }
     }
 
@@ -108,14 +111,16 @@ public class InventoryListener implements Listener {
      * Checks for GUI clicks in the Commands menu.
      * @param editor The SignEditor class of the particular user.
      * @param m The material clicked on in the menu.
-     * @param invName The name of the inventory.
      * @param itemName The name of the item clicked.
      */
-    public void checkForCommandsClicks(SignEditor editor, Material m, String invName, String itemName) {
-        if (m == Material.WRITABLE_BOOK) {
-            editor.prepareCommand();
-        } else if (m == Material.BOOK) {
-            editor.deleteCommand(ChatColor.stripColor(itemName));
+    public void checkForCommandsClicks(SignEditor editor, Material m, String itemName) {
+        switch (m) {
+            case WRITABLE_BOOK:
+                editor.prepareCommand();
+                break;
+            case BOOK:
+                editor.deleteCommand(ChatColor.stripColor(itemName));
+                break;
         }
     }
 
@@ -125,16 +130,16 @@ public class InventoryListener implements Listener {
      * Checks for GUI clicks in the Permissions menu.
      * @param editor The SignEditor class of the particular user.
      * @param m The material clicked on in the menu.
-     * @param invName The name of the inventory.
      * @param itemName The name of the item clicked.
      */
-    public void checkForPermissionsClicks(SignEditor editor, Material m, String invName, String itemName) {
-        if (m == Material.BOOK) {
-            editor.deletePermission(ChatColor.stripColor(itemName));
-        }
-        if (m == Material.WRITABLE_BOOK) {
-            editor.preparePermission();
+    public void checkForPermissionsClicks(SignEditor editor, Material m, String itemName) {
+        switch (m) {
+            case BOOK:
+                editor.deletePermission(ChatColor.stripColor(itemName));
+                break;
+            case WRITABLE_BOOK:
+                editor.preparePermission();
+                break;
         }
     }
-
 }
