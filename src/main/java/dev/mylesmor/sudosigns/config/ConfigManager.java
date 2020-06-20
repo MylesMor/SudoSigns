@@ -130,49 +130,38 @@ public class ConfigManager {
 
 
     public void addPermissionToConfig(SudoSign s, String perm) {
-        if (!signConfig.isConfigurationSection("signs." + s.getName() + ".permissions")) {
-            signConfig.set("signs." + s.getName() + ".permissions", new ArrayList<>());
-        }
-        List<String> perms = signConfig.getStringList("signs." + s.getName() + ".permissions");
+        String path = "signs." + s.getName() + ".permissions";
+        List<String> perms = signConfig.getStringList(path);
         perms.add(perm);
-        signConfig.set("signs." + s.getName() + ".permissions", perms);
+        signConfig.set(path, perms);
         save();
     }
 
     public void deletePermissionFromConfig(SudoSign s, String perm) {
-        if (!signConfig.isConfigurationSection("signs." + s.getName() + ".permissions")) {
-            signConfig.set("signs." + s.getName() + ".permissions", new ArrayList<>());
-        }
-        List<String> perms = signConfig.getStringList("signs." + s.getName() + ".permissions");
+        String path = "signs." + s.getName() + ".permissions";
+        List<String> perms = signConfig.getStringList(path);
         perms.remove(perm);
-        signConfig.set("signs." + s.getName() + ".permissions", perms);
+        signConfig.set(path, perms);
         save();
     }
 
     public void addCommandToConfig(SudoSign s, SignCommand cmd, PlayerInput type) {
-        if (signConfig.isConfigurationSection("signs." + s.getName() + "")) {
+        if (signConfig.isConfigurationSection("signs." + s.getName())) {
             if (type.equals(PlayerInput.PLAYER_COMMAND)) {
-                if (!signConfig.isConfigurationSection("signs." + s.getName() + ".player-commands")) {
-                    signConfig.set("signs." + s.getName() + ".player-commands", new ArrayList<>());
-                }
                 List<String> cmds = signConfig.getStringList("signs." + s.getName() + ".player-commands");
                 cmds.add(cmd.getCommand());
                 signConfig.set("signs." + s.getName() + ".player-commands", cmds);
             } else if (type.equals(PlayerInput.CONSOLE_COMMAND)) {
-                if (!signConfig.isConfigurationSection("signs." + s.getName() + ".console-commands")) {
-                    signConfig.set("signs." + s.getName() + ".console-commands", new ArrayList<>());
-                }
                 List<String> cmds = signConfig.getStringList("signs." + s.getName() + ".console-commands");
                 cmds.add(cmd.getCommand());
                 signConfig.set("signs." + s.getName() + ".console-commands", cmds);
-
             }
         }
         save();
     }
 
     public void deleteCommandFromConfig(SudoSign s, SignCommand cmd, PlayerInput type) {
-        if (signConfig.isConfigurationSection("signs." + s.getName() + "")) {
+        if (signConfig.isConfigurationSection("signs." + s.getName())) {
             if (type.equals(PlayerInput.PLAYER_COMMAND)) {
                 if (signConfig.isList("signs." + s.getName() + ".player-commands")) {
                     List<String> cmds = signConfig.getStringList("signs." + s.getName() + ".player-commands");
