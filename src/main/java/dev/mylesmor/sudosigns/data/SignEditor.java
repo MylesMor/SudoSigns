@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -329,7 +330,6 @@ public class SignEditor {
             sign.addPlayerCommand(command);
             SudoSigns.config.addCommandToConfig(sign, command, PlayerInput.PLAYER_COMMAND);
         }
-        su.removeTextInput();
         Util.sudoSignsMessage(p, ChatColor.GRAY, "Command added successfully!", null);
         goToCommands();
     }
@@ -344,7 +344,6 @@ public class SignEditor {
     }
 
     public void renameSign(String s) {
-        su.removeTextInput();
         if (SudoSigns.signs.containsKey(s)) {
             Util.sudoSignsMessage(p, ChatColor.RED,"A sign with name %NAME% already exists! Cancelling...", s);
         } else {
