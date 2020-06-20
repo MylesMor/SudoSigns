@@ -57,7 +57,7 @@ This plugin has a convenient inventory-based GUI which allows you perform action
 ## Commands
 The following table lists all of the commands and permissions associated with each one.
 * <> indicates a required argument.
-* [] indicates an optional argument.
+* [] indicates an optional argument. In the case where these appear, the sign you'd like to perform the command on can be clicked instead of the argument.
 
 **All of the commands are for admin/staff use only, average players should not have any permissions.** In particular,
 the `sudosigns.console` permission would allow players to execute **_any console command_**, so this is very important.
