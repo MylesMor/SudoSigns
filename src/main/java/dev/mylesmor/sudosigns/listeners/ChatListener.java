@@ -44,28 +44,20 @@ public class ChatListener implements Listener {
                     e.setCancelled(true);
                     user.removeTextInput();
                     Util.sudoSignsMessage(p, ChatColor.RED, "Cancelled!", null);
-                    Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, () -> {
-                        user.getEditor().goToMain();
-                    });
+                    Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, () -> user.getEditor().goToMain());
                 }
                 if (user.getInputType() == PlayerInput.CONSOLE_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND) {
                     Util.sudoSignsMessage(p, ChatColor.RED, "No command found! Cancelling...!", null);
                     user.removeTextInput();
-                    Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, () -> {
-                        user.getEditor().goToCommands();
-                    });
+                    Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, () -> user.getEditor().goToCommands());
                 } else if (user.getInputType() == PlayerInput.RENAME) {
                     e.setCancelled(true);
                     user.getEditor().renameSign(ChatColor.stripColor(e.getMessage()));
-                    Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, () -> {
-                        user.getEditor().goToMain();
-                    });
+                    Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, () -> user.getEditor().goToMain());
                 } else if (user.getInputType() == PlayerInput.PERMISSION) {
                     e.setCancelled(true);
                     user.getEditor().addPermission(true, ChatColor.stripColor(e.getMessage()));
-                    Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, () -> {
-                        user.getEditor().goToPermissions();
-                    });
+                    Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, () -> user.getEditor().goToPermissions());
                 }
             }
         }
