@@ -34,10 +34,6 @@ public class InventoryListener implements Listener {
                     e.setCancelled(true);
                     Material m = e.getCurrentItem().getType();
                     String itemName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-                    if (e.getCurrentItem().getType() == Material.ARROW) {
-                        editor.goToMain();
-                        return;
-                    }
                     switch (editor.getCurrentPage()) {
                         case MAIN:
                             checkForMainMenuClicks(editor, m);
@@ -49,18 +45,10 @@ public class InventoryListener implements Listener {
                             checkForPermissionsClicks(editor, m, itemName);
                             break;
                         case CHOOSE_COMMAND:
-                            if (itemName.equalsIgnoreCase("Player Command")) {
-                                editor.chooseCommandType(PlayerInput.PLAYER_COMMAND);
-                            } else if (itemName.equalsIgnoreCase("Console Command")) {
-                                editor.chooseCommandType(PlayerInput.CONSOLE_COMMAND);
-                            }
+                            chooseCommandType(editor, m);
                             break;
                         case CHOOSE_PERMISSION:
-                            if (itemName.equalsIgnoreCase("Custom Permission")) {
-                                editor.addPermission(false, null);
-                            } else if (itemName.equalsIgnoreCase("Default Permission")) {
-                                editor.addPermission(true, null);
-                            }
+                            choosePermissionType(editor, m);
                             break;
                     }
                 }
@@ -121,8 +109,37 @@ public class InventoryListener implements Listener {
             case BOOK:
                 editor.deleteCommand(ChatColor.stripColor(itemName));
                 break;
+            case ARROW:
+                editor.goToMain();
         }
     }
+
+    public void choosePermissionType(SignEditor editor, Material m) {
+        switch (m) {
+            case PLAYER_HEAD:
+                editor.addPermission(true, null);
+                break;
+            case COMMAND_BLOCK:
+                editor.addPermission(false, null);
+                break;
+            case ARROW:
+                editor.goToPermissions();
+        }
+    }
+
+    public void chooseCommandType(SignEditor editor, Material m) {
+        switch (m) {
+            case PLAYER_HEAD:
+                editor.chooseCommandType(PlayerInput.PLAYER_COMMAND);
+                break;
+            case COMMAND_BLOCK:
+                editor.chooseCommandType(PlayerInput.CONSOLE_COMMAND);
+                break;
+            case ARROW:
+                editor.goToCommands();
+        }
+    }
+
 
 
 
@@ -140,6 +157,8 @@ public class InventoryListener implements Listener {
             case WRITABLE_BOOK:
                 editor.preparePermission();
                 break;
+            case ARROW:
+                editor.goToMain();
         }
     }
 }

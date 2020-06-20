@@ -6,14 +6,14 @@ package dev.mylesmor.sudosigns.util;
  * @author https://mylesmor.dev
  */
 public final class Permissions {
-    public static final String CREATE = "sudosigns.admin.create";
-    public static final String EDIT = "sudosigns.admin.edit";
-    public static final String DELETE = "sudosigns.admin.delete";
-    public static final String RUN = "sudosigns.admin.run";
-    public static final String TP = "sudosigns.admin.tp";
-    public static final String COPY = "sudosigns.admin.copy";
-    public static final String RELOAD = "sudosigns.admin.reload";
-
+    public static final String CREATE = "sudosigns=.create";
+    public static final String EDIT = "sudosigns.edit";
+    public static final String CONSOLE_COMMAND = "sudosigns.console";
+    public static final String DELETE = "sudosigns.delete";
+    public static final String RUN = "sudosigns.run";
+    public static final String TP = "sudosigns.tp";
+    public static final String COPY = "sudosigns.copy";
+    public static final String RELOAD = "sudosigns.reload";
     public static final String VIEW = "sudosigns.view";
     public static final String HELP = "sudosigns.help";
     public static final String SELECT = "sudosigns.select";

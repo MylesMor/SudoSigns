@@ -32,7 +32,7 @@ public class Commands implements CommandExecutor {
         commands.put("tp", Teleport::tp);
         commands.put("copy", Copy::copy);
     }
-    
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if ((sender instanceof Player)) {

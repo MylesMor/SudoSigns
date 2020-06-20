@@ -1,6 +1,7 @@
 package dev.mylesmor.sudosigns.data;
 
 import dev.mylesmor.sudosigns.SudoSigns;
+import dev.mylesmor.sudosigns.util.Permissions;
 import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -177,7 +178,7 @@ public class SignEditor {
             }
         } else {
             p.closeInventory();
-            p.sendMessage(Util.prefix + ChatColor.GRAY + "Please enter in chat the permission which the player must have to run this sign or type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
+            p.sendMessage(Util.prefix + ChatColor.GRAY + " Please enter in chat the permission which the player must have to run this sign or type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
             su.addTextInput(PlayerInput.PERMISSION);
         }
     }
@@ -198,7 +199,7 @@ public class SignEditor {
         }
         ItemStack arrow = new ItemStack(Material.ARROW);
         ItemMeta arrowMeta = arrow.getItemMeta();
-        arrowMeta.setDisplayName(ChatColor.RESET + "BACK");
+        arrowMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "BACK");
         arrow.setItemMeta(arrowMeta);
 
         ItemStack bookQuill = new ItemStack(Material.WRITABLE_BOOK);
@@ -263,7 +264,7 @@ public class SignEditor {
         }
         ItemStack arrow = new ItemStack(Material.ARROW);
         ItemMeta arrowMeta = arrow.getItemMeta();
-        arrowMeta.setDisplayName(ChatColor.RESET + "BACK");
+        arrowMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "BACK");
         arrow.setItemMeta(arrowMeta);
 
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
@@ -279,8 +280,12 @@ public class SignEditor {
         cmdBlockMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Console Command");
         cmdBlock.setItemMeta(cmdBlockMeta);
 
-        choiceInv.setItem(21, head);
-        choiceInv.setItem(23, cmdBlock);
+        if (p.hasPermission(Permissions.CONSOLE_COMMAND)) {
+            choiceInv.setItem(21, head);
+            choiceInv.setItem(23, cmdBlock);
+        } else {
+            choiceInv.setItem(22, head);
+        }
         choiceInv.setItem(36, arrow);
 
         currentPage = GUIPage.CHOOSE_COMMAND;

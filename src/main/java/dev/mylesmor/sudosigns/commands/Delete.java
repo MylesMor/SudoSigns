@@ -27,7 +27,7 @@ public class Delete {
             } else if (SudoSigns.signs.containsKey(name)) {
                 SudoSigns.signs.remove(name);
                 SudoSigns.config.deleteSign(name);
-                Util.sudoSignsMessage(p, ChatColor.GRAY, "Sign %NAME% successfully deleted!", null);
+                Util.sudoSignsMessage(p, ChatColor.GRAY, "Sign %NAME% successfully deleted!", name);
             }
         } else {
             Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);

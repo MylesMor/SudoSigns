@@ -99,8 +99,10 @@ public class SignListener implements Listener {
         if (b.getState() instanceof Sign) {
             Sign sign = (Sign) b.getState();
             SudoSigns.signs.get(user.getPassThru()).setSign(sign);
-            SignEditor editor = new SignEditor(p, SudoSigns.signs.get(user.getPassThru()), user);
-            user.setEditor(editor);
+            if (p.hasPermission(Permissions.EDIT)) {
+                SignEditor editor = new SignEditor(p, SudoSigns.signs.get(user.getPassThru()), user);
+                user.setEditor(editor);
+            }
             SudoSigns.config.saveToFile(SudoSigns.signs.get(user.getPassThru()), true, p);
         } else {
             Util.sudoSignsMessage(p, ChatColor.RED, "A sign wasn't clicked! Cancelling...", null);
