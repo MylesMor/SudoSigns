@@ -4,6 +4,7 @@ import dev.mylesmor.sudosigns.SudoSigns;
 import dev.mylesmor.sudosigns.data.PlayerInput;
 import dev.mylesmor.sudosigns.commands.SignCommand;
 import dev.mylesmor.sudosigns.data.SudoSign;
+import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -218,7 +219,7 @@ public class ConfigManager {
             }
         } catch (Exception e) {
             if (p != null) {
-                p.sendMessage(SudoSigns.prefix + ChatColor.RED + " Failed to save sign " + ChatColor.GOLD + name + ChatColor.RED + " to the config!");
+                Util.sudoSignsMessage(p, ChatColor.RED, "Failed to save sign %NAME% to the config!", name);
             }
             Bukkit.getLogger().warning("[SUDOSIGNS] Failed to save " + name + " to signs.yml!");
             e.printStackTrace();

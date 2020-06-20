@@ -15,7 +15,6 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,9 +27,6 @@ import java.util.function.BiConsumer;
  * @author https://mylesmor.dev
  */
 public class SudoSigns extends JavaPlugin {
-
-    public static final String prefix = ChatColor.YELLOW + "[SUDOSIGNS]";
-
     public static Map<String, SudoSign> signs = new HashMap<>();
     public static Map<UUID, SudoUser> users = new HashMap<>();
     Map<String, BiConsumer<CommandSender, String[]>> commands = new HashMap<>();
@@ -70,43 +66,43 @@ public class SudoSigns extends JavaPlugin {
                         if (p.hasPermission(Permissions.HELP)) {
                             help(p);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     } else if (args[0].equalsIgnoreCase("delete") || args[0].equalsIgnoreCase("del")) {
                         if (p.hasPermission(Permissions.DELETE)) {
                             deleteSign(p, null);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     } else if (args[0].equalsIgnoreCase("edit") || args[0].equalsIgnoreCase("e")) {
                         if (p.hasPermission(Permissions.EDIT)) {
                             editSign(p, null);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     } else if (args[0].equalsIgnoreCase("view") || args[0].equalsIgnoreCase("v")) {
                         if (p.hasPermission(Permissions.VIEW)) {
                             viewSign(p, null);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     } else if (args[0].equalsIgnoreCase("run")) {
                         if (p.hasPermission(Permissions.RUN)) {
                             run(p, null);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     } else if (args[0].equalsIgnoreCase("near")) {
                         if (p.hasPermission(Permissions.NEAR)) {
                             near(p, null);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     } else if (args[0].equalsIgnoreCase("list")) {
                         if (p.hasPermission(Permissions.LIST)) {
                             list(p);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     }
 
@@ -116,55 +112,55 @@ public class SudoSigns extends JavaPlugin {
                         if (p.hasPermission(Permissions.CREATE)) {
                             createSign(p, args[1]);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     } else if (args[0].equalsIgnoreCase("delete") || args[0].equalsIgnoreCase("del")) {
                         if (p.hasPermission(Permissions.DELETE)) {
                             deleteSign(p, args[1]);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     } else if (args[0].equalsIgnoreCase("edit") || args[0].equalsIgnoreCase("e")) {
                         if (p.hasPermission(Permissions.EDIT)) {
                             editSign(p, args[1]);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     } else if (args[0].equalsIgnoreCase("view") || args[0].equalsIgnoreCase("v")) {
                         if (p.hasPermission(Permissions.VIEW)) {
                             viewSign(p, args[1]);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     } else if (args[0].equalsIgnoreCase("confirmdelete")) {
                         if (p.hasPermission(Permissions.DELETE)) {
                             confirmDelete(p, args[1]);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     } else if (args[0].equalsIgnoreCase("run")) {
                         if (p.hasPermission(Permissions.RUN)) {
                             run(p, args[1]);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     } else if (args[0].equalsIgnoreCase("near")) {
                         if (p.hasPermission(Permissions.NEAR)) {
                             near(p, args[1]);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     } else if (args[0].equalsIgnoreCase("tp")) {
                         if (p.hasPermission(Permissions.TP)) {
                             tpTo(p, args[1]);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     } else if (args[0].equalsIgnoreCase("copy")) {
                         if (p.hasPermission(Permissions.COPY)) {
                             copy(p, null, args[1]);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     }
                 } else if (args.length == 3) {
@@ -172,7 +168,7 @@ public class SudoSigns extends JavaPlugin {
                         if (p.hasPermission(Permissions.COPY)) {
                             copy(p, args[1], args[2]);
                         } else {
-                            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
                     }
                 }
@@ -229,7 +225,7 @@ public class SudoSigns extends JavaPlugin {
      */
     private void run(Player p, String name) {
         if (name == null) {
-            p.sendMessage(prefix + ChatColor.GRAY + " Please click the sign you'd like to run!");
+            Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to run!!", null);
             users.get(p.getUniqueId()).setCreate(true);
         } else if (signs.containsKey(name)) {
             signs.get(name).executeCommands(p);
@@ -243,12 +239,12 @@ public class SudoSigns extends JavaPlugin {
      */
     private void deleteSign(Player p, String name) {
         if (name == null) {
-            p.sendMessage(prefix + ChatColor.GRAY + " Please click the sign you'd like to delete!");
+            Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to delete!", null);
             users.get(p.getUniqueId()).setDelete(true);
         } else if (signs.containsKey(name)) {
             signs.remove(name);
             config.deleteSign(name);
-            p.sendMessage(prefix + ChatColor.GRAY + " Sign " + ChatColor.GOLD + name + ChatColor.GRAY + " successfully deleted!");
+            Util.sudoSignsMessage(p, ChatColor.GRAY,  "Sign %NAME% successfully deleted!", null);
         }
     }
 
@@ -270,13 +266,13 @@ public class SudoSigns extends JavaPlugin {
      */
     private void editSign(Player p, String name) {
         if (name == null) {
-            p.sendMessage(prefix + ChatColor.GRAY + " Please click the sign you'd like to edit!");
+            Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to edit!", null);
             users.get(p.getUniqueId()).setEdit(true);
         } else if (signs.containsKey(name)) {
             SignEditor editor = new SignEditor(p, signs.get(name), users.get(p.getUniqueId()));
             users.get(p.getUniqueId()).setEditor(editor);
         } else {
-            p.sendMessage(prefix + ChatColor.RED + " A sign with name " + ChatColor.GOLD + name + ChatColor.RED + " doesn't exist!");
+            Util.sudoSignsMessage(p, ChatColor.RED, "A sign with name %NAME% doesn't exist!", name);
         }
     }
 
@@ -292,7 +288,7 @@ public class SudoSigns extends JavaPlugin {
             newLoc.setZ(newLoc.getZ() + 0.5);
             p.teleport(newLoc);
         } else {
-            p.sendMessage(prefix + ChatColor.RED + " A sign with name " + ChatColor.GOLD + name + ChatColor.RED + " doesn't exist!");
+            Util.sudoSignsMessage(p, ChatColor.RED,  "A sign with name %NAME% doesn't exist!", name);
         }
     }
 
@@ -309,12 +305,13 @@ public class SudoSigns extends JavaPlugin {
             } else if (sign != null) {
                 Location signLoc = sign.getSign().getLocation();
                 String locString = "x=" + signLoc.getX() + " y=" + signLoc.getY() + " z=" + signLoc.getZ();
-                p.sendMessage(prefix + ChatColor.GRAY + " Displaying details for sign " + ChatColor.GOLD + name + ChatColor.GRAY + ":");
-                p.sendMessage(prefix + ChatColor.GRAY + " Location: " + ChatColor.LIGHT_PURPLE + locString);
-                p.sendMessage(prefix + ChatColor.GRAY + " Player Commands: " + ChatColor.LIGHT_PURPLE + sign.getPlayerCommands().size());
-                p.sendMessage(prefix + ChatColor.GRAY + " Console Commands: " + ChatColor.LIGHT_PURPLE + sign.getConsoleCommands().size());
+                Util.sudoSignsMessage(p, ChatColor.GRAY, "Displaying details for sign %NAME%:", name);
+                Util.sudoSignsMessage(p, ChatColor.GRAY,"Location: " + ChatColor.LIGHT_PURPLE + locString, null);
+                Util.sudoSignsMessage(p, ChatColor.GRAY, "Permissions: " + ChatColor.LIGHT_PURPLE + sign.getPermissions().size(), null);
+                Util.sudoSignsMessage(p, ChatColor.GRAY,"Player Commands: " + ChatColor.LIGHT_PURPLE + sign.getPlayerCommands().size(), null);
+                Util.sudoSignsMessage(p, ChatColor.GRAY,"Console Commands: " + ChatColor.LIGHT_PURPLE + sign.getConsoleCommands().size(), null);
             } else {
-                p.sendMessage(prefix + ChatColor.RED + " A sign with name " + ChatColor.GOLD + name + ChatColor.RED + " doesn't exist!");
+                Util.sudoSignsMessage(p, ChatColor.RED,  "A sign with name %NAME% doesn't exist!", name);
             }
         }
     }
@@ -329,9 +326,9 @@ public class SudoSigns extends JavaPlugin {
             users.get(p.getUniqueId()).setCreate(true);
             users.get(p.getUniqueId()).setPassThru(name);
             signs.put(name, new SudoSign(name));
-            p.sendMessage(prefix + ChatColor.GRAY + " Please click the sign you'd like to create!");
+            Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to create!", null);
         } else {
-            p.sendMessage(prefix + ChatColor.RED + " A sign with name " + ChatColor.GOLD + name + ChatColor.RED + " already exists!");
+            Util.sudoSignsMessage(p, ChatColor.RED,  "A sign with name %NAME% already exists!", name);
         }
     }
 
@@ -348,11 +345,11 @@ public class SudoSigns extends JavaPlugin {
             try {
                 r = Integer.parseInt(radius);
             } catch (NumberFormatException e) {
-                p.sendMessage(prefix + ChatColor.GOLD + radius + ChatColor.RED + " is not a valid number! Reverting to a radius of 5.");
+                Util.sudoSignsMessage(p, ChatColor.RED,ChatColor.GOLD + radius + ChatColor.RED + " is not a valid number! Reverting to a radius of 5.", null);
                 r = 5;
             }
         }
-        p.sendMessage(prefix + ChatColor.GRAY + " Displaying SudoSigns within a radius of " + ChatColor.GOLD + r + ChatColor.GRAY + " blocks:");
+        Util.sudoSignsMessage(p, ChatColor.GRAY, "Displaying SudoSigns within a radius of %NAME% blocks:", Integer.toString(r));
         for (Map.Entry<String, SudoSign> entry : signs.entrySet()) {
             Location signLoc = entry.getValue().getSign().getLocation();
             if (signLoc.distance(p.getLocation()) <= r) {
@@ -373,7 +370,7 @@ public class SudoSigns extends JavaPlugin {
             String message = Util.getSelectString(p, name);
             p.spigot().sendMessage(ComponentSerializer.parse(message));
         } else {
-            p.sendMessage(prefix + ChatColor.RED + " You don't have permission to do this!");
+            Util.sudoSignsMessage(p, ChatColor.RED,"You don't have permission to do this!", null);
         }
     }
 
@@ -386,13 +383,13 @@ public class SudoSigns extends JavaPlugin {
     public void copy(Player p, String oldName, String newName) {
         users.get(p.getUniqueId()).setPassThru(newName);
         if (oldName == null) {
-            p.sendMessage(prefix + ChatColor.GRAY + " Please click the sign you'd like to copy from!");
+            Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to copy from!", null);
             users.get(p.getUniqueId()).setSelectToCopy(true);
         } else {
             SudoSign oldSign = signs.get(oldName);
             if (oldSign != null) {
                 if (!signs.containsKey(newName)) {
-                    p.sendMessage(prefix + ChatColor.GRAY + " Please click the sign you'd like to copy to!");
+                    Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to copy to!", null);
                     SudoSign newSign = new SudoSign(newName);
                     newSign.setPermissions(oldSign.getPermissions());
                     newSign.setPlayerCommands(oldSign.getPlayerCommands());
@@ -400,10 +397,10 @@ public class SudoSigns extends JavaPlugin {
                     users.get(p.getUniqueId()).setCopy(true);
                     signs.put(newName, newSign);
                 } else {
-                    p.sendMessage(prefix + ChatColor.RED + " A sign with name " + ChatColor.GOLD + newName + ChatColor.RED + " already exists!");
+                    Util.sudoSignsMessage(p, ChatColor.RED,  "A sign with name %NAME% already exists!", newName);
                 }
             } else {
-                p.sendMessage(prefix + ChatColor.RED + " A sign with name " + ChatColor.GOLD + oldName + ChatColor.RED + " doesn't exist!");
+                Util.sudoSignsMessage(p, ChatColor.GRAY, "A sign with name %NAME% doesn't exist!", oldName);
             }
         }
     }

@@ -75,9 +75,9 @@ public class SignListener implements Listener {
                     return;
                 }
             }
-            p.sendMessage(SudoSigns.prefix + ChatColor.RED + " Failed to copy: this is not a SudoSign!");
+            Util.sudoSignsMessage(p, ChatColor.RED, "Failed to copy: this is not a SudoSign!", null);
         } else {
-            p.sendMessage(SudoSigns.prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
+            Util.sudoSignsMessage(p, ChatColor.RED, "A sign wasn't clicked! Cancelling...", null);
         }
         user.setSelectToCopy(false);
     }
@@ -103,7 +103,7 @@ public class SignListener implements Listener {
             user.setEditor(editor);
             SudoSigns.config.saveToFile(SudoSigns.signs.get(user.getPassThru()), true, p);
         } else {
-            p.sendMessage(SudoSigns.prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
+            Util.sudoSignsMessage(p, ChatColor.RED, "A sign wasn't clicked! Cancelling...", null);
             SudoSigns.signs.remove(user.getPassThru());
         }
         user.setCreate(false);
@@ -114,9 +114,9 @@ public class SignListener implements Listener {
             Sign newSign = (Sign) b.getState();
             SudoSigns.signs.get(user.getPassThru()).setSign(newSign);
             SudoSigns.config.saveToFile(SudoSigns.signs.get(user.getPassThru()), true, p);
-            p.sendMessage(SudoSigns.prefix + ChatColor.GRAY + " Sign has been copied to sign " + ChatColor.GOLD + user.getPassThru() + ChatColor.GRAY + " successfully!");
+            Util.sudoSignsMessage(p, ChatColor.GRAY, "Sign has been copied to sign %NAME% successfully!", user.getPassThru());
         } else {
-            p.sendMessage(SudoSigns.prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
+            Util.sudoSignsMessage(p, ChatColor.RED, "A sign wasn't clicked! Cancelling...", null);
             SudoSigns.signs.remove(user.getPassThru());
         }
         user.setCopy(false);
@@ -133,10 +133,10 @@ public class SignListener implements Listener {
                 }
             }
             if (!found) {
-                p.sendMessage(SudoSigns.prefix + ChatColor.RED + " This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create" + ChatColor.RED + " instead.");
+                Util.sudoSignsMessage(p, ChatColor.RED, "This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create <name>" + ChatColor.RED + " instead.", null);
             }
         } else {
-            p.sendMessage(SudoSigns.prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
+            Util.sudoSignsMessage(p, ChatColor.RED,"A sign wasn't clicked! Cancelling...", null);
         }
         user.setRun(false);
     }
@@ -153,10 +153,10 @@ public class SignListener implements Listener {
                 }
             }
             if (!found) {
-                p.sendMessage(SudoSigns.prefix + ChatColor.RED + " This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create" + ChatColor.RED + " instead.");
+                Util.sudoSignsMessage(p, ChatColor.RED, "This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create <name>" + ChatColor.RED + " instead.", null);
             }
         } else {
-            p.sendMessage(SudoSigns.prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
+            Util.sudoSignsMessage(p, ChatColor.RED,"A sign wasn't clicked! Cancelling...", null);
         }
         user.setEdit(false);
     }
@@ -171,14 +171,14 @@ public class SignListener implements Listener {
                 }
             }
             if (name == null) {
-                p.sendMessage(SudoSigns.prefix + ChatColor.RED + " This is not a SudoSign!");
+                Util.sudoSignsMessage(p, ChatColor.RED, "This is not a SudoSign!", null);
             } else {
                 SudoSigns.signs.remove(name);
                 SudoSigns.config.deleteSign(name);
-                p.sendMessage(SudoSigns.prefix + ChatColor.GRAY + " Sign " + ChatColor.GOLD + name + ChatColor.GRAY + " successfully deleted!");
+                Util.sudoSignsMessage(p, ChatColor.GRAY, "Sign %NAME% successfully deleted!", name);
             }
         } else {
-            p.sendMessage(SudoSigns.prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
+            Util.sudoSignsMessage(p, ChatColor.RED,"A sign wasn't clicked! Cancelling...", null);
         }
         user.setDelete(false);
     }
@@ -192,18 +192,19 @@ public class SignListener implements Listener {
                     SudoSign ssign = SudoSigns.signs.get(entry.getKey());
                     Location signLoc = ssign.getSign().getLocation();
                     String locString = "x=" + signLoc.getX() + " y=" + signLoc.getY() + " z=" + signLoc.getZ();
-                    p.sendMessage(SudoSigns.prefix + ChatColor.GRAY + " Displaying details for sign: " + ChatColor.GOLD + entry.getKey() + ChatColor.GRAY + ":");
-                    p.sendMessage(SudoSigns.prefix + ChatColor.GRAY + " Location: " + ChatColor.LIGHT_PURPLE + locString);
-                    p.sendMessage(SudoSigns.prefix + ChatColor.GRAY + " Player Commands: " + ChatColor.LIGHT_PURPLE + ssign.getPlayerCommands().size());
-                    p.sendMessage(SudoSigns.prefix + ChatColor.GRAY + " Console Commands: " + ChatColor.LIGHT_PURPLE + ssign.getConsoleCommands().size());
+                    Util.sudoSignsMessage(p, ChatColor.GRAY, "Displaying details for sign %NAME%:", entry.getKey());
+                    Util.sudoSignsMessage(p, ChatColor.GRAY,"Location: " + ChatColor.LIGHT_PURPLE + locString, null);
+                    Util.sudoSignsMessage(p, ChatColor.GRAY, "Permissions: " + ChatColor.LIGHT_PURPLE + ssign.getPermissions().size(), null);
+                    Util.sudoSignsMessage(p, ChatColor.GRAY,"Player Commands: " + ChatColor.LIGHT_PURPLE + ssign.getPlayerCommands().size(), null);
+                    Util.sudoSignsMessage(p, ChatColor.GRAY,"Console Commands: " + ChatColor.LIGHT_PURPLE + ssign.getConsoleCommands().size(), null);
                     found = true;
                 }
             }
             if (!found) {
-                p.sendMessage(SudoSigns.prefix + ChatColor.RED + " This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create" + ChatColor.RED + " instead.");
+                Util.sudoSignsMessage(p, ChatColor.RED, "This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create <name>" + ChatColor.RED + " instead.", null);
             }
         } else {
-            p.sendMessage(SudoSigns.prefix + ChatColor.RED + " A sign wasn't clicked! Cancelling...");
+            Util.sudoSignsMessage(p, ChatColor.RED,"A sign wasn't clicked! Cancelling...", null);
         }
         user.setView(false);
     }
@@ -220,7 +221,7 @@ public class SignListener implements Listener {
                         String message = Util.getSelectString(p, entry.getKey());
                         p.spigot().sendMessage(ComponentSerializer.parse(message));
                     } else {
-                        p.sendMessage(SudoSigns.prefix + ChatColor.RED + " You don't have permission to destroy this sign!");
+                        Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to destroy this sign!", null);
                     }
                 }
             }
@@ -233,7 +234,7 @@ public class SignListener implements Listener {
                     for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
                         if (entry.getValue().getSign().equals(sign)) {
                             e.setCancelled(true);
-                            p.sendMessage(SudoSigns.prefix + ChatColor.RED + " You can't destroy a block that's attached to a SudoSign!");
+                            Util.sudoSignsMessage(p, ChatColor.RED,"You can't destroy a block that's attached to a SudoSign!", null);
                         }
                     }
                 }

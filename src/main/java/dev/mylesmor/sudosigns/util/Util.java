@@ -1,9 +1,12 @@
 package dev.mylesmor.sudosigns.util;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
 public class Util {
+
+    public static final String prefix = ChatColor.YELLOW + "[SUDOSIGNS]";
 
     public static String getSelectString(Player p, String name) {
         String message = "[\"\",{\"text\":\"[SUDOSIGNS] \",\"color\":\"yellow\"},{\"text\":\"Sign: \",\"color\":\"gray\"},{\"text\":\"" + name + " \",\"bold\":true,\"color\":\"gold\"}]";
@@ -30,5 +33,12 @@ public class Util {
             message += ",{\"text\":\"[DELETE]\",\"bold\":true,\"color\":\"red\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/ss confirmdelete " + name + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[\"\",{\"text\":\"Delete " + name + "\",\"color\":\"red\"}]}}]";
         }
         return message;
+    }
+
+    public static void sudoSignsMessage(Player p, ChatColor color, String message, String name) {
+        if (message.contains("%NAME%")) {
+             message = message.replace("%NAME%", ChatColor.GOLD + name + color);
+        }
+        p.sendMessage(prefix + color + " " + message);
     }
 }

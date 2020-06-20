@@ -3,6 +3,7 @@ package dev.mylesmor.sudosigns.listeners;
 import dev.mylesmor.sudosigns.SudoSigns;
 import dev.mylesmor.sudosigns.data.PlayerInput;
 import dev.mylesmor.sudosigns.data.SudoUser;
+import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -42,13 +43,13 @@ public class ChatListener implements Listener {
                 if (e.getMessage().equalsIgnoreCase("cancel")) {
                     e.setCancelled(true);
                     user.removeTextInput();
-                    p.sendMessage(SudoSigns.prefix + ChatColor.RED + " Cancelled!");
+                    Util.sudoSignsMessage(p, ChatColor.RED, "Cancelled!", null);
                     Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, () -> {
                         user.getEditor().goToMain();
                     });
                 }
                 if (user.getInputType() == PlayerInput.CONSOLE_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND) {
-                    p.sendMessage(SudoSigns.prefix + ChatColor.RED + " No command found! Cancelling...");
+                    Util.sudoSignsMessage(p, ChatColor.RED, "No command found! Cancelling...!", null);
                     user.removeTextInput();
                     Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, () -> {
                         user.getEditor().goToCommands();
