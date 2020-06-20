@@ -3,6 +3,7 @@ package dev.mylesmor.sudosigns.data;
 import dev.mylesmor.sudosigns.commands.SignCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class SudoSign {
     private ArrayList<SignCommand> playerCommands = new ArrayList<>();
     private ArrayList<SignCommand> consoleCommands = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
-    private org.bukkit.block.Sign sign;
+    private Sign sign;
     private String name;
 
     public SudoSign(String name) {
