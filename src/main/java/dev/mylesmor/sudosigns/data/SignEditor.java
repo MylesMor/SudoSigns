@@ -170,7 +170,7 @@ public class SignEditor {
         p.openInventory(choiceInv);
     }
 
-    public void addPermission(Boolean provided, String perm) {
+    public void addPermission(boolean provided, String perm) {
         if (provided) {
             if (perm == null) {
                 sign.addPermission("sudosigns.sign." + sign.getName());
