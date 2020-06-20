@@ -8,6 +8,7 @@ import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -82,28 +83,38 @@ public class ConfigManager {
                 double x = locSec.getDouble("x");
                 double y = locSec.getDouble("y");
                 double z = locSec.getDouble("z");
-                Location loc = new Location(Bukkit.getServer().getWorld(world), x, y, z);
-                Sign sign = (Sign) loc.getBlock().getState();
-                SudoSign ss = new SudoSign(key);
-                ss.setSign(sign);
-                List<String> pCommands = signConfig.getStringList("signs." + key + ".player-commands");
-                List<String> cCommands = signConfig.getStringList("signs." + key + ".console-commands");
-                List<String> permissions = signConfig.getStringList("signs." + key + ".permissions");
-                for (String cmd : pCommands) {
-                    ss.addPlayerCommand(new SignCommand(cmd, PlayerInput.PLAYER_COMMAND));
+                World w = Bukkit.getServer().getWorld(world);
+                if (w != null) {
+                    Location loc = new Location(Bukkit.getServer().getWorld(world), x, y, z);
+                    if (loc.getBlock().getState() instanceof Sign) {
+                        Sign sign = (Sign) loc.getBlock().getState();
+                        SudoSign ss = new SudoSign(key);
+                        ss.setSign(sign);
+                        List<String> pCommands = signConfig.getStringList("signs." + key + ".player-commands");
+                        List<String> cCommands = signConfig.getStringList("signs." + key + ".console-commands");
+                        List<String> permissions = signConfig.getStringList("signs." + key + ".permissions");
+                        for (String cmd : pCommands) {
+                            ss.addPlayerCommand(new SignCommand(cmd, PlayerInput.PLAYER_COMMAND));
+                        }
+                        for (String cmd : cCommands) {
+                            ss.addConsoleCommand(new SignCommand(cmd, PlayerInput.CONSOLE_COMMAND));
+                        }
+                        for (String perm : permissions) {
+                            ss.addPermission(perm);
+                        }
+                        tempSigns.put(name, ss);
+                    } else {
+                        Bukkit.getLogger().warning("[SUDOSIGNS] Failed to load Sign " + key + "! The block at the provided location is not a sign. Skipping...");
+                    }
+                } else {
+                    Bukkit.getLogger().warning("[SUDOSIGNS] Failed to load Sign " + key + "! The world name for this sign is invalid. Skipping...");
                 }
-                for (String cmd : cCommands) {
-                    ss.addConsoleCommand(new SignCommand(cmd, PlayerInput.CONSOLE_COMMAND));
-                }
-                for (String perm : permissions) {
-                    ss.addPermission(perm);
-                }
-                tempSigns.put(name, ss);
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             }
         }
+        SudoSigns.signs = tempSigns;
         return true;
     }
 
