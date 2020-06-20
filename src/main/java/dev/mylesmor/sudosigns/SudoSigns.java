@@ -57,7 +57,7 @@ public class SudoSigns extends JavaPlugin {
         if ((sender instanceof Player)) {
             final Player p = (Player) sender;
             if (cmd.getName().equalsIgnoreCase("ss") || cmd.getName().equalsIgnoreCase("sudosigns") || cmd.getName().equalsIgnoreCase("sudosign")) {
-                users.put(p.getUniqueId(), new SudoUser(p));
+                users.computeIfAbsent(p.getUniqueId(), k -> new SudoUser(p));
                 if (args.length == 0) {
                     help(p);
                     return true;
