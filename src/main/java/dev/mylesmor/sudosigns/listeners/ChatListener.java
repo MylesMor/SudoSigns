@@ -53,10 +53,13 @@ public class ChatListener implements Listener {
                     case PLAYER_COMMAND: case CONSOLE_COMMAND:
                         user.removeTextInput();
                         handle(e, true, "No command found! Cancelling...", editor, user, null, editor::goToCommands);
+                        break;
                     case RENAME:
                         handle(e, true, null, editor, user, edit -> editor.renameSign(ChatColor.stripColor(e.getMessage())), editor::goToMain);
+                        break;
                     case PERMISSION:
                         handle(e, true, null, editor, user, edit -> editor.addPermission(true, ChatColor.stripColor(e.getMessage())), editor::goToPermissions);
+                        break;
                 }
 
             }

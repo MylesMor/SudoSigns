@@ -1,6 +1,7 @@
 package dev.mylesmor.sudosigns.listeners;
 
 import dev.mylesmor.sudosigns.SudoSigns;
+import dev.mylesmor.sudosigns.data.GUIPage;
 import dev.mylesmor.sudosigns.data.PlayerInput;
 import dev.mylesmor.sudosigns.data.SignEditor;
 import dev.mylesmor.sudosigns.data.SudoUser;
@@ -30,20 +31,41 @@ public class InventoryListener implements Listener {
             if (user.isEditing()) {
                 SignEditor editor = user.getEditor();
                 if (e.getCurrentItem() != null) {
+                    e.setCancelled(true);
                     Material m = e.getCurrentItem().getType();
                     String invName = ChatColor.stripColor(e.getView().getTitle());
                     String itemName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-                    if (editor.getCurrentPage().equalsIgnoreCase("MAIN")) {
-                        checkForMainMenuClicks(editor, m);
-                    } else if (editor.getCurrentPage().equalsIgnoreCase("COMMANDS")) {
-                        checkForCommandsClicks(editor, m, invName, itemName);
-                    } else if (editor.getCurrentPage().equalsIgnoreCase("PERMISSIONS")) {
-                        checkForPermissionsClicks(editor, m, invName, itemName);
-                    }
                     if (e.getCurrentItem().getType() == Material.ARROW) {
                         editor.goToMain();
+                        return;
                     }
-                    e.setCancelled(true);
+                    switch (editor.getCurrentPage()) {
+                        case MAIN:
+                            checkForMainMenuClicks(editor, m);
+                            break;
+                        case COMMANDS:
+                            checkForCommandsClicks(editor, m, invName, itemName);
+                            break;
+                        case PERMISSIONS:
+                            checkForPermissionsClicks(editor, m, invName, itemName);
+                            break;
+                        case CHOOSE_COMMAND:
+                            if (invName.equalsIgnoreCase("Player or Console command?")) {
+                                if (itemName.equalsIgnoreCase("Player Command")) {
+                                    editor.chooseCommandType(PlayerInput.PLAYER_COMMAND);
+                                } else if (itemName.equalsIgnoreCase("Console Command")) {
+                                    editor.chooseCommandType(PlayerInput.CONSOLE_COMMAND);
+                                }
+                            }
+                            break;
+                        case CHOOSE_PERMISSION:
+                            if (itemName.equalsIgnoreCase("Custom Permission")) {
+                                editor.addPermission(false, null);
+                            } else if (itemName.equalsIgnoreCase("Default Permission")) {
+                                editor.addPermission(true, null);
+                            }
+                            break;
+                    }
                 }
             }
         }
@@ -92,19 +114,14 @@ public class InventoryListener implements Listener {
      * @param itemName The name of the item clicked.
      */
     public void checkForCommandsClicks(SignEditor editor, Material m, String invName, String itemName) {
-        if (invName.equalsIgnoreCase("Player or Console command?")) {
-            if (itemName.equalsIgnoreCase("Player Command")) {
-                editor.chooseCommandType(PlayerInput.PLAYER_COMMAND);
-            } else if (itemName.equalsIgnoreCase("Console Command")) {
-                editor.chooseCommandType(PlayerInput.CONSOLE_COMMAND);
-            }
-        }
         if (m == Material.WRITABLE_BOOK) {
             editor.prepareCommand();
         } else if (m == Material.BOOK) {
             editor.deleteCommand(ChatColor.stripColor(itemName));
         }
     }
+
+
 
     /**
      * Checks for GUI clicks in the Permissions menu.
@@ -114,13 +131,6 @@ public class InventoryListener implements Listener {
      * @param itemName The name of the item clicked.
      */
     public void checkForPermissionsClicks(SignEditor editor, Material m, String invName, String itemName) {
-        if (invName.equalsIgnoreCase("Default or Custom?")) {
-            if (itemName.equalsIgnoreCase("Custom Permission")) {
-                editor.addPermission(false, null);
-            } else if (itemName.equalsIgnoreCase("Default Permission")) {
-                editor.addPermission(true, null);
-            }
-        }
         if (m == Material.BOOK) {
             editor.deletePermission(ChatColor.stripColor(itemName));
         }

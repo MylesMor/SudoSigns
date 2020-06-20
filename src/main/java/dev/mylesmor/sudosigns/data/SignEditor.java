@@ -27,34 +27,34 @@ public class SignEditor {
     private Inventory mainInv;
     private Inventory permissionsInv;
     private Inventory commandsInv;
-    private String currentPage;
+    private GUIPage currentPage;
 
     public SignEditor(Player p, SudoSign s, SudoUser su) {
         this.su = su;
         this.p = p;
         this.sign = s;
-        currentPage = "MAIN";
+        currentPage = GUIPage.MAIN;
         createMainMenu();
         p.openInventory(mainInv);
     }
 
-    public String getCurrentPage() {
+    public GUIPage getCurrentPage() {
         return currentPage;
     }
 
     public void goToMain() {
         p.openInventory(mainInv);
-        currentPage = "MAIN";
+        currentPage = GUIPage.MAIN;;
     }
 
     public void goToPermissions() {
-        currentPage = "PERMISSIONS";
+        currentPage = GUIPage.PERMISSIONS;
         createPermissionsMenu();
         p.openInventory(permissionsInv);
     }
 
     public void goToCommands() {
-        currentPage = "COMMANDS";
+        currentPage = GUIPage.COMMANDS;;
         createCommandsMenu();
         p.openInventory(commandsInv);
     }
@@ -166,6 +166,7 @@ public class SignEditor {
         choiceInv.setItem(23, cmdBlock);
         choiceInv.setItem(36, arrow);
 
+        currentPage = GUIPage.CHOOSE_PERMISSION;
         p.openInventory(choiceInv);
     }
 
@@ -287,6 +288,7 @@ public class SignEditor {
         choiceInv.setItem(23, cmdBlock);
         choiceInv.setItem(36, arrow);
 
+        currentPage = GUIPage.CHOOSE_COMMAND;
         p.openInventory(choiceInv);
     }
 
