@@ -1,0 +1,50 @@
+package dev.mylesmor.sudosigns.commands;
+
+import dev.mylesmor.sudosigns.SudoSigns;
+import dev.mylesmor.sudosigns.data.SudoUser;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
+public class Commands implements CommandExecutor {
+
+    Map<String, BiConsumer<Player, String[]>> commands = new HashMap<>();
+
+    public Commands() {
+        commands.put("help", Help::help);
+        commands.put("near", Near::near);
+        commands.put("list", List::list);
+        commands.put("delete", Delete::delete);
+        commands.put("edit", Edit::edit);
+        commands.put("view", View::view);
+        commands.put("run", Run::run);
+        commands.put("confirmdelete", Delete::confirmDelete);
+        commands.put("reload", Reload::reload);
+        commands.put("create", Create::create);
+        commands.put("tp", Teleport::tp);
+        commands.put("copy", Copy::copy);
+    }
+
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if ((sender instanceof Player)) {
+            final Player p = (Player) sender;
+                SudoSigns.users.computeIfAbsent(p.getUniqueId(), k -> new SudoUser(p));
+                BiConsumer<Player, String[]> command = commands.get(args[0].toLowerCase());
+                if (args.length > 1) {
+                    String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
+                    command.accept(p, newArgs);
+                } else {
+                   command.accept(p, null);
+                }
+        }
+        return true;
+    }
+}

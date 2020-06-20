@@ -1,16 +1,11 @@
 package dev.mylesmor.sudosigns.data;
 
 import dev.mylesmor.sudosigns.SudoSigns;
-import dev.mylesmor.sudosigns.commands.SignCommand;
-import dev.mylesmor.sudosigns.data.PlayerInput;
-import dev.mylesmor.sudosigns.data.SudoSign;
-import dev.mylesmor.sudosigns.data.SudoUser;
 import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

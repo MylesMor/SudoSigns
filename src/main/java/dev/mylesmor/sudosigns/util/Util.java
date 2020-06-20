@@ -46,7 +46,7 @@ public class Util {
     }
 
     public static boolean checkName(String name) {
-        String regex = "[A-z0-9]";
+        String regex = "^[A-z0-9]+$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(name);
         return matcher.matches();

@@ -1,4 +1,4 @@
-package dev.mylesmor.sudosigns.commands;
+package dev.mylesmor.sudosigns.data;
 
 import dev.mylesmor.sudosigns.data.PlayerInput;
 

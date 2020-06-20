@@ -2,7 +2,7 @@ package dev.mylesmor.sudosigns.config;
 
 import dev.mylesmor.sudosigns.SudoSigns;
 import dev.mylesmor.sudosigns.data.PlayerInput;
-import dev.mylesmor.sudosigns.commands.SignCommand;
+import dev.mylesmor.sudosigns.data.SignCommand;
 import dev.mylesmor.sudosigns.data.SudoSign;
 import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.Bukkit;
