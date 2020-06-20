@@ -4,6 +4,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Util {
 
     public static final String prefix = ChatColor.YELLOW + "[SUDOSIGNS]";
@@ -40,5 +43,12 @@ public class Util {
              message = message.replace("%NAME%", ChatColor.GOLD + name + color);
         }
         p.sendMessage(prefix + color + " " + message);
+    }
+
+    public static boolean checkName(String name) {
+        String regex = "[A-z0-9]";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(name);
+        return matcher.matches();
     }
 }

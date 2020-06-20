@@ -332,13 +332,17 @@ public class SudoSigns extends JavaPlugin {
      * @param name The name of the sign (or null for click selection).
      */
     public void createSign(Player p, String name) {
-        if (!signs.containsKey(name)) {
-            users.get(p.getUniqueId()).setCreate(true);
-            users.get(p.getUniqueId()).setPassThru(name);
-            signs.put(name, new SudoSign(name));
-            Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to create!", null);
+        if (Util.checkName(name)) {
+            if (!signs.containsKey(name)) {
+                users.get(p.getUniqueId()).setCreate(true);
+                users.get(p.getUniqueId()).setPassThru(name);
+                signs.put(name, new SudoSign(name));
+                Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to create!", null);
+            } else {
+                Util.sudoSignsMessage(p, ChatColor.RED, "A sign with name %NAME% already exists!", name);
+            }
         } else {
-            Util.sudoSignsMessage(p, ChatColor.RED,  "A sign with name %NAME% already exists!", name);
+            Util.sudoSignsMessage(p, ChatColor.RED, "The name of a SudoSign must only contain numbers and letters!", null);
         }
     }
 
@@ -407,27 +411,31 @@ public class SudoSigns extends JavaPlugin {
      * @param newName The name of the new sign to copy to.
      */
     public void copy(Player p, String oldName, String newName) {
-        users.get(p.getUniqueId()).setPassThru(newName);
-        if (oldName == null) {
-            Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to copy from!", null);
-            users.get(p.getUniqueId()).setSelectToCopy(true);
-        } else {
-            SudoSign oldSign = signs.get(oldName);
-            if (oldSign != null) {
-                if (!signs.containsKey(newName)) {
-                    Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to copy to!", null);
-                    SudoSign newSign = new SudoSign(newName);
-                    newSign.setPermissions(oldSign.getPermissions());
-                    newSign.setPlayerCommands(oldSign.getPlayerCommands());
-                    newSign.setConsoleCommands(oldSign.getConsoleCommands());
-                    users.get(p.getUniqueId()).setCopy(true);
-                    signs.put(newName, newSign);
-                } else {
-                    Util.sudoSignsMessage(p, ChatColor.RED,  "A sign with name %NAME% already exists!", newName);
-                }
+        if (Util.checkName(newName)) {
+            users.get(p.getUniqueId()).setPassThru(newName);
+            if (oldName == null) {
+                Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to copy from!", null);
+                users.get(p.getUniqueId()).setSelectToCopy(true);
             } else {
-                Util.sudoSignsMessage(p, ChatColor.GRAY, "A sign with name %NAME% doesn't exist!", oldName);
+                SudoSign oldSign = signs.get(oldName);
+                if (oldSign != null) {
+                    if (!signs.containsKey(newName)) {
+                        Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to copy to!", null);
+                        SudoSign newSign = new SudoSign(newName);
+                        newSign.setPermissions(oldSign.getPermissions());
+                        newSign.setPlayerCommands(oldSign.getPlayerCommands());
+                        newSign.setConsoleCommands(oldSign.getConsoleCommands());
+                        users.get(p.getUniqueId()).setCopy(true);
+                        signs.put(newName, newSign);
+                    } else {
+                        Util.sudoSignsMessage(p, ChatColor.RED, "A sign with name %NAME% already exists!", newName);
+                    }
+                } else {
+                    Util.sudoSignsMessage(p, ChatColor.GRAY, "A sign with name %NAME% doesn't exist!", oldName);
+                }
             }
+        } else {
+            Util.sudoSignsMessage(p, ChatColor.RED, "The name of a SudoSign must only contain numbers and letters!", null);
         }
     }
 

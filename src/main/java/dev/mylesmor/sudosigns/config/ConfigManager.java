@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * The class for managing the plugin's config.
+ * The class for managing the plugins config.
  * @author MylesMor
  * @author https://mylesmor.dev
  */
@@ -139,7 +139,7 @@ public class ConfigManager {
     }
 
     public void addCommandToConfig(SudoSign s, SignCommand cmd, PlayerInput type) {
-        if (signConfig.isConfigurationSection("signs." + s.getName())) {
+        if (signConfig.isConfigurationSection("signs." + s.getName() + "")) {
             if (type.equals(PlayerInput.PLAYER_COMMAND)) {
                 if (!signConfig.isConfigurationSection("signs." + s.getName() + ".player-commands")) {
                     signConfig.set("signs." + s.getName() + ".player-commands", new ArrayList<>());
@@ -161,16 +161,11 @@ public class ConfigManager {
     }
 
     public void deleteCommandFromConfig(SudoSign s, SignCommand cmd, PlayerInput type) {
-        if (signConfig.isConfigurationSection("signs." + s.getName())) {
-            Bukkit.getLogger().warning("HERE");
+        if (signConfig.isConfigurationSection("signs." + s.getName() + "")) {
             if (type.equals(PlayerInput.PLAYER_COMMAND)) {
-                Bukkit.getLogger().warning("HERE1");
                 if (signConfig.isList("signs." + s.getName() + ".player-commands")) {
-                    Bukkit.getLogger().warning("HERE2");
                     List<String> cmds = signConfig.getStringList("signs." + s.getName() + ".player-commands");
-                    Bukkit.getLogger().warning("BEFORE: " + cmds.toString());
                     cmds.remove(cmd.getCommand());
-                    Bukkit.getLogger().warning("AFTER: " + cmds.toString());
                     signConfig.set("signs." + s.getName() + ".player-commands", cmds);
                 }
             } else if (type.equals(PlayerInput.CONSOLE_COMMAND)) {
@@ -186,8 +181,8 @@ public class ConfigManager {
     }
 
     public void deleteSign(String name) {
-        if (signConfig.isConfigurationSection("signs." + name)) {
-            signConfig.set("signs." + name, null);
+        if (signConfig.isConfigurationSection("signs." + name + "")) {
+            signConfig.set("signs." + name + "", null);
         }
         save();
     }
@@ -206,8 +201,8 @@ public class ConfigManager {
     public void saveSign(SudoSign s, Player p) {
         String name = s.getName();
         try {
-            if (!signConfig.isConfigurationSection("signs." + name)) {
-                signConfig.createSection("signs." + name);
+            if (!signConfig.isConfigurationSection("signs." + name + "")) {
+                signConfig.createSection("signs." + name + "");
                 ConfigurationSection locSec = signConfig.createSection("signs." + name + ".location");
                 String world = s.getSign().getWorld().getName();
                 Double x = s.getSign().getLocation().getX();
