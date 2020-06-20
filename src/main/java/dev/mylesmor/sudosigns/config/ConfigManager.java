@@ -17,10 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The class for managing the plugin's config.
@@ -53,7 +50,7 @@ public class ConfigManager {
         }
     }
 
-    private void loadCustomConfig() {
+    public boolean loadCustomConfig() {
         signConfig = new YamlConfiguration();
         try {
             signConfig.load(signConfigFile);
@@ -64,11 +61,17 @@ public class ConfigManager {
         } catch (IOException | InvalidConfigurationException e) {
             Bukkit.getLogger().warning("[SUDOSIGNS] Failed to initialise signs.yml!");
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
-    public void loadSigns() {
-        SudoSigns.signs.clear();
+    /**
+     * Loads the signs from the config.
+     * @return True if successful, false if not
+     */
+    public boolean loadSigns() {
+        Map<String, SudoSign> tempSigns = new HashMap<>();
         Set<String> signSection = signConfig.getConfigurationSection("signs").getKeys(false);
         String name;
         for (String key : signSection) {
@@ -95,12 +98,13 @@ public class ConfigManager {
                 for (String perm : permissions) {
                     ss.addPermission(perm);
                 }
-                SudoSigns.signs.put(key, ss);
+                tempSigns.put(name, ss);
             } catch (Exception e) {
                 e.printStackTrace();
-                Bukkit.getLogger().warning("[SUDOSIGNS] Failed to initialise SudoSign " + name + "!");
+                return false;
             }
         }
+        return true;
     }
 
     private void save() {

@@ -12,6 +12,7 @@ public final class Permissions {
     public static final String RUN = "sudosigns.admin.run";
     public static final String TP = "sudosigns.admin.tp";
     public static final String COPY = "sudosigns.admin.copy";
+    public static final String RELOAD = "sudosigns.admin.reload";
 
     public static final String VIEW = "sudosigns.view";
     public static final String HELP = "sudosigns.help";

@@ -10,6 +10,7 @@ import dev.mylesmor.sudosigns.listeners.SignListener;
 import dev.mylesmor.sudosigns.util.Permissions;
 import dev.mylesmor.sudosigns.util.Util;
 import net.md_5.bungee.chat.ComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -101,6 +102,12 @@ public class SudoSigns extends JavaPlugin {
                     } else if (args[0].equalsIgnoreCase("list")) {
                         if (p.hasPermission(Permissions.LIST)) {
                             list(p);
+                        } else {
+                            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
+                        }
+                    } else if (args[0].equalsIgnoreCase("reload")) {
+                        if (p.hasPermission(Permissions.RELOAD)) {
+                            reloadConfig(p);
                         } else {
                             Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
                         }
@@ -214,6 +221,9 @@ public class SudoSigns extends JavaPlugin {
         }
         if (p.hasPermission(Permissions.DELETE)) {
             p.sendMessage(ChatColor.YELLOW + "[!]" + ChatColor.LIGHT_PURPLE + " /ss delete [name]" + ChatColor.GRAY + " - Deletes the specified SudoSign.");
+        }
+        if (p.hasPermission(Permissions.RELOAD)) {
+            p.sendMessage(ChatColor.YELLOW + "[!]" + ChatColor.LIGHT_PURPLE + " /ss reload" + ChatColor.GRAY + " - Reloads the configuration file (signs.yml).");
         }
 
     }
@@ -358,6 +368,22 @@ public class SudoSigns extends JavaPlugin {
                 }
             }
         }
+    }
+
+    /**
+     * Reloads the config file (signs.yml)
+     * @param p The player running the command.
+     */
+    public void reloadConfig(Player p) {
+        Util.sudoSignsMessage(p, ChatColor.GRAY, "Reloading config...", null);
+
+        if (config.loadCustomConfig() && config.loadSigns()) {
+            Util.sudoSignsMessage(p, ChatColor.GREEN, "Config successfully reloaded!", null);
+        } else {
+            Bukkit.getLogger().warning("[SUDOSIGNS] There was an error with the SudoSigns config!");
+            Util.sudoSignsMessage(p, ChatColor.RED, "There was an error with the SudoSigns config! Continuing to use old config...", null);
+        }
+
     }
 
     /**

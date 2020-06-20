@@ -32,6 +32,7 @@ public class ChatListener implements Listener {
                 if (user.getInputType() == PlayerInput.CONSOLE_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND) {
                     e.setCancelled(true);
                     user.getEditor().addCommand(e.getMessage().substring(1), user.getInputType());
+                    user.removeTextInput();
                 }
             }
         }
@@ -46,6 +47,7 @@ public class ChatListener implements Listener {
                 SignEditor editor = user.getEditor();
                 if (e.getMessage().equalsIgnoreCase("cancel")) {
                     handle(e, true, "Cancelled!", editor, user, null, editor::goToMain);
+                    return;
                 }
                 switch (user.getInputType()) {
                     case PLAYER_COMMAND: case CONSOLE_COMMAND:
@@ -56,6 +58,7 @@ public class ChatListener implements Listener {
                     case PERMISSION:
                         handle(e, true, null, editor, user, edit -> editor.addPermission(true, ChatColor.stripColor(e.getMessage())), editor::goToPermissions);
                 }
+
             }
         }
     }
