@@ -50,12 +50,10 @@ public class InventoryListener implements Listener {
                             checkForPermissionsClicks(editor, m, invName, itemName);
                             break;
                         case CHOOSE_COMMAND:
-                            if (invName.equalsIgnoreCase("Player or Console command?")) {
-                                if (itemName.equalsIgnoreCase("Player Command")) {
-                                    editor.chooseCommandType(PlayerInput.PLAYER_COMMAND);
-                                } else if (itemName.equalsIgnoreCase("Console Command")) {
-                                    editor.chooseCommandType(PlayerInput.CONSOLE_COMMAND);
-                                }
+                            if (itemName.equalsIgnoreCase("Player Command")) {
+                                editor.chooseCommandType(PlayerInput.PLAYER_COMMAND);
+                            } else if (itemName.equalsIgnoreCase("Console Command")) {
+                                editor.chooseCommandType(PlayerInput.CONSOLE_COMMAND);
                             }
                             break;
                         case CHOOSE_PERMISSION:
