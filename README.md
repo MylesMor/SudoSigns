@@ -19,20 +19,20 @@ This plugin has a convenient inventory-based GUI which allows you perform action
 * When adding a permission, bear in mind that a player must have **ALL** the permissions to be able to run the sign's commands.
 
 
-##Getting Started
+## Getting Started
 
-###Creating a SudoSign
+### Creating a SudoSign
 1. Place a sign down and write your own text on it.
 2. Use `/ss create <name>` and click on your sign.
 
-###Editing a SudoSign
+### Editing a SudoSign
 1. Either:
     1. Break the SudoSign and the selection menu will appear. Click [EDIT]. This looks like the below image:
     ![SudoSigns select menu](https://mylesmor.dev/sudosigns/selectmenu.jpg)
     2. Use `/ss edit [name]`. Either provide the name in the command or exclude it and click the relevant sign.
 2. The inventory-based Sign Editor will then open.
 
-###Adding and removing commands
+### Adding and removing commands
 1. Edit the sign using the above steps.
 2. Click the command block.
 3. This page shows all the commands currently assigned to the sign.
@@ -42,8 +42,8 @@ This plugin has a convenient inventory-based GUI which allows you perform action
 7. You will now see your command listed as a book in the page.
 8. If you'd like to remove the command, click the relevant book.
 
-###Adding and removing permissions
-1. Edit the sign by following [these steps](###editing-a-sudosign).
+### Adding and removing permissions
+1. Edit the sign by following [these steps](#editing-a-sudosign).
 2. Click the barrier block.
 3. This page shows all the permissions currently assigned to the sign.
 4. Click the writeable book at the bottom.
