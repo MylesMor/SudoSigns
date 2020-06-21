@@ -16,7 +16,7 @@ This plugin has a convenient inventory-based GUI which allows you perform action
 * A _player command_ is executed by the player and the player must therefore have the correct permissions.
 * A _console command_ is executed by the console and doesn't require the player to have the relevant permission.
 * **Player commands will always execute before console commands.**
-* When adding a permission, bear in mind that a player must have **ALL** the permissions to be able to run the sign's commands.
+* When adding a permission, bear in mind that a player must have **ALL** the permissions that you've added to be able to run the sign's commands.
 
 
 ## Getting Started
