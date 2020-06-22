@@ -2,8 +2,7 @@ package dev.mylesmor.sudosigns.listeners;
 
 import dev.mylesmor.sudosigns.SudoSigns;
 import dev.mylesmor.sudosigns.data.PlayerInput;
-import dev.mylesmor.sudosigns.data.SignEditor;
-import dev.mylesmor.sudosigns.data.SudoSign;
+import dev.mylesmor.sudosigns.menus.SignEditor;
 import dev.mylesmor.sudosigns.data.SudoUser;
 import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.Bukkit;
@@ -31,7 +30,7 @@ public class ChatListener implements Listener {
             if (user.isTextInput() && user.isEditing()) {
                 if (user.getInputType() == PlayerInput.CONSOLE_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND) {
                     e.setCancelled(true);
-                    user.getEditor().addCommand(e.getMessage().substring(1), user.getInputType());
+                    user.getEditor().getCommandsMenu().addCommand(e.getMessage().substring(1), user.getInputType());
                     user.removeTextInput();
                 }
             }
@@ -58,7 +57,7 @@ public class ChatListener implements Listener {
                         handle(e, true, null, editor, user, edit -> editor.renameSign(ChatColor.stripColor(e.getMessage())), editor::goToMain);
                         break;
                     case PERMISSION:
-                        handle(e, true, null, editor, user, edit -> editor.addPermission(true, ChatColor.stripColor(e.getMessage())), editor::goToPermissions);
+                        handle(e, true, null, editor, user, edit -> editor.getPermMenu().addPermission(true, ChatColor.stripColor(e.getMessage())), editor::goToPermissions);
                         break;
                 }
 

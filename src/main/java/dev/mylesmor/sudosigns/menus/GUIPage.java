@@ -1,4 +1,4 @@
-package dev.mylesmor.sudosigns.data;
+package dev.mylesmor.sudosigns.menus;
 
 public enum GUIPage {
     MAIN,
@@ -6,4 +6,5 @@ public enum GUIPage {
     PERMISSIONS,
     CHOOSE_PERMISSION,
     CHOOSE_COMMAND,
+    MESSAGES,
 }

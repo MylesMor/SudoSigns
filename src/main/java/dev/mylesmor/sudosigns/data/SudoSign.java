@@ -18,6 +18,7 @@ public class SudoSign {
     private ArrayList<SignCommand> playerCommands = new ArrayList<>();
     private ArrayList<SignCommand> consoleCommands = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
+    private ArrayList<String> messages = new ArrayList<>();
     private String worldName;
     private double x;
     private double y;
@@ -69,6 +70,16 @@ public class SudoSign {
         return permissions;
     }
 
+    public void addMessage(String s) {
+        messages.add(s);
+    }
+
+    public void removeMessage(String s) {
+        messages.remove(s);
+    }
+
+    public ArrayList<String> getMessages() { return messages; }
+
     public void setPlayerCommands(ArrayList<SignCommand> playerCommands) {
         this.playerCommands = playerCommands;
     }
@@ -101,6 +112,9 @@ public class SudoSign {
             }
         }
         if (hasPermission) {
+            for (String s : messages) {
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
+            }
             for (SignCommand sc : playerCommands) {
                 String cmd = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());
                 p.performCommand(cmd);

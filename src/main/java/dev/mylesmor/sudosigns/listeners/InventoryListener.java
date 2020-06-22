@@ -1,9 +1,8 @@
 package dev.mylesmor.sudosigns.listeners;
 
 import dev.mylesmor.sudosigns.SudoSigns;
-import dev.mylesmor.sudosigns.data.GUIPage;
 import dev.mylesmor.sudosigns.data.PlayerInput;
-import dev.mylesmor.sudosigns.data.SignEditor;
+import dev.mylesmor.sudosigns.menus.SignEditor;
 import dev.mylesmor.sudosigns.data.SudoUser;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -104,10 +103,10 @@ public class InventoryListener implements Listener {
     public void checkForCommandsClicks(SignEditor editor, Material m, String itemName) {
         switch (m) {
             case WRITABLE_BOOK:
-                editor.prepareCommand();
+                editor.getCommandsMenu().prepareCommand();
                 break;
             case BOOK:
-                editor.deleteCommand(ChatColor.stripColor(itemName));
+                editor.getCommandsMenu().deleteCommand(ChatColor.stripColor(itemName));
                 break;
             case ARROW:
                 editor.goToMain();
@@ -117,10 +116,10 @@ public class InventoryListener implements Listener {
     public void choosePermissionType(SignEditor editor, Material m) {
         switch (m) {
             case PLAYER_HEAD:
-                editor.addPermission(true, null);
+                editor.getPermMenu().addPermission(true, null);
                 break;
             case COMMAND_BLOCK:
-                editor.addPermission(false, null);
+                editor.getPermMenu().addPermission(false, null);
                 break;
             case ARROW:
                 editor.goToPermissions();
@@ -130,10 +129,10 @@ public class InventoryListener implements Listener {
     public void chooseCommandType(SignEditor editor, Material m) {
         switch (m) {
             case PLAYER_HEAD:
-                editor.chooseCommandType(PlayerInput.PLAYER_COMMAND);
+                editor.getCommandsMenu().chooseCommandType(PlayerInput.PLAYER_COMMAND);
                 break;
             case COMMAND_BLOCK:
-                editor.chooseCommandType(PlayerInput.CONSOLE_COMMAND);
+                editor.getCommandsMenu().chooseCommandType(PlayerInput.CONSOLE_COMMAND);
                 break;
             case ARROW:
                 editor.goToCommands();
@@ -152,10 +151,10 @@ public class InventoryListener implements Listener {
     public void checkForPermissionsClicks(SignEditor editor, Material m, String itemName) {
         switch (m) {
             case BOOK:
-                editor.deletePermission(ChatColor.stripColor(itemName));
+                editor.getPermMenu().deletePermission(ChatColor.stripColor(itemName));
                 break;
             case WRITABLE_BOOK:
-                editor.preparePermission();
+                editor.getPermMenu().preparePermission();
                 break;
             case ARROW:
                 editor.goToMain();

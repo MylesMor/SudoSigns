@@ -1,8 +1,7 @@
 package dev.mylesmor.sudosigns.commands;
 
 import dev.mylesmor.sudosigns.SudoSigns;
-import dev.mylesmor.sudosigns.data.SignEditor;
-import dev.mylesmor.sudosigns.data.SudoUser;
+import dev.mylesmor.sudosigns.menus.SignEditor;
 import dev.mylesmor.sudosigns.util.Permissions;
 import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.ChatColor;

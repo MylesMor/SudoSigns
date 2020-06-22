@@ -1,7 +1,7 @@
 package dev.mylesmor.sudosigns.listeners;
 
 import dev.mylesmor.sudosigns.SudoSigns;
-import dev.mylesmor.sudosigns.data.SignEditor;
+import dev.mylesmor.sudosigns.menus.SignEditor;
 import dev.mylesmor.sudosigns.data.SudoSign;
 import dev.mylesmor.sudosigns.data.SudoUser;
 import dev.mylesmor.sudosigns.util.Permissions;
@@ -19,7 +19,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.permissions.Permission;
 
 import java.util.ArrayList;
 import java.util.Map;

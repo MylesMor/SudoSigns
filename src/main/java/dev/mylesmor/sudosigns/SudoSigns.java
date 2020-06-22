@@ -2,21 +2,12 @@ package dev.mylesmor.sudosigns;
 
 import dev.mylesmor.sudosigns.commands.Commands;
 import dev.mylesmor.sudosigns.config.ConfigManager;
-import dev.mylesmor.sudosigns.data.SignEditor;
 import dev.mylesmor.sudosigns.data.SudoSign;
 import dev.mylesmor.sudosigns.data.SudoUser;
 import dev.mylesmor.sudosigns.listeners.ChatListener;
 import dev.mylesmor.sudosigns.listeners.InventoryListener;
 import dev.mylesmor.sudosigns.listeners.SignListener;
-import dev.mylesmor.sudosigns.util.Permissions;
-import dev.mylesmor.sudosigns.util.Util;
-import net.md_5.bungee.chat.ComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
