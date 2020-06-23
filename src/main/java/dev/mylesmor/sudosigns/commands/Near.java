@@ -4,6 +4,7 @@ import dev.mylesmor.sudosigns.SudoSigns;
 import dev.mylesmor.sudosigns.data.SudoSign;
 import dev.mylesmor.sudosigns.util.Permissions;
 import dev.mylesmor.sudosigns.util.Util;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -43,7 +44,8 @@ public class Near {
             for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
                 Location signLoc = entry.getValue().getSign().getLocation();
                 if (signLoc.distance(p.getLocation()) <= r) {
-                    Select.select(p, entry.getKey());
+                    String message = Util.getSelectString(p, entry.getKey());
+                    p.spigot().sendMessage(ComponentSerializer.parse(message));
                 }
             }
         } else {

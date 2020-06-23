@@ -52,6 +52,12 @@ public class Help {
             if (p.hasPermission(Permissions.RELOAD)) {
                 p.sendMessage(ChatColor.YELLOW + "[!]" + ChatColor.LIGHT_PURPLE + " /ss reload" + ChatColor.GRAY + " - Reloads the configuration file (signs.yml).");
             }
+            if (p.hasPermission(Permissions.PURGE)) {
+                p.sendMessage(ChatColor.YELLOW + "[!]" + ChatColor.LIGHT_PURPLE + " /ss purge <name>" + ChatColor.GRAY + " - Purges an invalid entry in the config.");
+            }
+            if (p.hasPermission(Permissions.PURGE)) {
+                p.sendMessage(ChatColor.YELLOW + "[!]" + ChatColor.LIGHT_PURPLE + " /ss purgeall" + ChatColor.GRAY + " - Purges all invalid entries in the config.");
+            }
         } else {
             Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
         }

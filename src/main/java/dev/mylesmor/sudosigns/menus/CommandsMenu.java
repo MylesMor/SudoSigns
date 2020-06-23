@@ -72,7 +72,6 @@ public class CommandsMenu {
         head.setItemMeta(headMeta);
 
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.RED + "Click to delete!");
 
         boolean anyOpPermissions = false;
 
@@ -83,10 +82,18 @@ public class CommandsMenu {
             if (i > 26) break;
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
+            if (entry.getValue()) {
+                lore.add(ChatColor.YELLOW + "Player Command with Permissions (player is granted OP for the duration of this command).");
+            } else {
+                lore.add(ChatColor.YELLOW + "Player Command");
+            }
             bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + "/" + sc.getCommand());
             if (p.hasPermission(Permissions.DELETE_COMMAND)) {
-                bookMeta.setLore(lore);
+                lore.add(ChatColor.RED + "Click to delete!");
+                lore.add("");
             }
+            bookMeta.setLore(lore);
+            lore.clear();
             book.setItemMeta(bookMeta);
             if (i == 9) i++;
             menu.setItem(i, book);

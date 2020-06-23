@@ -29,11 +29,33 @@ public class ConfigManager {
 
     private FileConfiguration signConfig;
     private File signConfigFile;
+    private ArrayList<String> invalidEntries = new ArrayList<>();
 
     public ConfigManager() {
         createCustomConfig();
         loadCustomConfig();
         loadSigns();
+    }
+
+    public boolean purgeInvalidEntry(String name, boolean all) {
+        if (all) {
+            for (String s : invalidEntries) {
+                Bukkit.getLogger().warning(Boolean.toString(signConfig.isConfigurationSection("signs." + s)));
+                signConfig.set("signs." + s, null);
+            }
+            save();
+            return true;
+        } else {
+            for (String s : invalidEntries) {
+                if (name.equalsIgnoreCase(s)) {
+                    Bukkit.getLogger().warning(Boolean.toString(signConfig.isConfigurationSection("signs." + s)));
+                    signConfig.set("signs." + name, null);
+                    save();
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void createCustomConfig() {
@@ -71,10 +93,11 @@ public class ConfigManager {
      * Loads the signs from the config.
      * @return True if successful, false if not
      */
-    public boolean loadSigns() {
+    public ArrayList<String> loadSigns() {
         Map<String, SudoSign> tempSigns = new HashMap<>();
         Set<String> signSection = signConfig.getConfigurationSection("signs").getKeys(false);
         String name;
+        ArrayList<String> invalidSigns = new ArrayList<>();
         for (String key : signSection) {
             name = key;
             try {
@@ -112,18 +135,21 @@ public class ConfigManager {
                         }
                         tempSigns.put(name, ss);
                     } else {
+                        invalidSigns.add(key);
                         Bukkit.getLogger().warning("[SUDOSIGNS] Failed to load Sign " + key + "! The block at the provided location is not a sign. Skipping...");
                     }
                 } else {
+                    invalidSigns.add(key);
                     Bukkit.getLogger().warning("[SUDOSIGNS] Failed to load Sign " + key + "! The world name for this sign is invalid. Skipping...");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                return false;
+                return null;
             }
         }
+        invalidEntries = invalidSigns;
         SudoSigns.signs = tempSigns;
-        return true;
+        return invalidSigns;
     }
 
     private void save() {

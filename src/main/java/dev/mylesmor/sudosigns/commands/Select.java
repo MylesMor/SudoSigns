@@ -11,14 +11,18 @@ public class Select {
     /**
      * Select a sign (display selection message in chat).
      * @param p The player running the command.
-     * @param name The name of the sign.
+     * @param args 1 argument: The name of the sign.
      */
-    public static void select(Player p, String name) {
+    public static void select(Player p, String[] args) {
         if (p.hasPermission(Permissions.SELECT)) {
-            String message = Util.getSelectString(p, name);
-            p.spigot().sendMessage(ComponentSerializer.parse(message));
+            if (args.length != 1) {
+                Util.sudoSignsMessage(p, ChatColor.RED, "Invalid syntax! " + ChatColor.GRAY + "Correct syntax: " + ChatColor.LIGHT_PURPLE + "/ss select <name>" + ChatColor.GRAY + ".", null);
+            } else {
+                String message = Util.getSelectString(p, args[0]);
+                p.spigot().sendMessage(ComponentSerializer.parse(message));
+            }
         } else {
-            Util.sudoSignsMessage(p, ChatColor.RED,"You don't have permission to do this!", null);
+            Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
         }
     }
 }

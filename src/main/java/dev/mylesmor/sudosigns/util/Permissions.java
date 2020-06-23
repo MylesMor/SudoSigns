@@ -19,6 +19,7 @@ public final class Permissions {
     public static final String NEAR = "sudosigns.near";
     public static final String LIST = "sudosigns.list";
     public static final String RENAME = "sudosigns.rename";
+    public static final String PURGE = "sudosigns.purge";
     public static final String VIEW_COMMAND = "sudosigns.command.view";
     public static final String ADD_COMMAND = "sudosigns.command.add";
     public static final String DELETE_COMMAND = "sudosigns.command.delete";

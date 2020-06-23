@@ -7,6 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.StringJoiner;
+
 public class Reload {
 
     /**
@@ -18,11 +21,28 @@ public class Reload {
         if (p.hasPermission(Permissions.RELOAD)) {
             Util.sudoSignsMessage(p, ChatColor.GRAY, "Reloading config...", null);
 
-            if (SudoSigns.config.loadCustomConfig() && SudoSigns.config.loadSigns()) {
-                Util.sudoSignsMessage(p, ChatColor.GREEN, "Config successfully reloaded!", null);
-            } else {
+            if (SudoSigns.config.loadCustomConfig()) {
+                ArrayList<String> invalidSigns = SudoSigns.config.loadSigns();
+                if (invalidSigns != null) {
+                    if (invalidSigns.size() == 0) {
+                        Util.sudoSignsMessage(p, ChatColor.GREEN, "Config successfully reloaded! Found " + invalidSigns.size() + " invalid signs! ", null);
+                    } else {
+                        StringBuilder message = new StringBuilder("Config successfully reloaded!" + ChatColor.RED + " Found " + invalidSigns.size() + " invalid signs: ");
+                        StringJoiner joiner = new StringJoiner("" + ChatColor.RED + ", ", "", ChatColor.RED + ". ");
+                        for (String name : invalidSigns) {
+                            joiner.add(ChatColor.GOLD + name);
+                        }
+                        message.append(joiner.toString());
+                        //message.append(ChatColor.GRAY + "Use " + ChatColor.LIGHT_PURPLE + "/ss purge <name>" + ChatColor.GRAY + " to remove an invalid entry from the config!");
+                        Util.sudoSignsMessage(p, ChatColor.GREEN, message.toString(), null);
+                    }
+                    return;
+                }
                 Bukkit.getLogger().warning("[SUDOSIGNS] There was an error with the SudoSigns config!");
                 Util.sudoSignsMessage(p, ChatColor.RED, "There was an error with the SudoSigns config! Continuing to use old config...", null);
+            } else {
+                Bukkit.getLogger().warning("[SUDOSIGNS] There was an error with the SudoSigns config!");
+                Util.sudoSignsMessage(p, ChatColor.RED, "There was an error with the SudoSigns config! Please attempt to fix before the next server reload/restart.", null);
             }
         } else {
             Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);

@@ -31,6 +31,9 @@ public class Commands implements CommandExecutor {
         commands.put("create", Create::create);
         commands.put("tp", Teleport::tp);
         commands.put("copy", Copy::copy);
+        commands.put("select", Select::select);
+        commands.put("purge", Purge::purge);
+        commands.put("purgeall", Purge::purgeAll);
     }
 
     @Override
