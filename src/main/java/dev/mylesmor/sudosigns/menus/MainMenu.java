@@ -1,6 +1,7 @@
 package dev.mylesmor.sudosigns.menus;
 
 import dev.mylesmor.sudosigns.data.SudoSign;
+import dev.mylesmor.sudosigns.util.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -8,6 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
 
 public class MainMenu {
 
@@ -32,28 +35,62 @@ public class MainMenu {
     }
 
     private void createMainMenu() {
+        ArrayList<ItemStack> items = new ArrayList<>();
         menu = Bukkit.createInventory(p, 45, "Editing: " + sign.getName());
         for (int i = 0; i < menu.getSize(); i++) {
             menu.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
         }
-        ItemStack book = new ItemStack(Material.BOOK);
-        ItemMeta bookMeta = book.getItemMeta();
-        bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Rename Sign");
-        book.setItemMeta(bookMeta);
+        if (p.hasPermission(Permissions.RENAME)) {
+            ItemStack book = new ItemStack(Material.BOOK);
+            ItemMeta bookMeta = book.getItemMeta();
+            bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Rename Sign");
+            book.setItemMeta(bookMeta);
+            items.add(book);
+        }
 
-        ItemStack barrier = new ItemStack(Material.BARRIER);
-        ItemMeta barrierMeta = barrier.getItemMeta();
-        barrierMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Permissions");
-        barrier.setItemMeta(barrierMeta);
+        if (p.hasPermission(Permissions.VIEW_PERMISSION)) {
+            ItemStack barrier = new ItemStack(Material.BARRIER);
+            ItemMeta barrierMeta = barrier.getItemMeta();
+            barrierMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Permissions");
+            barrier.setItemMeta(barrierMeta);
+            items.add(barrier);
+        }
 
-        ItemStack cmdBlock = new ItemStack(Material.COMMAND_BLOCK);
-        ItemMeta cmdBlockMeta = cmdBlock.getItemMeta();
-        cmdBlockMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Commands");
-        cmdBlock.setItemMeta(cmdBlockMeta);
+        if (p.hasPermission(Permissions.VIEW_COMMAND)) {
+            ItemStack cmdBlock = new ItemStack(Material.COMMAND_BLOCK);
+            ItemMeta cmdBlockMeta = cmdBlock.getItemMeta();
+            cmdBlockMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Commands");
+            cmdBlock.setItemMeta(cmdBlockMeta);
+            items.add(cmdBlock);
+        }
 
-        menu.setItem(20, book);
-        //mainInv.setItem(21, editSign);
-        menu.setItem(22, barrier);
-        menu.setItem(24, cmdBlock);
+        if (p.hasPermission(Permissions.VIEW_MESSAGE)) {
+            ItemStack signBlock = new ItemStack(Material.BIRCH_SIGN);
+            ItemMeta signMeta = signBlock.getItemMeta();
+            signMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Messages");
+            signBlock.setItemMeta(signMeta);
+            items.add(signBlock);
+        }
+
+        switch (items.size()) {
+            case 4:
+                menu.setItem(11, items.get(0));
+                menu.setItem(13, items.get(1));
+                menu.setItem(15, items.get(2));
+                menu.setItem(29, items.get(3));
+                break;
+            case 3:
+                menu.setItem(20, items.get(0));
+                menu.setItem(22, items.get(1));
+                menu.setItem(24, items.get(2));
+                break;
+            case 2:
+                menu.setItem(21, items.get(0));
+                menu.setItem(23, items.get(1));
+                break;
+            case 1:
+                menu.setItem(22, items.get(0));
+                break;
+        }
     }
 }

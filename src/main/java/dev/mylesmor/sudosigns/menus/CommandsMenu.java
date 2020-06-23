@@ -17,6 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CommandsMenu {
 
@@ -52,10 +53,13 @@ public class CommandsMenu {
         arrowMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "BACK");
         arrow.setItemMeta(arrowMeta);
 
-        ItemStack bookQuill = new ItemStack(Material.WRITABLE_BOOK);
-        ItemMeta bqMeta = bookQuill.getItemMeta();
-        bqMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GREEN + "Add new command");
-        bookQuill.setItemMeta(bqMeta);
+        if (p.hasPermission(Permissions.ADD_COMMAND)) {
+            ItemStack bookQuill = new ItemStack(Material.WRITABLE_BOOK);
+            ItemMeta bqMeta = bookQuill.getItemMeta();
+            bqMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GREEN + "Add new command");
+            bookQuill.setItemMeta(bqMeta);
+            menu.setItem(40, bookQuill);
+        }
 
         ItemStack cmdBlock = new ItemStack(Material.COMMAND_BLOCK);
         ItemMeta cmdBlockMeta = cmdBlock.getItemMeta();
@@ -70,15 +74,19 @@ public class CommandsMenu {
         List<String> lore = new ArrayList<>();
         lore.add(ChatColor.RED + "Click to delete!");
 
+        boolean anyOpPermissions = false;
 
         // Populates spaces with commands.
         int i = 1;
-        for (SignCommand sc : sign.getPlayerCommands()) {
+        for (Map.Entry<SignCommand, Boolean> entry : sign.getPlayerCommands().entrySet()) {
+            SignCommand sc = entry.getKey();
             if (i > 26) break;
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
             bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + "/" + sc.getCommand());
-            bookMeta.setLore(lore);
+            if (p.hasPermission(Permissions.DELETE_COMMAND)) {
+                bookMeta.setLore(lore);
+            }
             book.setItemMeta(bookMeta);
             if (i == 9) i++;
             menu.setItem(i, book);
@@ -91,7 +99,9 @@ public class CommandsMenu {
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
             bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + sc.getCommand());
-            bookMeta.setLore(lore);
+            if (p.hasPermission(Permissions.DELETE_COMMAND)) {
+                bookMeta.setLore(lore);
+            }
             book.setItemMeta(bookMeta);
             if (i == 27) i++;
             menu.setItem(i, book);
@@ -104,7 +114,6 @@ public class CommandsMenu {
         menu.setItem(27, cmdBlock);
 
         menu.setItem(36, arrow);
-        menu.setItem(40, bookQuill);
     }
 
     public void prepareCommand() {
@@ -125,14 +134,25 @@ public class CommandsMenu {
         headMeta.setLore(lore);
         head.setItemMeta(headMeta);
 
+        ItemStack chainCmdBlock = new ItemStack(Material.CHAIN_COMMAND_BLOCK);
+        ItemMeta chainCmdBlockItemMeta = chainCmdBlock.getItemMeta();
+        lore.clear();
+        lore.add(ChatColor.YELLOW + "The player is granted operator for this command only.");
+        lore.add("");
+        lore.add(ChatColor.RED + "THIS IS DISCOURAGED FOR SECURITY REASONS, ONLY USE IF CONSOLE COMMAND CANNOT BE USED.");
+        chainCmdBlockItemMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Player Command with Permissions");
+        chainCmdBlockItemMeta.setLore(lore);
+        chainCmdBlock.setItemMeta(chainCmdBlockItemMeta);
+
         ItemStack cmdBlock = new ItemStack(Material.COMMAND_BLOCK);
         ItemMeta cmdBlockMeta = cmdBlock.getItemMeta();
         cmdBlockMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Console Command");
         cmdBlock.setItemMeta(cmdBlockMeta);
 
         if (p.hasPermission(Permissions.CONSOLE_COMMAND)) {
-            choiceInv.setItem(21, head);
-            choiceInv.setItem(23, cmdBlock);
+            choiceInv.setItem(20, head);
+            choiceInv.setItem(22, chainCmdBlock);
+            choiceInv.setItem(24, cmdBlock);
         } else {
             choiceInv.setItem(22, head);
         }
@@ -154,10 +174,15 @@ public class CommandsMenu {
             sign.deleteConsoleCommand(found);
         }
         found = null;
-        for (SignCommand c : sign.getPlayerCommands()) {
-            if (c.getCommand().equals(cmd)) {
-                found = c;
-                SudoSigns.config.deleteCommandFromConfig(sign, c, PlayerInput.PLAYER_COMMAND);
+        for (Map.Entry<SignCommand, Boolean> entry : sign.getPlayerCommands().entrySet()) {
+            SignCommand command = entry.getKey();
+            if (command.getCommand().equals(cmd.replace("/", ""))) {
+                found = command;
+                if (entry.getValue()) {
+                    SudoSigns.config.deleteCommandFromConfig(sign, command, PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS);
+                } else {
+                    SudoSigns.config.deleteCommandFromConfig(sign, command, PlayerInput.PLAYER_COMMAND);
+                }
             }
         }
         if (found != null) {
@@ -168,20 +193,25 @@ public class CommandsMenu {
 
     public void chooseCommandType(PlayerInput type) {
         p.closeInventory();
-        p.sendMessage(Util.prefix + ChatColor.GRAY + "Please enter the full command in chat. The phrase" + ChatColor.GOLD + " %PLAYER%" + ChatColor.GRAY +
+        p.sendMessage(Util.prefix + ChatColor.GRAY + " Please enter the full command in chat. The phrase" + ChatColor.GOLD + " %PLAYER%" + ChatColor.GRAY +
                 " will be replaced with the player who clicked the sign. To cancel, type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
         su.addTextInput(type);
     }
 
     public void addCommand(String cmd, PlayerInput type) {
         SignCommand command = new SignCommand(cmd, type);
-        if (type.equals(PlayerInput.CONSOLE_COMMAND)) {
-            sign.addConsoleCommand(command);
-            SudoSigns.config.addCommandToConfig(sign, command, PlayerInput.CONSOLE_COMMAND);
-        } else if (type.equals(PlayerInput.PLAYER_COMMAND)) {
-            sign.addPlayerCommand(command);
-            SudoSigns.config.addCommandToConfig(sign, command, PlayerInput.PLAYER_COMMAND);
+        switch (type) {
+            case CONSOLE_COMMAND:
+                sign.addConsoleCommand(command);
+                break;
+            case PLAYER_COMMAND:
+                sign.addPlayerCommand(command, false);
+                break;
+            case PLAYER_COMMAND_WITH_PERMISSIONS:
+                sign.addPlayerCommand(command, true);
+                break;
         }
+        SudoSigns.config.addCommandToConfig(sign, command, type);
         Util.sudoSignsMessage(p, ChatColor.GRAY, "Command added successfully!", null);
         goToCommandsMenu();
     }

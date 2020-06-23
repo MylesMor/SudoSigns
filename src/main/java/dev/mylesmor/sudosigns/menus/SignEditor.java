@@ -27,6 +27,7 @@ public class SignEditor {
     private MainMenu mainMenu;
     private PermissionsMenu permMenu;
     private CommandsMenu commandsMenu;
+    private MessagesMenu messagesMenu;
     private GUIPage currentPage;
 
     public SignEditor(Player p, SudoSign s, SudoUser su) {
@@ -62,6 +63,11 @@ public class SignEditor {
         commandsMenu.goToCommandsMenu();
     }
 
+    public void goToMessages() {
+        if (messagesMenu == null) messagesMenu = new MessagesMenu(su, p, sign, this);
+        messagesMenu.goToMessagesMenu();
+    }
+
     public MainMenu getMainMenu() {
         return mainMenu;
     }
@@ -72,6 +78,10 @@ public class SignEditor {
 
     public CommandsMenu getCommandsMenu() {
         return commandsMenu;
+    }
+
+    public MessagesMenu getMessagesMenu() {
+        return messagesMenu;
     }
 
     public void endEditor() {
@@ -87,7 +97,7 @@ public class SignEditor {
 
 
     public void prepareRename() {
-        p.sendMessage(Util.prefix + ChatColor.GRAY + "Please enter the new name for the sign in chat or type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
+        p.sendMessage(Util.prefix + ChatColor.GRAY + " Please enter the new name for the sign in chat or type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
         su.addTextInput(PlayerInput.RENAME);
         p.closeInventory();
     }

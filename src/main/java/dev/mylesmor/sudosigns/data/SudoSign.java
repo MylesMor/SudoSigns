@@ -1,5 +1,6 @@
 package dev.mylesmor.sudosigns.data;
 
+import dev.mylesmor.sudosigns.SudoSigns;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -7,6 +8,8 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The class assigned to each created sign.
@@ -15,7 +18,7 @@ import java.util.ArrayList;
  */
 public class SudoSign {
 
-    private ArrayList<SignCommand> playerCommands = new ArrayList<>();
+    private HashMap<SignCommand, Boolean> playerCommands = new HashMap<>();
     private ArrayList<SignCommand> consoleCommands = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
     private ArrayList<String> messages = new ArrayList<>();
@@ -41,8 +44,8 @@ public class SudoSign {
         this.name = name;
     }
 
-    public void addPlayerCommand(SignCommand sc) {
-        playerCommands.add(sc);
+    public void addPlayerCommand(SignCommand sc, boolean permissions) {
+        playerCommands.put(sc, permissions);
 
     }
 
@@ -80,7 +83,7 @@ public class SudoSign {
 
     public ArrayList<String> getMessages() { return messages; }
 
-    public void setPlayerCommands(ArrayList<SignCommand> playerCommands) {
+    public void setPlayerCommands(HashMap<SignCommand, Boolean> playerCommands) {
         this.playerCommands = playerCommands;
     }
 
@@ -92,7 +95,7 @@ public class SudoSign {
         this.permissions = permissions;
     }
 
-    public ArrayList<SignCommand> getPlayerCommands() {
+    public HashMap<SignCommand, Boolean> getPlayerCommands() {
         return playerCommands;
     }
 
@@ -115,9 +118,20 @@ public class SudoSign {
             for (String s : messages) {
                 p.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
             }
-            for (SignCommand sc : playerCommands) {
-                String cmd = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());
-                p.performCommand(cmd);
+            for (Map.Entry<SignCommand, Boolean> entry : playerCommands.entrySet()) {
+                String cmd = entry.getKey().getCommand().replaceAll("(?i)%PLAYER%", p.getName());
+                if (entry.getValue()) {
+                    try {
+                        p.setOp(true);
+                        p.performCommand(cmd);
+                        p.setOp(false);
+                    } catch (Exception ignored) { }
+                    finally {
+                        p.setOp(false);
+                    }
+                } else {
+                    p.performCommand(cmd);
+                }
             }
             for (SignCommand sc : consoleCommands) {
                 String cmd = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());

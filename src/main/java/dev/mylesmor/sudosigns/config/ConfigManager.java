@@ -91,16 +91,24 @@ public class ConfigManager {
                         SudoSign ss = new SudoSign(key);
                         ss.setSign(sign);
                         List<String> pCommands = signConfig.getStringList("signs." + key + ".player-commands");
+                        List<String> opCommands = signConfig.getStringList("signs." + key + ".op-commands");
                         List<String> cCommands = signConfig.getStringList("signs." + key + ".console-commands");
                         List<String> permissions = signConfig.getStringList("signs." + key + ".permissions");
+                        List<String> messages = signConfig.getStringList("signs." + key + ".messages");
                         for (String cmd : pCommands) {
-                            ss.addPlayerCommand(new SignCommand(cmd, PlayerInput.PLAYER_COMMAND));
+                            ss.addPlayerCommand(new SignCommand(cmd, PlayerInput.PLAYER_COMMAND), false);
+                        }
+                        for (String cmd : opCommands) {
+                            ss.addPlayerCommand(new SignCommand(cmd, PlayerInput.PLAYER_COMMAND), true);
                         }
                         for (String cmd : cCommands) {
                             ss.addConsoleCommand(new SignCommand(cmd, PlayerInput.CONSOLE_COMMAND));
                         }
                         for (String perm : permissions) {
                             ss.addPermission(perm);
+                        }
+                        for (String message : messages) {
+                            ss.addMessage(message);
                         }
                         tempSigns.put(name, ss);
                     } else {
@@ -145,8 +153,41 @@ public class ConfigManager {
         save();
     }
 
+    public void addMessageToConfig(SudoSign s, String message) {
+        String path = "signs." + s.getName() + ".messages";
+        List<String> messages = signConfig.getStringList(path);
+        messages.add(message);
+        signConfig.set(path, messages);
+        save();
+    }
+
+    public void deleteMessageFromConfig(SudoSign s, String message) {
+        String path = "signs." + s.getName() + ".messages";
+        List<String> messages = signConfig.getStringList(path);
+        messages.remove(message);
+        signConfig.set(path, messages);
+        save();
+    }
+
     public void addCommandToConfig(SudoSign s, SignCommand cmd, PlayerInput type) {
         if (signConfig.isConfigurationSection("signs." + s.getName())) {
+            switch (type) {
+                case PLAYER_COMMAND:
+                    List<String> pCmds = signConfig.getStringList("signs." + s.getName() + ".player-commands");
+                    pCmds.add(cmd.getCommand());
+                    signConfig.set("signs." + s.getName() + ".player-commands", pCmds);
+                    break;
+                case PLAYER_COMMAND_WITH_PERMISSIONS:
+                    List<String> opCmds = signConfig.getStringList("signs." + s.getName() + ".op-commands");
+                    opCmds.add(cmd.getCommand());
+                    signConfig.set("signs." + s.getName() + ".op-commands", opCmds);
+                    break;
+                case CONSOLE_COMMAND:
+                    List<String> cCmds = signConfig.getStringList("signs." + s.getName() + ".console-commands");
+                    cCmds.add(cmd.getCommand());
+                    signConfig.set("signs." + s.getName() + ".console-commands", cCmds);
+                    break;
+            }
             if (type.equals(PlayerInput.PLAYER_COMMAND)) {
                 List<String> cmds = signConfig.getStringList("signs." + s.getName() + ".player-commands");
                 cmds.add(cmd.getCommand());
@@ -213,6 +254,7 @@ public class ConfigManager {
                 locSec.set("y", y);
                 locSec.set("z", z);
                 signConfig.createSection("signs." + name + ".permissions");
+                signConfig.createSection("signs." + name + ".messages");
                 signConfig.createSection("signs." + name + ".player-commands");
                 signConfig.createSection("signs." + name + ".console-commands");
             }

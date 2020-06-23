@@ -28,8 +28,8 @@ public class ChatListener implements Listener {
         SudoUser user = SudoSigns.users.get(p.getUniqueId());
         if (user != null) {
             if (user.isTextInput() && user.isEditing()) {
-                if (user.getInputType() == PlayerInput.CONSOLE_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND) {
-                    e.setCancelled(true);
+                e.setCancelled(true);
+                if (user.getInputType() == PlayerInput.CONSOLE_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS) {
                     user.getEditor().getCommandsMenu().addCommand(e.getMessage().substring(1), user.getInputType());
                     user.removeTextInput();
                 }
@@ -49,15 +49,34 @@ public class ChatListener implements Listener {
                     return;
                 }
                 switch (user.getInputType()) {
-                    case PLAYER_COMMAND: case CONSOLE_COMMAND:
+                    case PLAYER_COMMAND: case CONSOLE_COMMAND: case PLAYER_COMMAND_WITH_PERMISSIONS:
+                        if (e.getMessage().equalsIgnoreCase("cancel")) {
+                            handle(e, true, "Cancelled!", editor, user, null, editor::goToMain);
+                            return;
+                        }
                         user.removeTextInput();
                         handle(e, true, "No command found! Cancelling...", editor, user, null, editor::goToCommands);
                         break;
                     case RENAME:
+                        if (e.getMessage().equalsIgnoreCase("cancel")) {
+                            handle(e, true, "Cancelled!", editor, user, null, editor::goToMain);
+                            return;
+                        }
                         handle(e, true, null, editor, user, edit -> editor.renameSign(ChatColor.stripColor(e.getMessage())), editor::goToMain);
                         break;
                     case PERMISSION:
+                        if (e.getMessage().equalsIgnoreCase("cancel")) {
+                            handle(e, true, "Cancelled!", editor, user, null, editor::goToPermissions);
+                            return;
+                        }
                         handle(e, true, null, editor, user, edit -> editor.getPermMenu().addPermission(true, ChatColor.stripColor(e.getMessage())), editor::goToPermissions);
+                        break;
+                    case MESSAGE:
+                        if (e.getMessage().equalsIgnoreCase("cancel")) {
+                            handle(e, true, "Cancelled!", editor, user, null, editor::goToMessages);
+                            return;
+                        }
+                        handle(e, true, null, editor, user, edit -> editor.getMessagesMenu().addMessage(ChatColor.stripColor(e.getMessage())), editor::goToMessages);
                         break;
                 }
 
@@ -68,7 +87,7 @@ public class ChatListener implements Listener {
     private void handle(AsyncPlayerChatEvent e, boolean cancel, String message, SignEditor editor, SudoUser user, Consumer<SignEditor> eventConsumer, Runnable finalAction) {
         if (cancel) e.setCancelled(true);
         if (message != null) Util.sudoSignsMessage(e.getPlayer(), ChatColor.RED, message, null);
-        if (eventConsumer != null) eventConsumer.accept(editor);
+        if (eventConsumer != null) Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, () -> eventConsumer.accept(editor));
         user.removeTextInput();
         Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, finalAction);
     }

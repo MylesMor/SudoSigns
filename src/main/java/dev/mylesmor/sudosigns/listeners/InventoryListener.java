@@ -4,6 +4,7 @@ import dev.mylesmor.sudosigns.SudoSigns;
 import dev.mylesmor.sudosigns.data.PlayerInput;
 import dev.mylesmor.sudosigns.menus.SignEditor;
 import dev.mylesmor.sudosigns.data.SudoUser;
+import dev.mylesmor.sudosigns.util.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -28,27 +29,35 @@ public class InventoryListener implements Listener {
         SudoUser user = SudoSigns.users.get(p.getUniqueId());
         if (user != null) {
             if (user.isEditing()) {
-                SignEditor editor = user.getEditor();
-                if (e.getCurrentItem() != null) {
-                    e.setCancelled(true);
-                    Material m = e.getCurrentItem().getType();
-                    String itemName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
-                    switch (editor.getCurrentPage()) {
-                        case MAIN:
-                            checkForMainMenuClicks(editor, m);
-                            break;
-                        case COMMANDS:
-                            checkForCommandsClicks(editor, m, itemName);
-                            break;
-                        case PERMISSIONS:
-                            checkForPermissionsClicks(editor, m, itemName);
-                            break;
-                        case CHOOSE_COMMAND:
-                            chooseCommandType(editor, m);
-                            break;
-                        case CHOOSE_PERMISSION:
-                            choosePermissionType(editor, m);
-                            break;
+                if (e.getClickedInventory().equals(e.getView().getTopInventory())) {
+                    SignEditor editor = user.getEditor();
+                    if (e.getCurrentItem() != null) {
+                        e.setCancelled(true);
+                        Material m = e.getCurrentItem().getType();
+                        String itemName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
+                        switch (editor.getCurrentPage()) {
+                            case MAIN:
+                                checkForMainMenuClicks(editor, m);
+                                break;
+                            case COMMANDS:
+                                checkForCommandsClicks(p, editor, m, itemName);
+                                break;
+                            case PERMISSIONS:
+                                checkForPermissionsClicks(p, editor, m, itemName);
+                                break;
+                            case CHOOSE_COMMAND:
+                                chooseCommandType(editor, m, itemName);
+                                break;
+                            case CHOOSE_PERMISSION:
+                                choosePermissionType(editor, m);
+                                break;
+                            case MESSAGES:
+                                if (e.getCurrentItem().getItemMeta().getLore() != null) {
+                                    checkForMessagesClicks(p, editor, m, e.getCurrentItem().getItemMeta().getLore().get(0).replace("§", "&"));
+                                } else {
+                                    checkForMessagesClicks(p, editor, m, null);
+                                }
+                        }
                     }
                 }
             }
@@ -91,6 +100,9 @@ public class InventoryListener implements Listener {
                 break;
             case COMMAND_BLOCK:
                 editor.goToCommands();
+                break;
+            case BIRCH_SIGN:
+                editor.goToMessages();
         }
     }
 
@@ -100,13 +112,36 @@ public class InventoryListener implements Listener {
      * @param m The material clicked on in the menu.
      * @param itemName The name of the item clicked.
      */
-    public void checkForCommandsClicks(SignEditor editor, Material m, String itemName) {
+    public void checkForCommandsClicks(Player p, SignEditor editor, Material m, String itemName) {
         switch (m) {
             case WRITABLE_BOOK:
                 editor.getCommandsMenu().prepareCommand();
                 break;
             case BOOK:
-                editor.getCommandsMenu().deleteCommand(ChatColor.stripColor(itemName));
+                if (p.hasPermission(Permissions.DELETE_COMMAND)) {
+                    editor.getCommandsMenu().deleteCommand(ChatColor.stripColor(itemName));
+                }
+                break;
+            case ARROW:
+                editor.goToMain();
+        }
+    }
+
+    /**
+     * Checks for GUI clicks in the Commands menu.
+     * @param editor The SignEditor class of the particular user.
+     * @param m The material clicked on in the menu.
+     * @param itemName The name of the item clicked.
+     */
+    public void checkForMessagesClicks(Player p, SignEditor editor, Material m, String itemName) {
+        switch (m) {
+            case WRITABLE_BOOK:
+                editor.getMessagesMenu().prepareMessage();
+                break;
+            case BOOK:
+                if (p.hasPermission(Permissions.DELETE_MESSAGE)) {
+                    editor.getMessagesMenu().deleteMessage(itemName.substring(4));
+                }
                 break;
             case ARROW:
                 editor.goToMain();
@@ -126,8 +161,11 @@ public class InventoryListener implements Listener {
         }
     }
 
-    public void chooseCommandType(SignEditor editor, Material m) {
+    public void chooseCommandType(SignEditor editor, Material m, String itemName) {
         switch (m) {
+            case CHAIN_COMMAND_BLOCK:
+                editor.getCommandsMenu().chooseCommandType(PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS);
+                break;
             case PLAYER_HEAD:
                 editor.getCommandsMenu().chooseCommandType(PlayerInput.PLAYER_COMMAND);
                 break;
@@ -136,6 +174,7 @@ public class InventoryListener implements Listener {
                 break;
             case ARROW:
                 editor.goToCommands();
+                break;
         }
     }
 
@@ -148,10 +187,12 @@ public class InventoryListener implements Listener {
      * @param m The material clicked on in the menu.
      * @param itemName The name of the item clicked.
      */
-    public void checkForPermissionsClicks(SignEditor editor, Material m, String itemName) {
+    public void checkForPermissionsClicks(Player p, SignEditor editor, Material m, String itemName) {
         switch (m) {
             case BOOK:
-                editor.getPermMenu().deletePermission(ChatColor.stripColor(itemName));
+                if (p.hasPermission(Permissions.DELETE_PERMISSION)) {
+                    editor.getPermMenu().deletePermission(ChatColor.stripColor(itemName));
+                }
                 break;
             case WRITABLE_BOOK:
                 editor.getPermMenu().preparePermission();

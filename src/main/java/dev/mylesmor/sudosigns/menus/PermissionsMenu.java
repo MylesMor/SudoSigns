@@ -4,6 +4,7 @@ import dev.mylesmor.sudosigns.SudoSigns;
 import dev.mylesmor.sudosigns.data.PlayerInput;
 import dev.mylesmor.sudosigns.data.SudoSign;
 import dev.mylesmor.sudosigns.data.SudoUser;
+import dev.mylesmor.sudosigns.util.Permissions;
 import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -55,10 +56,14 @@ public class PermissionsMenu {
         barrierMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Permissions");
         barrier.setItemMeta(barrierMeta);
 
-        ItemStack bookQuill = new ItemStack(Material.WRITABLE_BOOK);
-        ItemMeta bqMeta = bookQuill.getItemMeta();
-        bqMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GREEN + "Add new permission");
-        bookQuill.setItemMeta(bqMeta);
+        if (p.hasPermission(Permissions.ADD_PERMISSION)) {
+            ItemStack bookQuill = new ItemStack(Material.WRITABLE_BOOK);
+            ItemMeta bqMeta = bookQuill.getItemMeta();
+            bqMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GREEN + "Add new permission");
+            bookQuill.setItemMeta(bqMeta);
+            menu.setItem(40, bookQuill);
+        }
+
 
         List<String> lore = new ArrayList<>();
         lore.add(ChatColor.RED + "Click to delete!");
@@ -69,7 +74,9 @@ public class PermissionsMenu {
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
             bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + perm);
-            bookMeta.setLore(lore);
+            if (p.hasPermission(Permissions.DELETE_PERMISSION)) {
+                bookMeta.setLore(lore);
+            }
             book.setItemMeta(bookMeta);
             if (i == 9 || i == 18 || i == 27) i++;
             menu.setItem(i, book);
@@ -81,7 +88,6 @@ public class PermissionsMenu {
         menu.setItem(18, barrier);
         menu.setItem(27, barrier);
         menu.setItem(36, arrow);
-        menu.setItem(40, bookQuill);
     }
 
 
