@@ -5,10 +5,7 @@ import dev.mylesmor.sudosigns.data.PlayerInput;
 import dev.mylesmor.sudosigns.data.SignCommand;
 import dev.mylesmor.sudosigns.data.SudoSign;
 import dev.mylesmor.sudosigns.util.Util;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -56,6 +53,41 @@ public class ConfigManager {
             }
         }
         return false;
+    }
+
+    public boolean fixInvalidEntry(String name, boolean all) {
+        if (all) {
+            for (String s : invalidEntries) {
+                try {
+                    ConfigurationSection locSec = signConfig.getConfigurationSection("signs." + s + ".location");
+                    String world = locSec.getString("world");
+                    double x = locSec.getDouble("x");
+                    double y = locSec.getDouble("y");
+                    double z = locSec.getDouble("z");
+                    World w = Bukkit.getServer().getWorld(world);
+                    if (w != null) {
+                        Location loc = new Location(Bukkit.getServer().getWorld(world), x, y, z);
+                        w.getBlockAt(loc).setType(Material.OAK_SIGN);
+                    }
+                } catch (Exception ignored) {}
+            }
+            save();
+            return true;
+        } else {
+            for (String s : invalidEntries) {
+                if (name.equalsIgnoreCase(s)) {
+                    Bukkit.getLogger().warning(Boolean.toString(signConfig.isConfigurationSection("signs." + s)));
+                    signConfig.set("signs." + name, null);
+                    save();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public ArrayList<String> getInvalidEntries() {
+        return invalidEntries;
     }
 
     private void createCustomConfig() {
