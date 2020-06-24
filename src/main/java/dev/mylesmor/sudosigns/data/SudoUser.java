@@ -76,6 +76,7 @@ public class SudoUser {
         this.inputType = null;
     }
 
+
     private String passThru;
 
     public String getPassThru() {

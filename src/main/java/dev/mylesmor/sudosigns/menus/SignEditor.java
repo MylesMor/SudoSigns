@@ -93,9 +93,6 @@ public class SignEditor {
         //TODO: Add editing of sign text.
     }
 
-
-
-
     public void prepareRename() {
         p.sendMessage(Util.prefix + ChatColor.GRAY + " Please enter the new name for the sign in chat or type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
         su.addTextInput(PlayerInput.RENAME);
@@ -122,6 +119,5 @@ public class SignEditor {
             }
         }
     }
-
 
 }

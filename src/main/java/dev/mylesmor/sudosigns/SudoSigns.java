@@ -6,6 +6,7 @@ import dev.mylesmor.sudosigns.data.SudoSign;
 import dev.mylesmor.sudosigns.data.SudoUser;
 import dev.mylesmor.sudosigns.listeners.ChatListener;
 import dev.mylesmor.sudosigns.listeners.InventoryListener;
+import dev.mylesmor.sudosigns.listeners.PlayerListener;
 import dev.mylesmor.sudosigns.listeners.SignListener;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -20,9 +21,9 @@ import java.util.function.BiConsumer;
  * @author https://mylesmor.dev
  */
 public class SudoSigns extends JavaPlugin {
+
     public static Map<String, SudoSign> signs = new HashMap<>();
     public static Map<UUID, SudoUser> users = new HashMap<>();
-    Map<String, BiConsumer<CommandSender, String[]>> commands = new HashMap<>();
 
     public static ConfigManager config;
 
@@ -34,6 +35,7 @@ public class SudoSigns extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SignListener(), this);
         getServer().getPluginManager().registerEvents(new InventoryListener(), this);
         getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         sudoSignsPlugin = this;
         config = new ConfigManager();
         this.getCommand("sudosigns").setExecutor(new Commands());
