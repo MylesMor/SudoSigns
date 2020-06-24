@@ -40,7 +40,7 @@ public class Fix {
                     } else if (SudoSigns.config.getInvalidEntries().size() == size) {
                         Util.sudoSignsMessage(p, ChatColor.RED, "No invalid entries were able to be fixed automatically!", null);
                     } else if (SudoSigns.config.getInvalidEntries().size() < size) {
-                        Util.sudoSignsMessage(p, ChatColor.GREEN, "" + ChatColor.GOLD + Integer.toString(SudoSigns.config.getInvalidEntries().size() - size) + " invalid entries were able to be fixed automatically!" + ChatColor.GOLD + Integer.toString(SudoSigns.config.getInvalidEntries().size()) + ChatColor.RED + " were unable to be fixed!", null);
+                        Util.sudoSignsMessage(p, ChatColor.GREEN, "" + ChatColor.GOLD + (SudoSigns.config.getInvalidEntries().size() - size) + " invalid entries were able to be fixed automatically!" + ChatColor.GOLD + Integer.toString(SudoSigns.config.getInvalidEntries().size()) + ChatColor.RED + " were unable to be fixed!", null);
                     }
                 }
             }

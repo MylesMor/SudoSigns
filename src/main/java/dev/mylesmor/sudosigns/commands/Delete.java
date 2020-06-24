@@ -28,6 +28,8 @@ public class Delete {
                 SudoSigns.signs.remove(name);
                 SudoSigns.config.deleteSign(name);
                 Util.sudoSignsMessage(p, ChatColor.GRAY, "Sign %NAME% successfully deleted!", name);
+            } else {
+                Util.sudoSignsMessage(p, ChatColor.RED,  "A sign with name %NAME% doesn't exist!", name);
             }
         } else {
             Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
@@ -42,8 +44,12 @@ public class Delete {
     public static void confirmDelete(Player p, String[] args) {
         if (p.hasPermission(Permissions.DELETE)) {
             if (args.length != 1) return;
-            String message = "[\"\",{\"text\":\"[SUDOSIGNS] \",\"color\":\"yellow\"},{\"text\":\"Are you sure you want to delete sign \",\"color\":\"gray\"},{\"text\":\"" + args[0] + "\",\"color\":\"gold\"},{\"text\":\"? \",\"color\":\"gray\"},{\"text\":\"[YES] \",\"bold\":true,\"color\":\"green\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/ss delete " + args[0] + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[\"\",{\"text\":\"Yes, delete the sign!\",\"color\":\"green\"}]}}]";
-            p.spigot().sendMessage(ComponentSerializer.parse(message));
+            if (SudoSigns.signs.containsKey(args[0])) {
+                String message = "[\"\",{\"text\":\"[SUDOSIGNS] \",\"color\":\"yellow\"},{\"text\":\"Are you sure you want to delete sign \",\"color\":\"gray\"},{\"text\":\"" + args[0] + "\",\"color\":\"gold\"},{\"text\":\"? \",\"color\":\"gray\"},{\"text\":\"[YES] \",\"bold\":true,\"color\":\"green\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/ss delete " + args[0] + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[\"\",{\"text\":\"Yes, delete the sign!\",\"color\":\"green\"}]}}]";
+                p.spigot().sendMessage(ComponentSerializer.parse(message));
+            } else {
+                Util.sudoSignsMessage(p, ChatColor.RED,  "A sign with name %NAME% doesn't exist!", args[0]);
+            }
         }
     }
 }

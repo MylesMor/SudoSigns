@@ -21,10 +21,12 @@ public class Run {
             }
             if (args.length == 1) name = args[0];
             if (name == null) {
-                Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to run!!", null);
+                Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to run!", null);
                 SudoSigns.users.get(p.getUniqueId()).setCreate(true);
             } else if (SudoSigns.signs.containsKey(name)) {
                 SudoSigns.signs.get(name).executeCommands(p);
+            } else {
+                Util.sudoSignsMessage(p, ChatColor.RED,  "A sign with name %NAME% doesn't exist!", name);
             }
         } else {
             Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
