@@ -1,8 +1,8 @@
 ![SudoSigns logo](https://mylesmor.dev/sudosigns/logo.png)
 
 # SudoSigns
-A Spigot plugin used to run commands by interacting with a sign.
-This plugin has a convenient inventory-based GUI which allows you to perform actions on SudoSigns such as:
+A Spigot plugin used to run commands by interacting with a sign. Some inspiration for commands has been taken from [Norkorbis' Command Signs](https://www.spigotmc.org/resources/command-signs.10512/), but all the code is my own, and I have also implemented a convenient inventory-based GUI. 
+This which allows you to perform actions on SudoSigns such as:
 * Renaming the SudoSign
 * Adding permissions that a player must have to run the sign's commands
 * Adding either player or console commands to a sign
