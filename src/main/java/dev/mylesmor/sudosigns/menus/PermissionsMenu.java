@@ -75,6 +75,7 @@ public class PermissionsMenu {
             ItemMeta bookMeta = book.getItemMeta();
             bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + perm);
             if (p.hasPermission(Permissions.DELETE_PERMISSION)) {
+                lore.add("");
                 bookMeta.setLore(lore);
             }
             book.setItemMeta(bookMeta);

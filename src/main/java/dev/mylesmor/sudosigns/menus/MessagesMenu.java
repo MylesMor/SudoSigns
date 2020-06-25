@@ -99,7 +99,7 @@ public class MessagesMenu {
 
     public void prepareMessage() {
         p.closeInventory();
-        p.sendMessage(Util.prefix + ChatColor.GRAY + " Please enter in chat the message which will be shown. Use the '&' symbol for colour codes and %PLAYER% for the player who clicked the sign.. To cancel type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
+        p.sendMessage(Util.prefix + ChatColor.GRAY + " Please enter in chat the message which will be shown. Use the " + ChatColor.GOLD + "& " + ChatColor.GRAY + "symbol for chat colour codes and the phrase" + ChatColor.GOLD + " %PLAYER% " + ChatColor.GRAY + "for the player who clicked the sign. To cancel type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
         su.addTextInput(PlayerInput.MESSAGE);
     }
 

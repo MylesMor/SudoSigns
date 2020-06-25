@@ -205,15 +205,6 @@ public class ConfigManager {
                     signConfig.set("signs." + s.getName() + ".console-commands", cCmds);
                     break;
             }
-            if (type.equals(PlayerInput.PLAYER_COMMAND)) {
-                List<String> cmds = signConfig.getStringList("signs." + s.getName() + ".player-commands");
-                cmds.add(cmd.getCommand());
-                signConfig.set("signs." + s.getName() + ".player-commands", cmds);
-            } else if (type.equals(PlayerInput.CONSOLE_COMMAND)) {
-                List<String> cmds = signConfig.getStringList("signs." + s.getName() + ".console-commands");
-                cmds.add(cmd.getCommand());
-                signConfig.set("signs." + s.getName() + ".console-commands", cmds);
-            }
         }
         save();
     }

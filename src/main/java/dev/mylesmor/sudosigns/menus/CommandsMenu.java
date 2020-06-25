@@ -89,8 +89,8 @@ public class CommandsMenu {
             }
             bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + "/" + sc.getCommand());
             if (p.hasPermission(Permissions.DELETE_COMMAND)) {
-                lore.add(ChatColor.RED + "Click to delete!");
                 lore.add("");
+                lore.add(ChatColor.RED + "Click to delete!");
             }
             bookMeta.setLore(lore);
             lore.clear();
@@ -107,8 +107,8 @@ public class CommandsMenu {
             ItemMeta bookMeta = book.getItemMeta();
             bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + sc.getCommand());
             if (p.hasPermission(Permissions.DELETE_COMMAND)) {
-                lore.add(ChatColor.RED + "Click to delete!");
                 lore.add("");
+                lore.add(ChatColor.RED + "Click to delete!");
             }
             bookMeta.setLore(lore);
             lore.clear();
@@ -204,7 +204,7 @@ public class CommandsMenu {
 
     public void chooseCommandType(PlayerInput type) {
         p.closeInventory();
-        p.sendMessage(Util.prefix + ChatColor.GRAY + " Please enter the full command in chat. The phrase" + ChatColor.GOLD + " %PLAYER%" + ChatColor.GRAY +
+        p.sendMessage(Util.prefix + ChatColor.GRAY + " Please enter the full command in chat with the beginning /. The phrase" + ChatColor.GOLD + " %PLAYER%" + ChatColor.GRAY +
                 " will be replaced with the player who clicked the sign. To cancel, type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
         su.addTextInput(type);
     }
