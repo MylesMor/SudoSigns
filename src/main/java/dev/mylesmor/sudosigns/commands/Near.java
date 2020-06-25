@@ -41,13 +41,18 @@ public class Near {
                     r = 5;
                 }
             }
-            Util.sudoSignsMessage(p, ChatColor.GRAY, "Displaying SudoSigns within a radius of %NAME% blocks:", Integer.toString(r));
+            boolean found = false;
             for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
                 Location signLoc = entry.getValue().getSign().getLocation();
                 if (signLoc.distance(p.getLocation()) <= r) {
+                    if (!found) Util.sudoSignsMessage(p, ChatColor.GRAY, "Displaying SudoSigns within a radius of %NAME% block(s):", Integer.toString(r));
+                    found = true;
                     String message = Util.getSelectString(p, entry.getKey());
                     p.spigot().sendMessage(ComponentSerializer.parse(message));
                 }
+            }
+            if (!found) {
+                Util.sudoSignsMessage(p, ChatColor.GRAY, "No SudoSigns found within a radius of %NAME% block(s).", Integer.toString(r));
             }
         } else {
         Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);
