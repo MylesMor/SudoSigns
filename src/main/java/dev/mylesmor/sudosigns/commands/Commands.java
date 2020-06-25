@@ -33,6 +33,7 @@ public class Commands implements CommandExecutor {
         commands.put("copy", Copy::copy);
         commands.put("select", Select::select);
         commands.put("purge", Purge::purge);
+        commands.put("confirmpurge", Purge::confirmPurge);
         commands.put("fix", Fix::fix);
     }
 

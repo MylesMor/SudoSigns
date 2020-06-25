@@ -31,106 +31,20 @@ public class ConfigManager {
 
     private FileConfiguration signConfig;
     private File signConfigFile;
-    private ArrayList<String> invalidEntries = new ArrayList<>();
+    private InvalidEntriesManager invalidEntriesManager;
 
     public ConfigManager() {
         createCustomConfig();
         loadCustomConfig();
+        invalidEntriesManager = new InvalidEntriesManager(this, signConfig);
         loadSigns();
     }
 
-    public boolean purgeInvalidEntry(String name, boolean all) {
-        if (all) {
-            for (String s : invalidEntries) {
-                Bukkit.getLogger().warning(Boolean.toString(signConfig.isConfigurationSection("signs." + s)));
-                signConfig.set("signs." + s, null);
-            }
-            loadSigns();
-            save();
-            return true;
-        } else {
-            for (String s : invalidEntries) {
-                if (name.equalsIgnoreCase(s)) {
-                    Bukkit.getLogger().warning(Boolean.toString(signConfig.isConfigurationSection("signs." + s)));
-                    signConfig.set("signs." + name, null);
-                    loadSigns();
-                    save();
-                    return true;
-                }
-            }
-        }
-        return false;
+    public InvalidEntriesManager getInvalidEntriesManager() {
+        return invalidEntriesManager;
     }
 
-    public boolean fixInvalidEntry(String name, boolean all) {
-        if (all) {
-            for (String s : invalidEntries) {
-                fixEntry(s);
-            }
-            save();
-            return true;
-        } else {
-            for (String s : invalidEntries) {
-                if (name.equals(s)) {
-                    if (fixEntry(s)) {
-                        save();
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 
-    private boolean fixEntry(String s) {
-        try {
-            ConfigurationSection locSec = signConfig.getConfigurationSection("signs." + s + ".location");
-            String world = locSec.getString("world");
-            double x = locSec.getDouble("x");
-            double y = locSec.getDouble("y");
-            double z = locSec.getDouble("z");
-            Vector direction = locSec.getVector("direction");
-            float yaw = Float.valueOf(locSec.get("yaw").toString() + "f");
-            float pitch = Float.valueOf(locSec.get("pitch").toString() + "f");
-            Material material = Material.valueOf(signConfig.getString("signs." + s + ".blocktype"));
-            BlockFace blockFace = BlockFace.valueOf(locSec.getString("rotation"));
-            World w = Bukkit.getServer().getWorld(world);
-            if (w != null) {
-                Location loc = new Location(Bukkit.getServer().getWorld(world), x, y, z);
-                loc.setDirection(direction);
-                loc.setPitch(pitch);
-                loc.setYaw(yaw);
-                w.getBlockAt(loc).setType(material);
-                Block b = w.getBlockAt(loc);
-                if (b.getBlockData() instanceof org.bukkit.block.data.type.Sign) {
-                    org.bukkit.block.data.type.Sign facing = (org.bukkit.block.data.type.Sign) b.getBlockData();
-                    facing.setRotation(blockFace);
-                    b.setBlockData(facing);
-                } else if (b.getBlockData() instanceof org.bukkit.block.data.type.WallSign){
-                    org.bukkit.block.data.type.WallSign facing = (org.bukkit.block.data.type.WallSign) b.getBlockData();
-                    facing.setFacing(blockFace);
-                    b.setBlockData(facing);
-                }
-                Sign newSign = (Sign) b.getState();
-                Bukkit.getLogger().warning(w.getBlockAt(loc).getBlockData().toString());
-                List<String> lines = getSignText(s);
-                int i = 0;
-                for (String line : lines) {
-                    newSign.setLine(i, ChatColor.translateAlternateColorCodes('&', line));
-                    i++;
-                }
-                newSign.update();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public ArrayList<String> getInvalidEntries() {
-        return invalidEntries;
-    }
 
     private void createCustomConfig() {
         if (!SudoSigns.sudoSignsPlugin.getDataFolder().exists()) {
@@ -154,6 +68,9 @@ public class ConfigManager {
             if (!signConfig.isConfigurationSection("signs")) {
                 signConfig.createSection("signs");
                 save();
+            }
+            if (invalidEntriesManager != null) {
+                invalidEntriesManager.setConfig(signConfig);
             }
         } catch (IOException | InvalidConfigurationException e) {
             Bukkit.getLogger().warning("[SUDOSIGNS] Failed to initialise signs.yml!");
@@ -221,12 +138,12 @@ public class ConfigManager {
                 return null;
             }
         }
-        invalidEntries = invalidSigns;
+        invalidEntriesManager.setInvalidEntries(invalidSigns);
         SudoSigns.signs = tempSigns;
         return invalidSigns;
     }
 
-    private void save() {
+    void save() {
         try {
             signConfig.save(signConfigFile);
         } catch (IOException e) {
@@ -339,17 +256,6 @@ public class ConfigManager {
         save();
     }
 
-    public List<String> getSignText(String name) {
-        List<String> signSec = signConfig.getStringList("signs." + name + ".text");
-        for (String item : signSec) {
-            item = ChatColor.translateAlternateColorCodes('&', item);
-        }
-        if (signSec.size() != 0) {
-            return signSec;
-        }
-        return null;
-    }
-
     public void saveSign(SudoSign s, Player p) {
         String name = s.getName();
         try {
@@ -364,17 +270,11 @@ public class ConfigManager {
                 double x = s.getSign().getLocation().getX();
                 double y = s.getSign().getLocation().getY();
                 double z = s.getSign().getLocation().getZ();
-                Vector direction = s.getSign().getLocation().getDirection();
-                float pitch = s.getSign().getLocation().getPitch();
-                float yaw = s.getSign().getLocation().getYaw();
                 signConfig.set("signs." + name + ".blocktype", s.getSign().getType().toString());
                 locSec.set("world", world);
                 locSec.set("x", x);
                 locSec.set("y", y);
                 locSec.set("z", z);
-                locSec.set("direction", direction);
-                locSec.set("pitch", pitch);
-                locSec.set("yaw", yaw);
                 if (s.getSign().getWorld().getBlockAt(s.getSign().getLocation()).getBlockData() instanceof org.bukkit.block.data.type.Sign) {
                     org.bukkit.block.data.type.Sign facing = (org.bukkit.block.data.type.Sign) s.getSign().getWorld().getBlockAt(s.getSign().getLocation()).getBlockData();
                     locSec.set("rotation", facing.getRotation().toString());

@@ -21,7 +21,7 @@ public class Fix {
             }
             if (args.length == 1) name = args[0];
             if (name != null) {
-                if (SudoSigns.config.fixInvalidEntry(args[0], false)) {
+                if (SudoSigns.config.getInvalidEntriesManager().fixInvalidEntry(args[0], false)) {
                     SudoSigns.config.loadSigns();
                     if (SudoSigns.signs.containsKey(args[0])) {
                         Util.sudoSignsMessage(p, ChatColor.GREEN, "Sign " + ChatColor.GOLD + args[0] + ChatColor.GREEN + " successfully fixed!", null);
@@ -32,15 +32,15 @@ public class Fix {
                     Util.sudoSignsMessage(p, ChatColor.RED, "Nothing fixed! That entry is not invalid.", null);
                 }
             } else {
-                int size = SudoSigns.config.getInvalidEntries().size();
-                if (SudoSigns.config.fixInvalidEntry(null, true)) {
+                int size = SudoSigns.config.getInvalidEntriesManager().getInvalidEntries().size();
+                if (SudoSigns.config.getInvalidEntriesManager().fixInvalidEntry(null, true)) {
                     SudoSigns.config.loadSigns();
-                    if (SudoSigns.config.getInvalidEntries().size() == 0) {
+                    if (SudoSigns.config.getInvalidEntriesManager().getInvalidEntries().size() == 0) {
                         Util.sudoSignsMessage(p, ChatColor.GREEN, "All invalid entries successfully purged from the config!", null);
-                    } else if (SudoSigns.config.getInvalidEntries().size() == size) {
+                    } else if (SudoSigns.config.getInvalidEntriesManager().getInvalidEntries().size() == size) {
                         Util.sudoSignsMessage(p, ChatColor.RED, "No invalid entries were able to be fixed automatically!", null);
-                    } else if (SudoSigns.config.getInvalidEntries().size() < size) {
-                        Util.sudoSignsMessage(p, ChatColor.GREEN, "" + ChatColor.GOLD + (SudoSigns.config.getInvalidEntries().size() - size) + " invalid entries were able to be fixed automatically!" + ChatColor.GOLD + Integer.toString(SudoSigns.config.getInvalidEntries().size()) + ChatColor.RED + " were unable to be fixed!", null);
+                    } else if (SudoSigns.config.getInvalidEntriesManager().getInvalidEntries().size() < size) {
+                        Util.sudoSignsMessage(p, ChatColor.GREEN, "" + ChatColor.GOLD + (SudoSigns.config.getInvalidEntriesManager().getInvalidEntries().size() - size) + " invalid entries were able to be fixed automatically!" + ChatColor.GOLD + Integer.toString(SudoSigns.config.getInvalidEntriesManager().getInvalidEntries().size()) + ChatColor.RED + " were unable to be fixed!", null);
                     }
                 }
             }

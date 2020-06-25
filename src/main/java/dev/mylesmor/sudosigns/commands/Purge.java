@@ -3,6 +3,7 @@ package dev.mylesmor.sudosigns.commands;
 import dev.mylesmor.sudosigns.SudoSigns;
 import dev.mylesmor.sudosigns.util.Permissions;
 import dev.mylesmor.sudosigns.util.Util;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -26,7 +27,7 @@ public class Purge {
             }
             if (args.length == 1) name = args[0];
             if (name != null) {
-                if (SudoSigns.config.purgeInvalidEntry(args[0], false)) {
+                if (SudoSigns.config.getInvalidEntriesManager().purgeInvalidEntry(args[0], false)) {
                     Util.sudoSignsMessage(p, ChatColor.GREEN, "Sign " + ChatColor.GOLD + args[0] + ChatColor.GREEN + " successfully purged from the config!", null);
                 } else {
                     Util.sudoSignsMessage(p, ChatColor.RED, "Nothing purged! That entry is not invalid.", null);
@@ -39,13 +40,13 @@ public class Purge {
     }
 
     private static void purgeAll(Player p) {
-        int beforeSize = SudoSigns.config.getInvalidEntries().size();
+        int beforeSize = SudoSigns.config.getInvalidEntriesManager().getInvalidEntries().size();
         if (beforeSize == 0) {
             Util.sudoSignsMessage(p, ChatColor.GREEN, "No invalid entries found to remove from the config!", null);
             return;
         }
-        if (SudoSigns.config.purgeInvalidEntry(null, true)) {
-            int afterSize = SudoSigns.config.getInvalidEntries().size();
+        if (SudoSigns.config.getInvalidEntriesManager().purgeInvalidEntry(null, true)) {
+            int afterSize = SudoSigns.config.getInvalidEntriesManager().getInvalidEntries().size();
             if (afterSize == 0) {
                 Util.sudoSignsMessage(p, ChatColor.GREEN, "All invalid entries successfully purged from the config!", null);
             } else if (afterSize == beforeSize) {
@@ -55,5 +56,13 @@ public class Purge {
             }
         }
         return;
+    }
+
+    public static void confirmPurge(Player p, String[] args) {
+        if (p.hasPermission(Permissions.PURGE)) {
+            if (args.length != 1) return;
+            String message = "[\"\",{\"text\":\"[SUDOSIGNS] \",\"color\":\"yellow\"},{\"text\":\"Are you sure you want to purge sign \",\"color\":\"gray\"},{\"text\":\"" + args[0] + "\",\"color\":\"gold\"},{\"text\":\"? \",\"color\":\"gray\"},{\"text\":\"[YES] \",\"bold\":true,\"color\":\"green\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/ss purge " + args[0] + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[\"\",{\"text\":\"Yes, delete the sign!\",\"color\":\"green\"}]}}]";
+            p.spigot().sendMessage(ComponentSerializer.parse(message));
+        }
     }
 }

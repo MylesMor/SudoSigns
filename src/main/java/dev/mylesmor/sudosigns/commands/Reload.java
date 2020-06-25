@@ -3,6 +3,7 @@ package dev.mylesmor.sudosigns.commands;
 import dev.mylesmor.sudosigns.SudoSigns;
 import dev.mylesmor.sudosigns.util.Permissions;
 import dev.mylesmor.sudosigns.util.Util;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -27,14 +28,20 @@ public class Reload {
                     if (invalidSigns.size() == 0) {
                         Util.sudoSignsMessage(p, ChatColor.GREEN, "Config successfully reloaded! Found " + invalidSigns.size() + " invalid signs! ", null);
                     } else {
-                        StringBuilder message = new StringBuilder("Config successfully reloaded!" + ChatColor.RED + " Found " + invalidSigns.size() + " invalid sign(s): ");
-                        StringJoiner joiner = new StringJoiner("" + ChatColor.RED + ", ", "", ChatColor.RED + ". ");
+                        Util.sudoSignsMessage(p, ChatColor.GREEN, "Config successfully reloaded!" + ChatColor.RED + " Found " + invalidSigns.size() + " invalid sign(s): ", null);
                         for (String name : invalidSigns) {
-                            joiner.add(ChatColor.GOLD + name);
+                            StringBuilder clickableMessage = new StringBuilder("[\"\",{\"text\":\"[SUDOSIGNS] \",\"color\":\"yellow\"},{\"text\":\"Sign: \",\"color\":\"red\"},{\"text\":\"" + name + " \",\"bold\":true,\"color\":\"gold\"}]");
+
+                            if (p.hasPermission(Permissions.PURGE)) {
+                                clickableMessage = new StringBuilder(clickableMessage.substring(0, clickableMessage.length() - 1));
+                                clickableMessage.append(",{\"text\":\"[FIX] \",\"bold\":true,\"color\":\"green\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/ss fix ").append(name).append("\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[\"\",{\"text\":\"Fix ").append(name).append(" by placing a replica of the sign at the location\",\"color\":\"green\"}]}}]");
+                            }
+                            if (p.hasPermission(Permissions.FIX)) {
+                                clickableMessage = new StringBuilder(clickableMessage.substring(0, clickableMessage.length() - 1));
+                                clickableMessage.append(",{\"text\":\"[PURGE]\",\"bold\":true,\"color\":\"red\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/ss confirmpurge ").append(name).append("\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[\"\",{\"text\":\"Remove ").append(name).append(" from the config file\",\"color\":\"red\"}]}}]");
+                            }
+                            p.spigot().sendMessage(ComponentSerializer.parse(clickableMessage.toString()));
                         }
-                        message.append(joiner.toString());
-                        message.append(ChatColor.GRAY + "Use " + ChatColor.LIGHT_PURPLE + "/ss fix <name>" + ChatColor.GRAY + " to fix or " + ChatColor.LIGHT_PURPLE + "/ss purge <name>" + ChatColor.GRAY + " to remove.");
-                        Util.sudoSignsMessage(p, ChatColor.GREEN, message.toString(), null);
                     }
                     return;
                 }
