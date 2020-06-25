@@ -7,6 +7,7 @@ This which allows you to perform actions on SudoSigns such as:
 * Adding permissions that a player must have to run the sign's commands
 * Adding either player or console commands to a sign
 * Adding messages which are shown to the player
+* Use colour codes (`&`) on the sign for coloured text
 
 For in-depth details on the command, permissions and features of this plugin, visit the [Wiki](https://github.com/MylesMor/SudoSigns/wiki)!
 
