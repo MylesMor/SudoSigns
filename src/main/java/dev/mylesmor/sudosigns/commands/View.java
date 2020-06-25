@@ -19,15 +19,18 @@ public class View {
     public static void view(Player p, String[] args) {
         if (p.hasPermission(Permissions.VIEW)) {
             String name = null;
+            if (args == null) {
+                Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to view!", null);
+                SudoSigns.users.get(p.getUniqueId()).setView(true);
+                return;
+            }
             if (args.length > 1) {
                 Util.sudoSignsMessage(p, ChatColor.RED, "Invalid syntax! " + ChatColor.GRAY + "Correct syntax: " + ChatColor.LIGHT_PURPLE + "/ss view [name]" + ChatColor.GRAY + ".", null);
                 return;
             }
-            if (args.length == 1) name = args[0];
+            name = args[0];
             SudoSign sign = SudoSigns.signs.get(name);
-            if (name == null) {
-                SudoSigns.users.get(p.getUniqueId()).setDelete(true);
-            } else if (sign != null) {
+            if (sign != null) {
                 Location signLoc = sign.getSign().getLocation();
                 String locString = "x=" + signLoc.getX() + " y=" + signLoc.getY() + " z=" + signLoc.getZ();
                 Util.sudoSignsMessage(p, ChatColor.GRAY, "Displaying details for sign %NAME%:", name);

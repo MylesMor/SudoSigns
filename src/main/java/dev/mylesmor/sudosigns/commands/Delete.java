@@ -15,16 +15,19 @@ public class Delete {
      */
     public static void delete(Player p, String[] args) {
         if (p.hasPermission(Permissions.DELETE)) {
-            String name = null;
-            if (args.length > 1) {
-                Util.sudoSignsMessage(p, ChatColor.RED, "Invalid syntax! " + ChatColor.GRAY + "Correct syntax: " + ChatColor.LIGHT_PURPLE + "/ss delete [name]" + ChatColor.GRAY + ".", null);
-                return;
-            }
-            if (args.length == 1) name = args[0];
-            if (name == null) {
+            String name;
+            if (args != null) {
+                if (args.length > 1) {
+                    Util.sudoSignsMessage(p, ChatColor.RED, "Invalid syntax! " + ChatColor.GRAY + "Correct syntax: " + ChatColor.LIGHT_PURPLE + "/ss delete [name]" + ChatColor.GRAY + ".", null);
+                    return;
+                }
+            } else {
                 Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to delete!", null);
                 SudoSigns.users.get(p.getUniqueId()).setDelete(true);
-            } else if (SudoSigns.signs.containsKey(name)) {
+                return;
+            }
+            name = args[0];
+            if (SudoSigns.signs.containsKey(name)) {
                 SudoSigns.signs.remove(name);
                 SudoSigns.config.deleteSign(name);
                 Util.sudoSignsMessage(p, ChatColor.GRAY, "Sign %NAME% successfully deleted!", name);

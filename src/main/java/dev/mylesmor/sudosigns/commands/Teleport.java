@@ -16,7 +16,7 @@ public class Teleport {
      */
     public static void tp(Player p, String[] args) {
         if (p.hasPermission(Permissions.TP)) {
-            if (args.length != 1) {
+            if (args == null || args.length != 1) {
                 Util.sudoSignsMessage(p, ChatColor.RED, "Invalid syntax! " + ChatColor.GRAY + "Correct syntax: " + ChatColor.LIGHT_PURPLE + "/ss tp <name>" + ChatColor.GRAY + ".", null);
                 return;
             }

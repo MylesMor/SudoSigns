@@ -21,15 +21,16 @@ public class Near {
      */
     public static void near(Player p, String[] args) {
         if (p.hasPermission(Permissions.NEAR)) {
-            if (args.length > 1) {
-                Util.sudoSignsMessage(p, ChatColor.RED, "Invalid syntax! " + ChatColor.GRAY + "Correct syntax: " + ChatColor.LIGHT_PURPLE + "/ss near [radius]" + ChatColor.GRAY + ".", null);
-                return;
-            }
-            String radius = null;
-            if (args.length == 1) {
-                radius = args[0];
-            }
             int r;
+            String radius = null;
+            if (args != null) {
+                if (args.length > 1) {
+                    Util.sudoSignsMessage(p, ChatColor.RED, "Invalid syntax! " + ChatColor.GRAY + "Correct syntax: " + ChatColor.LIGHT_PURPLE + "/ss near [radius]" + ChatColor.GRAY + ".", null);
+                    return;
+                } else if (args.length == 1) {
+                    radius = args[0];
+                }
+            }
             if (radius == null) {
                 r = 5;
             } else {

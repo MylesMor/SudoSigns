@@ -17,7 +17,7 @@ public class Copy {
         if (p.hasPermission(Permissions.COPY)) {
             String oldName = null;
             String newName = null;
-            if (args.length < 1 || args.length > 2) {
+            if (args == null || args.length < 1 || args.length > 2) {
                 Util.sudoSignsMessage(p, ChatColor.RED, "Invalid syntax! " + ChatColor.GRAY + "Correct syntax: " + ChatColor.LIGHT_PURPLE + "/ss copy [old-sign-name] <new-sign-name>" + ChatColor.GRAY + ".", null);
                 return;
             }
@@ -39,9 +39,7 @@ public class Copy {
                         if (!SudoSigns.signs.containsKey(newName)) {
                             Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to copy to!", null);
                             SudoSign newSign = new SudoSign(newName);
-                            newSign.setPermissions(oldSign.getPermissions());
-                            newSign.setPlayerCommands(oldSign.getPlayerCommands());
-                            newSign.setConsoleCommands(oldSign.getConsoleCommands());
+                            newSign.copyFrom(oldSign);
                             SudoSigns.users.get(p.getUniqueId()).setCopy(true);
                             SudoSigns.signs.put(newName, newSign);
                         } else {

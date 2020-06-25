@@ -14,24 +14,8 @@ public class Fix {
      */
     public static void fix(Player p, String[] args) {
         if (p.hasPermission(Permissions.FIX)) {
-            String name = null;
-            if (args.length > 2) {
-                Util.sudoSignsMessage(p, ChatColor.RED, "Invalid syntax! " + ChatColor.GRAY + "Correct syntax: " + ChatColor.LIGHT_PURPLE + "/ss fix [name]" + ChatColor.GRAY + ".", null);
-                return;
-            }
-            if (args.length == 1) name = args[0];
-            if (name != null) {
-                if (SudoSigns.config.getInvalidEntriesManager().fixInvalidEntry(args[0], false)) {
-                    SudoSigns.config.loadSigns();
-                    if (SudoSigns.signs.containsKey(args[0])) {
-                        Util.sudoSignsMessage(p, ChatColor.GREEN, "Sign " + ChatColor.GOLD + args[0] + ChatColor.GREEN + " successfully fixed!", null);
-                    } else {
-                        Util.sudoSignsMessage(p, ChatColor.RED, "Sign " + ChatColor.GOLD + args[0] + ChatColor.RED + " was unable to be fixed!", null);
-                    }
-                } else {
-                    Util.sudoSignsMessage(p, ChatColor.RED, "Nothing fixed! That entry is not invalid.", null);
-                }
-            } else {
+            String name;
+            if (args == null) {
                 int size = SudoSigns.config.getInvalidEntriesManager().getInvalidEntries().size();
                 if (SudoSigns.config.getInvalidEntriesManager().fixInvalidEntry(null, true)) {
                     SudoSigns.config.loadSigns();
@@ -43,6 +27,22 @@ public class Fix {
                         Util.sudoSignsMessage(p, ChatColor.GREEN, "" + ChatColor.GOLD + (SudoSigns.config.getInvalidEntriesManager().getInvalidEntries().size() - size) + " invalid entries were able to be fixed automatically!" + ChatColor.GOLD + Integer.toString(SudoSigns.config.getInvalidEntriesManager().getInvalidEntries().size()) + ChatColor.RED + " were unable to be fixed!", null);
                     }
                 }
+                return;
+            }
+            if (args.length > 2) {
+                Util.sudoSignsMessage(p, ChatColor.RED, "Invalid syntax! " + ChatColor.GRAY + "Correct syntax: " + ChatColor.LIGHT_PURPLE + "/ss fix [name]" + ChatColor.GRAY + ".", null);
+                return;
+            }
+            name = args[0];
+            if (SudoSigns.config.getInvalidEntriesManager().fixInvalidEntry(name, false)) {
+                SudoSigns.config.loadSigns();
+                if (SudoSigns.signs.containsKey(name)) {
+                    Util.sudoSignsMessage(p, ChatColor.GREEN, "Sign " + ChatColor.GOLD + name + ChatColor.GREEN + " successfully fixed!", null);
+                } else {
+                    Util.sudoSignsMessage(p, ChatColor.RED, "Sign " + ChatColor.GOLD + name + ChatColor.RED + " was unable to be fixed!", null);
+                }
+            } else {
+                Util.sudoSignsMessage(p, ChatColor.RED, "Nothing fixed! That entry is not invalid.", null);
             }
         } else {
             Util.sudoSignsMessage(p, ChatColor.RED, "You don't have permission to do this!", null);

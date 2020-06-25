@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class SignListener implements Listener {
@@ -68,7 +69,6 @@ public class SignListener implements Listener {
             Sign sign = (Sign) b.getState();
             for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
                 if (entry.getValue().getSign().equals(sign)) {
-                    entry.getValue().executeCommands(p);
                     user.setSelectToCopy(false);
                     p.performCommand("ss copy " + entry.getKey() + " " + user.getPassThru());
                     return;
@@ -82,7 +82,7 @@ public class SignListener implements Listener {
     }
 
     private void runSign(Player p, PlayerInteractEvent e) {
-        if (e.getClickedBlock().getState() instanceof Sign) {
+        if (Objects.requireNonNull(e.getClickedBlock()).getState() instanceof Sign) {
             if (p.hasPermission(Permissions.SELECT) && e.getAction() == Action.RIGHT_CLICK_BLOCK || !p.hasPermission(Permissions.SELECT)) {
                 Sign sign = (Sign) e.getClickedBlock().getState();
                 for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
@@ -115,6 +115,7 @@ public class SignListener implements Listener {
         if (b.getState() instanceof Sign) {
             Sign newSign = (Sign) b.getState();
             SudoSigns.signs.get(user.getPassThru()).setSign(newSign);
+            SudoSigns.signs.get(user.getPassThru()).addLines();
             SudoSigns.config.saveToFile(SudoSigns.signs.get(user.getPassThru()), true, p);
             Util.sudoSignsMessage(p, ChatColor.GRAY, "Sign has been copied to sign %NAME% successfully!", user.getPassThru());
         } else {
@@ -130,7 +131,7 @@ public class SignListener implements Listener {
             boolean found = false;
             for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
                 if (entry.getValue().getSign().equals(sign)) {
-                    entry.getValue().executeCommands(p);
+                    p.performCommand("ss run " + entry.getKey());
                     found = true;
                 }
             }
@@ -149,8 +150,7 @@ public class SignListener implements Listener {
             boolean found = false;
             for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
                 if (entry.getValue().getSign().equals(sign)) {
-                    SignEditor editor = new SignEditor(p, SudoSigns.signs.get(entry.getKey()), user);
-                    user.setEditor(editor);
+                    p.performCommand("ss edit " + entry.getKey());
                     found = true;
                 }
             }
@@ -175,9 +175,7 @@ public class SignListener implements Listener {
             if (name == null) {
                 Util.sudoSignsMessage(p, ChatColor.RED, "This is not a SudoSign!", null);
             } else {
-                SudoSigns.signs.remove(name);
-                SudoSigns.config.deleteSign(name);
-                Util.sudoSignsMessage(p, ChatColor.GRAY, "Sign %NAME% successfully deleted!", name);
+                p.performCommand("ss delete " + name);
             }
         } else {
             Util.sudoSignsMessage(p, ChatColor.RED,"A sign wasn't clicked! Cancelling...", null);
@@ -191,14 +189,7 @@ public class SignListener implements Listener {
             boolean found = false;
             for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
                 if (entry.getValue().getSign().equals(sign)) {
-                    SudoSign ssign = SudoSigns.signs.get(entry.getKey());
-                    Location signLoc = ssign.getSign().getLocation();
-                    String locString = "x=" + signLoc.getX() + " y=" + signLoc.getY() + " z=" + signLoc.getZ();
-                    Util.sudoSignsMessage(p, ChatColor.GRAY, "Displaying details for sign %NAME%:", entry.getKey());
-                    Util.sudoSignsMessage(p, ChatColor.GRAY,"Location: " + ChatColor.LIGHT_PURPLE + locString, null);
-                    Util.sudoSignsMessage(p, ChatColor.GRAY, "Permissions: " + ChatColor.LIGHT_PURPLE + ssign.getPermissions().size(), null);
-                    Util.sudoSignsMessage(p, ChatColor.GRAY,"Player Commands: " + ChatColor.LIGHT_PURPLE + ssign.getPlayerCommands().size(), null);
-                    Util.sudoSignsMessage(p, ChatColor.GRAY,"Console Commands: " + ChatColor.LIGHT_PURPLE + ssign.getConsoleCommands().size(), null);
+                    p.performCommand("ss view " + entry.getKey());
                     found = true;
                 }
             }

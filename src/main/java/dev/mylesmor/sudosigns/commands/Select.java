@@ -15,7 +15,7 @@ public class Select {
      */
     public static void select(Player p, String[] args) {
         if (p.hasPermission(Permissions.SELECT)) {
-            if (args.length != 1) {
+            if (args == null || args.length != 1) {
                 Util.sudoSignsMessage(p, ChatColor.RED, "Invalid syntax! " + ChatColor.GRAY + "Correct syntax: " + ChatColor.LIGHT_PURPLE + "/ss select <name>" + ChatColor.GRAY + ".", null);
             } else {
                 String message = Util.getSelectString(p, args[0]);

@@ -100,7 +100,17 @@ public class SudoSign {
         messages.remove(s);
     }
 
+    public void copyFrom(SudoSign s) {
+        this.permissions = s.getPermissions();
+        this.playerCommands = s.getPlayerCommands();
+        this.consoleCommands = s.getConsoleCommands();
+        this.messages = s.getMessages();
+    }
+
     public ArrayList<String> getMessages() { return messages; }
+
+    public void setMessages(ArrayList<String> messages) { this.messages = messages; }
+
 
     public void setPlayerCommands(HashMap<SignCommand, Boolean> playerCommands) {
         this.playerCommands = playerCommands;

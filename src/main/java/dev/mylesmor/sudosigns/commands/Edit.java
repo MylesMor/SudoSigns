@@ -16,16 +16,18 @@ public class Edit {
      */
     public static void edit(Player p, String[] args) {
         if (p.hasPermission(Permissions.EDIT)) {
-            String name = null;
+            String name;
+            if (args == null) {
+                Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to edit!", null);
+                SudoSigns.users.get(p.getUniqueId()).setEdit(true);
+                return;
+            }
             if (args.length > 1) {
                 Util.sudoSignsMessage(p, ChatColor.RED, "Invalid syntax! " + ChatColor.GRAY + "Correct syntax: " + ChatColor.LIGHT_PURPLE + "/ss edit [name]" + ChatColor.GRAY + ".", null);
                 return;
             }
-            if (args.length == 1) name = args[0];
-            if (name == null) {
-                Util.sudoSignsMessage(p, ChatColor.GRAY, "Please click the sign you'd like to edit!", null);
-                SudoSigns.users.get(p.getUniqueId()).setEdit(true);
-            } else if (SudoSigns.signs.containsKey(name)) {
+            name = args[0];
+            if (SudoSigns.signs.containsKey(name)) {
                 SignEditor editor = new SignEditor(p, SudoSigns.signs.get(name), SudoSigns.users.get(p.getUniqueId()));
                 SudoSigns.users.get(p.getUniqueId()).setEditor(editor);
             } else {
