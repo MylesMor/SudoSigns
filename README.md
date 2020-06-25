@@ -7,6 +7,7 @@ This which allows you to perform actions on SudoSigns such as:
 * Adding permissions that a player must have to run the sign's commands
 * Adding either player or console commands to a sign
 * Adding messages which are shown to the player
+* Use colour codes (`&`) on the sign for coloured text
 
 For in-depth details on the command, permissions and features of this plugin, visit the [Wiki](https://github.com/MylesMor/SudoSigns/wiki)!
 
@@ -17,6 +18,14 @@ For in-depth details on the command, permissions and features of this plugin, vi
 
 ## Getting Started
 Visit the [Getting Started](https://github.com/MylesMor/SudoSigns/wiki/Getting-Started) page to find out how to setup your first SudoSign!
+
+## Issues
+The best course of action would be opening an issue [here](https://github.com/MylesMor/SudoSigns/issues), but I will also try to keep up-to-date with the Spigot comments section.
+
+In your issue report, please include as much information as possible including:
+* The Spigot version
+* Any errors in the console (please copy these in full)
+* The steps to reproduce the issue
 
 ## Upcoming Features
 These features will be available in future updates!
