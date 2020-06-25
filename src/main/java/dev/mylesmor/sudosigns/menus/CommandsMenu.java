@@ -107,8 +107,11 @@ public class CommandsMenu {
             ItemMeta bookMeta = book.getItemMeta();
             bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + sc.getCommand());
             if (p.hasPermission(Permissions.DELETE_COMMAND)) {
-                bookMeta.setLore(lore);
+                lore.add(ChatColor.RED + "Click to delete!");
+                lore.add("");
             }
+            bookMeta.setLore(lore);
+            lore.clear();
             book.setItemMeta(bookMeta);
             if (i == 27) i++;
             menu.setItem(i, book);
