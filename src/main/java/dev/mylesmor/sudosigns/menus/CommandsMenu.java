@@ -83,7 +83,7 @@ public class CommandsMenu {
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
             if (entry.getValue()) {
-                lore.add(ChatColor.YELLOW + "Player Command with Permissions (player is granted OP for the duration of this command).");
+                lore.add(ChatColor.YELLOW + "Player Command with Permissions (player is granted OP for this command only).");
             } else {
                 lore.add(ChatColor.YELLOW + "Player Command");
             }
@@ -149,7 +149,8 @@ public class CommandsMenu {
         lore.clear();
         lore.add(ChatColor.YELLOW + "The player is granted operator for this command only.");
         lore.add("");
-        lore.add(ChatColor.RED + "THIS IS DISCOURAGED FOR SECURITY REASONS, ONLY USE IF CONSOLE COMMAND CANNOT BE USED.");
+        lore.add(ChatColor.RED + "THIS IS DISCOURAGED FOR SECURITY REASONS");
+        lore.add(ChatColor.RED + "ONLY USE IF CONSOLE COMMAND CANNOT BE USED.");
         chainCmdBlockItemMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Player Command with Permissions");
         chainCmdBlockItemMeta.setLore(lore);
         chainCmdBlock.setItemMeta(chainCmdBlockItemMeta);

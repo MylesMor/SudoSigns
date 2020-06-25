@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainMenu {
 
@@ -52,6 +53,11 @@ public class MainMenu {
             ItemStack barrier = new ItemStack(Material.BARRIER);
             ItemMeta barrierMeta = barrier.getItemMeta();
             barrierMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Permissions");
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.YELLOW + "Players must have all permissions");
+            lore.add(ChatColor.YELLOW + "listed in this section to be able");
+            lore.add(ChatColor.YELLOW + "to use the sign.");
+            barrierMeta.setLore(lore);
             barrier.setItemMeta(barrierMeta);
             items.add(barrier);
         }
@@ -59,6 +65,10 @@ public class MainMenu {
         if (p.hasPermission(Permissions.VIEW_COMMAND)) {
             ItemStack cmdBlock = new ItemStack(Material.COMMAND_BLOCK);
             ItemMeta cmdBlockMeta = cmdBlock.getItemMeta();
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.YELLOW + "Commands listed here will be executed");
+            lore.add(ChatColor.YELLOW + "when a player uses the sign.");
+            cmdBlockMeta.setLore(lore);
             cmdBlockMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Commands");
             cmdBlock.setItemMeta(cmdBlockMeta);
             items.add(cmdBlock);
@@ -68,6 +78,10 @@ public class MainMenu {
             ItemStack signBlock = new ItemStack(Material.BIRCH_SIGN);
             ItemMeta signMeta = signBlock.getItemMeta();
             signMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Messages");
+            List<String> lore = new ArrayList<>();
+            lore.add(ChatColor.YELLOW + "Messages listed here will be shown");
+            lore.add(ChatColor.YELLOW + "to the player when they use the sign.");
+            signMeta.setLore(lore);
             signBlock.setItemMeta(signMeta);
             items.add(signBlock);
         }
