@@ -19,6 +19,14 @@ For in-depth details on the command, permissions and features of this plugin, vi
 ## Getting Started
 Visit the [Getting Started](https://github.com/MylesMor/SudoSigns/wiki/Getting-Started) page to find out how to setup your first SudoSign!
 
+## Issues
+The best course of action would be opening an issue [here](https://github.com/MylesMor/SudoSigns/issues), but I will also try to keep up-to-date with the Spigot comments section.
+
+In your issue report, please include as much information as possible including:
+* The Spigot version
+* Any errors in the console (please copy these in full)
+* The steps to reproduce the issue
+
 ## Upcoming Features
 These features will be available in future updates!
 * Edit the sign's text from the GUI menu.
