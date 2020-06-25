@@ -98,6 +98,7 @@ public class SignListener implements Listener {
         if (b.getState() instanceof Sign) {
             Sign sign = (Sign) b.getState();
             SudoSigns.signs.get(user.getPassThru()).setSign(sign);
+            SudoSigns.signs.get(user.getPassThru()).addLines();
             if (p.hasPermission(Permissions.EDIT)) {
                 SignEditor editor = new SignEditor(p, SudoSigns.signs.get(user.getPassThru()), user);
                 user.setEditor(editor);
@@ -291,6 +292,22 @@ public class SignListener implements Listener {
 
     @EventHandler
     public void onBlockFade(BlockFadeEvent e) {
+        final BlockFace[] faces = {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+        for (BlockFace face : faces) {
+            BlockState b = e.getBlock().getRelative(face).getState();
+            if (b instanceof Sign) {
+                Sign sign = (Sign) b;
+                for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
+                    if (entry.getValue().getSign().equals(sign)) {
+                        e.setCancelled(true);
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onLeavesDecay(LeavesDecayEvent e) {
         final BlockFace[] faces = {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
         for (BlockFace face : faces) {
             BlockState b = e.getBlock().getRelative(face).getState();

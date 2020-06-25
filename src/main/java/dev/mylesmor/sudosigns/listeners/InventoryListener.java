@@ -15,6 +15,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.InventoryView;
 
+import java.util.Objects;
+
 
 /**
  * InventoryListener class to listen for GUI actions.
@@ -29,12 +31,12 @@ public class InventoryListener implements Listener {
         SudoUser user = SudoSigns.users.get(p.getUniqueId());
         if (user != null) {
             if (user.isEditing()) {
-                if (e.getClickedInventory().equals(e.getView().getTopInventory())) {
+                if (Objects.equals(e.getClickedInventory(), e.getView().getTopInventory())) {
                     SignEditor editor = user.getEditor();
                     if (e.getCurrentItem() != null) {
                         e.setCancelled(true);
                         Material m = e.getCurrentItem().getType();
-                        String itemName = ChatColor.stripColor(e.getCurrentItem().getItemMeta().getDisplayName());
+                        String itemName = ChatColor.stripColor(Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName());
                         switch (editor.getCurrentPage()) {
                             case MAIN:
                                 checkForMainMenuClicks(editor, m);

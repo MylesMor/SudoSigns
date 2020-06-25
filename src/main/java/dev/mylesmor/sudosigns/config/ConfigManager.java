@@ -6,12 +6,17 @@ import dev.mylesmor.sudosigns.data.SignCommand;
 import dev.mylesmor.sudosigns.data.SudoSign;
 import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +45,7 @@ public class ConfigManager {
                 Bukkit.getLogger().warning(Boolean.toString(signConfig.isConfigurationSection("signs." + s)));
                 signConfig.set("signs." + s, null);
             }
+            loadSigns();
             save();
             return true;
         } else {
@@ -47,6 +53,7 @@ public class ConfigManager {
                 if (name.equalsIgnoreCase(s)) {
                     Bukkit.getLogger().warning(Boolean.toString(signConfig.isConfigurationSection("signs." + s)));
                     signConfig.set("signs." + name, null);
+                    loadSigns();
                     save();
                     return true;
                 }
@@ -58,32 +65,67 @@ public class ConfigManager {
     public boolean fixInvalidEntry(String name, boolean all) {
         if (all) {
             for (String s : invalidEntries) {
-                try {
-                    ConfigurationSection locSec = signConfig.getConfigurationSection("signs." + s + ".location");
-                    String world = locSec.getString("world");
-                    double x = locSec.getDouble("x");
-                    double y = locSec.getDouble("y");
-                    double z = locSec.getDouble("z");
-                    World w = Bukkit.getServer().getWorld(world);
-                    if (w != null) {
-                        Location loc = new Location(Bukkit.getServer().getWorld(world), x, y, z);
-                        w.getBlockAt(loc).setType(Material.OAK_SIGN);
-                    }
-                } catch (Exception ignored) {}
+                fixEntry(s);
             }
             save();
             return true;
         } else {
             for (String s : invalidEntries) {
-                if (name.equalsIgnoreCase(s)) {
-                    Bukkit.getLogger().warning(Boolean.toString(signConfig.isConfigurationSection("signs." + s)));
-                    signConfig.set("signs." + name, null);
-                    save();
-                    return true;
+                if (name.equals(s)) {
+                    if (fixEntry(s)) {
+                        save();
+                        return true;
+                    }
                 }
             }
         }
         return false;
+    }
+
+    private boolean fixEntry(String s) {
+        try {
+            ConfigurationSection locSec = signConfig.getConfigurationSection("signs." + s + ".location");
+            String world = locSec.getString("world");
+            double x = locSec.getDouble("x");
+            double y = locSec.getDouble("y");
+            double z = locSec.getDouble("z");
+            Vector direction = locSec.getVector("direction");
+            float yaw = Float.valueOf(locSec.get("yaw").toString() + "f");
+            float pitch = Float.valueOf(locSec.get("pitch").toString() + "f");
+            Material material = Material.valueOf(signConfig.getString("signs." + s + ".blocktype"));
+            BlockFace blockFace = BlockFace.valueOf(locSec.getString("rotation"));
+            World w = Bukkit.getServer().getWorld(world);
+            if (w != null) {
+                Location loc = new Location(Bukkit.getServer().getWorld(world), x, y, z);
+                loc.setDirection(direction);
+                loc.setPitch(pitch);
+                loc.setYaw(yaw);
+                w.getBlockAt(loc).setType(material);
+                Block b = w.getBlockAt(loc);
+                if (b.getBlockData() instanceof org.bukkit.block.data.type.Sign) {
+                    org.bukkit.block.data.type.Sign facing = (org.bukkit.block.data.type.Sign) b.getBlockData();
+                    facing.setRotation(blockFace);
+                    b.setBlockData(facing);
+                } else if (b.getBlockData() instanceof org.bukkit.block.data.type.WallSign){
+                    org.bukkit.block.data.type.WallSign facing = (org.bukkit.block.data.type.WallSign) b.getBlockData();
+                    facing.setFacing(blockFace);
+                    b.setBlockData(facing);
+                }
+                Sign newSign = (Sign) b.getState();
+                Bukkit.getLogger().warning(w.getBlockAt(loc).getBlockData().toString());
+                List<String> lines = getSignText(s);
+                int i = 0;
+                for (String line : lines) {
+                    newSign.setLine(i, ChatColor.translateAlternateColorCodes('&', line));
+                    i++;
+                }
+                newSign.update();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     public ArrayList<String> getInvalidEntries() {
@@ -297,20 +339,49 @@ public class ConfigManager {
         save();
     }
 
+    public List<String> getSignText(String name) {
+        List<String> signSec = signConfig.getStringList("signs." + name + ".text");
+        for (String item : signSec) {
+            item = ChatColor.translateAlternateColorCodes('&', item);
+        }
+        if (signSec.size() != 0) {
+            return signSec;
+        }
+        return null;
+    }
+
     public void saveSign(SudoSign s, Player p) {
         String name = s.getName();
         try {
             if (!signConfig.isConfigurationSection("signs." + name + "")) {
                 signConfig.createSection("signs." + name + "");
+                signConfig.createSection("signs." + name + ".text");
+                ArrayList<String> lines = new ArrayList<>();
+                lines.addAll(s.getText());
+                signConfig.set("signs." + name + ".text", lines);
                 ConfigurationSection locSec = signConfig.createSection("signs." + name + ".location");
                 String world = s.getSign().getWorld().getName();
-                Double x = s.getSign().getLocation().getX();
-                Double y = s.getSign().getLocation().getY();
-                Double z = s.getSign().getLocation().getZ();
+                double x = s.getSign().getLocation().getX();
+                double y = s.getSign().getLocation().getY();
+                double z = s.getSign().getLocation().getZ();
+                Vector direction = s.getSign().getLocation().getDirection();
+                float pitch = s.getSign().getLocation().getPitch();
+                float yaw = s.getSign().getLocation().getYaw();
+                signConfig.set("signs." + name + ".blocktype", s.getSign().getType().toString());
                 locSec.set("world", world);
                 locSec.set("x", x);
                 locSec.set("y", y);
                 locSec.set("z", z);
+                locSec.set("direction", direction);
+                locSec.set("pitch", pitch);
+                locSec.set("yaw", yaw);
+                if (s.getSign().getWorld().getBlockAt(s.getSign().getLocation()).getBlockData() instanceof org.bukkit.block.data.type.Sign) {
+                    org.bukkit.block.data.type.Sign facing = (org.bukkit.block.data.type.Sign) s.getSign().getWorld().getBlockAt(s.getSign().getLocation()).getBlockData();
+                    locSec.set("rotation", facing.getRotation().toString());
+                } else if (s.getSign().getWorld().getBlockAt(s.getSign().getLocation()).getBlockData() instanceof org.bukkit.block.data.type.WallSign) {
+                    org.bukkit.block.data.type.WallSign facing = (org.bukkit.block.data.type.WallSign) s.getSign().getWorld().getBlockAt(s.getSign().getLocation()).getBlockData();
+                    locSec.set("rotation", facing.getFacing().toString());
+                }
                 signConfig.createSection("signs." + name + ".permissions");
                 signConfig.createSection("signs." + name + ".messages");
                 signConfig.createSection("signs." + name + ".player-commands");

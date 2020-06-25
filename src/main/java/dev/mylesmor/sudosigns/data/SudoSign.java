@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +23,7 @@ public class SudoSign {
     private ArrayList<SignCommand> consoleCommands = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
     private ArrayList<String> messages = new ArrayList<>();
+    private ArrayList<String> text = new ArrayList<>();
     private String worldName;
     private double x;
     private double y;
@@ -47,6 +49,23 @@ public class SudoSign {
     public void addPlayerCommand(SignCommand sc, boolean permissions) {
         playerCommands.put(sc, permissions);
 
+    }
+
+    public List<String> getText() {
+        return text;
+    }
+
+    public void addLines() {
+        Sign sign = getSign();
+        String[] lines = sign.getLines();
+        for (int i = 0; i < 4; i++) {
+            String line = lines[i];
+            text.add(line.replaceAll("§", "&"));
+            line = ChatColor.translateAlternateColorCodes('&', line);
+            //line = ChatColor.translateAlternateColorCodes('§', line);
+            sign.setLine(i, line);
+        }
+        sign.update();
     }
 
     public void addConsoleCommand(SignCommand sc) {
@@ -116,7 +135,7 @@ public class SudoSign {
         }
         if (hasPermission) {
             for (String s : messages) {
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', s));
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', s).replaceAll("(?i)%PLAYER%", p.getName()));
             }
             for (Map.Entry<SignCommand, Boolean> entry : playerCommands.entrySet()) {
                 String cmd = entry.getKey().getCommand().replaceAll("(?i)%PLAYER%", p.getName());

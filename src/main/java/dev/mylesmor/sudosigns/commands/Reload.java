@@ -27,13 +27,13 @@ public class Reload {
                     if (invalidSigns.size() == 0) {
                         Util.sudoSignsMessage(p, ChatColor.GREEN, "Config successfully reloaded! Found " + invalidSigns.size() + " invalid signs! ", null);
                     } else {
-                        StringBuilder message = new StringBuilder("Config successfully reloaded!" + ChatColor.RED + " Found " + invalidSigns.size() + " invalid signs: ");
+                        StringBuilder message = new StringBuilder("Config successfully reloaded!" + ChatColor.RED + " Found " + invalidSigns.size() + " invalid sign(s): ");
                         StringJoiner joiner = new StringJoiner("" + ChatColor.RED + ", ", "", ChatColor.RED + ". ");
                         for (String name : invalidSigns) {
                             joiner.add(ChatColor.GOLD + name);
                         }
                         message.append(joiner.toString());
-                        //message.append(ChatColor.GRAY + "Use " + ChatColor.LIGHT_PURPLE + "/ss purge <name>" + ChatColor.GRAY + " to remove an invalid entry from the config!");
+                        message.append(ChatColor.GRAY + "Use " + ChatColor.LIGHT_PURPLE + "/ss fix <name>" + ChatColor.GRAY + " to fix or " + ChatColor.LIGHT_PURPLE + "/ss purge <name>" + ChatColor.GRAY + " to remove.");
                         Util.sudoSignsMessage(p, ChatColor.GREEN, message.toString(), null);
                     }
                     return;

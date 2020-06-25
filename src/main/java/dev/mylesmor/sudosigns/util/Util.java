@@ -15,11 +15,11 @@ public class Util {
         String message = "[\"\",{\"text\":\"[SUDOSIGNS] \",\"color\":\"yellow\"},{\"text\":\"Sign: \",\"color\":\"gray\"},{\"text\":\"" + name + " \",\"bold\":true,\"color\":\"gold\"}]";
         if (p.hasPermission(Permissions.VIEW)) {
             message = message.substring(0, message.length() - 1);
-            message += ",{\"text\":\"[VIEW] \",\"bold\":true,\"color\":\"blue\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/ss view " + name + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[\"\",{\"text\":\"View " + name + "'s details\",\"color\":\"blue\"}]}}]";
+            message += ",{\"text\":\"[V] \",\"bold\":true,\"color\":\"blue\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/ss view " + name + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[\"\",{\"text\":\"View " + name + "'s details\",\"color\":\"blue\"}]}}]";
         }
         if (p.hasPermission(Permissions.RUN)) {
             message = message.substring(0, message.length() - 1);
-            message += ",{\"text\":\"[RUN] \",\"bold\":true,\"color\":\"green\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/ss run " + name + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[\"\",{\"text\":\"Run " + name + "'s commands\",\"color\":\"green\"}]}}]";
+            message += ",{\"text\":\"[R] \",\"bold\":true,\"color\":\"green\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/ss run " + name + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[\"\",{\"text\":\"Run " + name + "'s commands\",\"color\":\"green\"}]}}]";
         }
         if (p.hasPermission(Permissions.TP)) {
             message = message.substring(0, message.length() - 1);
@@ -33,7 +33,7 @@ public class Util {
 
         if (p.hasPermission(Permissions.DELETE)) {
             message = message.substring(0, message.length() - 1);
-            message += ",{\"text\":\"[DELETE]\",\"bold\":true,\"color\":\"red\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/ss confirmdelete " + name + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[\"\",{\"text\":\"Delete " + name + "\",\"color\":\"red\"}]}}]";
+            message += ",{\"text\":\"[DEL]\",\"bold\":true,\"color\":\"red\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/ss confirmdelete " + name + "\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":[\"\",{\"text\":\"Delete " + name + "\",\"color\":\"red\"}]}}]";
         }
         return message;
     }
