@@ -32,6 +32,4 @@ public final class Permissions {
     public static final String ADD_MESSAGE = "sudosigns.message.add";
     public static final String DELETE_MESSAGE = "sudosigns.message.delete";
 
-
-
 }

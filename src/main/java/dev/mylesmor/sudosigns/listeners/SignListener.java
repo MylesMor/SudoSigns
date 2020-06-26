@@ -13,6 +13,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -221,13 +222,29 @@ public class SignListener implements Listener {
         } else {
             final BlockFace[] faces = {BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
             for (BlockFace face : faces) {
-                BlockState b = e.getBlock().getRelative(face).getState();
-                if (b instanceof Sign) {
-                    Sign sign = (Sign) b;
+                Block br = e.getBlock().getRelative(face);
+                BlockState bs = br.getState();
+                if (bs instanceof Sign) {
+                    Sign sign = (Sign) bs;
                     for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
                         if (entry.getValue().getSign().equals(sign)) {
-                            e.setCancelled(true);
-                            Util.sudoSignsMessage(p, ChatColor.RED,"You can't destroy a block that's attached to a SudoSign!", null);
+                            if (br.getBlockData() instanceof org.bukkit.block.data.type.Sign) {
+                                if (e.getBlock().equals(sign.getBlock().getRelative(BlockFace.DOWN))) {
+                                    e.setCancelled(true);
+                                    Util.sudoSignsMessage(p, ChatColor.RED, "You can't destroy a block that's attached to a SudoSign!", null);
+                                    return;
+                                }
+                            } else if (br.getBlockData() instanceof org.bukkit.block.data.type.WallSign) {
+                                WallSign signData = (WallSign) sign.getBlock().getState().getBlockData();
+                                BlockFace attached = signData.getFacing().getOppositeFace();
+                                Block blockAttached = sign.getBlock().getRelative(attached);
+                                if (e.getBlock().equals(blockAttached)) {
+                                    e.setCancelled(true);
+                                    Util.sudoSignsMessage(p, ChatColor.RED, "You can't destroy a block that's attached to a SudoSign!", null);
+                                    return;
+                                }
+
+                            }
                         }
                     }
                 }
