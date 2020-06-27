@@ -73,8 +73,6 @@ public class CommandsMenu {
 
         List<String> lore = new ArrayList<>();
 
-        boolean anyOpPermissions = false;
-
         // Populates spaces with commands.
         int i = 1;
         for (Map.Entry<SignCommand, Boolean> entry : sign.getPlayerCommands().entrySet()) {
@@ -105,7 +103,7 @@ public class CommandsMenu {
             if (i > 35) break;
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
-            bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + sc.getCommand());
+            bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + "/" + sc.getCommand());
             if (p.hasPermission(Permissions.DELETE_COMMAND)) {
                 lore.add("");
                 lore.add(ChatColor.RED + "Click to delete!");

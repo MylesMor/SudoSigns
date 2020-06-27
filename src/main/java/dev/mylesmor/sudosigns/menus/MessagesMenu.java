@@ -59,8 +59,12 @@ public class MessagesMenu {
             menu.setItem(40, bookQuill);
         }
 
-        ItemStack signItem = new ItemStack(Material.BIRCH_SIGN);
-        ItemMeta signMeta = signItem.getItemMeta();
+        ItemStack signItem = null;
+        if (SudoSigns.version.contains("1.13")) {
+            signItem = new ItemStack(Material.valueOf("SIGN"));
+        } else {
+            signItem = new ItemStack(Material.OAK_SIGN);
+        }        ItemMeta signMeta = signItem.getItemMeta();
         signMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Messages");
         signItem.setItemMeta(signMeta);
 

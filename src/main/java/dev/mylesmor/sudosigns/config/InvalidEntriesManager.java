@@ -35,7 +35,11 @@ public class InvalidEntriesManager {
             double x = locSec.getDouble("x");
             double y = locSec.getDouble("y");
             double z = locSec.getDouble("z");
-            Material material = Material.valueOf(config.getString("signs." + s + ".blocktype"));
+            String matString = config.getString("signs." + s + ".blocktype");
+            if (SudoSigns.version.contains("1.13")) {
+                matString = "SIGN";
+            }
+            Material material = Material.valueOf(matString);
             BlockFace blockFace = BlockFace.valueOf(locSec.getString("rotation"));
             World w = Bukkit.getServer().getWorld(world);
             if (w != null) {

@@ -8,6 +8,7 @@ import dev.mylesmor.sudosigns.listeners.ChatListener;
 import dev.mylesmor.sudosigns.listeners.InventoryListener;
 import dev.mylesmor.sudosigns.listeners.PlayerListener;
 import dev.mylesmor.sudosigns.listeners.SignListener;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,9 +30,13 @@ public class SudoSigns extends JavaPlugin {
 
     public static Plugin sudoSignsPlugin;
 
+    public static String version;
+
 
     @Override
     public void onEnable() {
+        String version = getServer().getVersion().split("MC: ")[1];
+        SudoSigns.version = version.substring(0, version.length()-1);
         getServer().getPluginManager().registerEvents(new SignListener(), this);
         getServer().getPluginManager().registerEvents(new InventoryListener(), this);
         getServer().getPluginManager().registerEvents(new ChatListener(), this);

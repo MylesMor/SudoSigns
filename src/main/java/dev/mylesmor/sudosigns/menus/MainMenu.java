@@ -1,5 +1,6 @@
 package dev.mylesmor.sudosigns.menus;
 
+import dev.mylesmor.sudosigns.SudoSigns;
 import dev.mylesmor.sudosigns.data.SudoSign;
 import dev.mylesmor.sudosigns.util.Permissions;
 import org.bukkit.Bukkit;
@@ -75,7 +76,12 @@ public class MainMenu {
         }
 
         if (p.hasPermission(Permissions.VIEW_MESSAGE)) {
-            ItemStack signBlock = new ItemStack(Material.BIRCH_SIGN);
+            ItemStack signBlock = null;
+            if (SudoSigns.version.contains("1.13")) {
+                signBlock = new ItemStack(Material.valueOf("SIGN"));
+            } else {
+                signBlock = new ItemStack(Material.OAK_SIGN);
+            }
             ItemMeta signMeta = signBlock.getItemMeta();
             signMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Messages");
             List<String> lore = new ArrayList<>();

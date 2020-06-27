@@ -90,6 +90,12 @@ public class InventoryListener implements Listener {
      * @param m The material clicked on in the menu.
      */
     public void checkForMainMenuClicks(SignEditor editor, Material m) {
+        if (SudoSigns.version.contains("1.13")) {
+            if (m.equals(Material.valueOf("SIGN"))) {
+                editor.goToMessages();
+                return;
+            }
+        }
         switch (m) {
             case BOOK:
                 editor.prepareRename();
