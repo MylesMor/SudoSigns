@@ -8,7 +8,6 @@ import dev.mylesmor.sudosigns.util.Permissions;
 import dev.mylesmor.sudosigns.util.Util;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -68,14 +67,13 @@ public class SignListener implements Listener {
     private void selectToCopy(Player p, SudoUser user, Block b) {
         if (b.getState() instanceof Sign) {
             Sign sign = (Sign) b.getState();
-            for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
-                if (entry.getValue().getSign().equals(sign)) {
-                    user.setSelectToCopy(false);
-                    p.performCommand("ss copy " + entry.getKey() + " " + user.getPassThru());
-                    return;
-                }
+            String name = Util.findSign(sign);
+            if (name != null) {
+                user.setSelectToCopy(false);
+                p.performCommand("ss copy " + name + " " + user.getPassThru());
+            } else {
+                Util.sudoSignsMessage(p, ChatColor.RED, "Failed to copy: this is not a SudoSign!", null);
             }
-            Util.sudoSignsMessage(p, ChatColor.RED, "Failed to copy: this is not a SudoSign!", null);
         } else {
             Util.sudoSignsMessage(p, ChatColor.RED, "A sign wasn't clicked! Cancelling...", null);
         }
@@ -86,18 +84,25 @@ public class SignListener implements Listener {
         if (Objects.requireNonNull(e.getClickedBlock()).getState() instanceof Sign) {
             if (p.hasPermission(Permissions.SELECT) && e.getAction() == Action.RIGHT_CLICK_BLOCK || !p.hasPermission(Permissions.SELECT)) {
                 Sign sign = (Sign) e.getClickedBlock().getState();
-                for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
-                    if (entry.getValue().getSign().equals(sign)) {
-                        entry.getValue().executeCommands(p);
-                    }
+                String name = Util.findSign(sign);
+                if (name != null) {
+                    SudoSigns.signs.get(name).executeCommands(p);
                 }
             }
         }
     }
 
     private void create(Player p, SudoUser user, Block b) {
-        if (b.getState() instanceof Sign) {
+        if (b.getBlockData() instanceof org.bukkit.block.data.type.Sign || b.getBlockData() instanceof org.bukkit.block.data.type.WallSign) {
+        //if (b.getState() instanceof Sign) {
             Sign sign = (Sign) b.getState();
+            String name = Util.findSign(sign);
+            if (name != null) {
+                user.setCreate(false);
+                SudoSigns.signs.remove(user.getPassThru());
+                Util.sudoSignsMessage(p, ChatColor.RED, "This sign is already a SudoSign! Cancelling...", null);
+                return;
+            }
             SudoSigns.signs.get(user.getPassThru()).setSign(sign);
             SudoSigns.signs.get(user.getPassThru()).addLines();
             if (p.hasPermission(Permissions.EDIT)) {
@@ -107,6 +112,7 @@ public class SignListener implements Listener {
             SudoSigns.config.saveToFile(SudoSigns.signs.get(user.getPassThru()), true, p);
         } else {
             Util.sudoSignsMessage(p, ChatColor.RED, "A sign wasn't clicked! Cancelling...", null);
+            user.setCreate(false);
             SudoSigns.signs.remove(user.getPassThru());
         }
         user.setCreate(false);
@@ -115,6 +121,13 @@ public class SignListener implements Listener {
     private void copy(Player p, SudoUser user, Block b) {
         if (b.getState() instanceof Sign) {
             Sign newSign = (Sign) b.getState();
+            String name = Util.findSign(newSign);
+            if (name != null) {
+                user.setCopy(false);
+                SudoSigns.signs.remove(user.getPassThru());
+                Util.sudoSignsMessage(p, ChatColor.RED, "This sign is already a SudoSign! Cancelling...", null);
+                return;
+            }
             SudoSigns.signs.get(user.getPassThru()).setSign(newSign);
             SudoSigns.signs.get(user.getPassThru()).addLines();
             SudoSigns.config.saveToFile(SudoSigns.signs.get(user.getPassThru()), true, p);
@@ -129,14 +142,11 @@ public class SignListener implements Listener {
     private void runRemote(Player p, SudoUser user, Block b) {
         if (b.getState() instanceof Sign) {
             Sign sign = (Sign) b.getState();
-            boolean found = false;
-            for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
-                if (entry.getValue().getSign().equals(sign)) {
-                    p.performCommand("ss run " + entry.getKey());
-                    found = true;
-                }
-            }
-            if (!found) {
+            String name = Util.findSign(sign);
+            if (name != null) {
+                p.performCommand("ss run " +name);
+
+            } else {
                 Util.sudoSignsMessage(p, ChatColor.RED, "This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create <name>" + ChatColor.RED + " instead.", null);
             }
         } else {
@@ -148,14 +158,10 @@ public class SignListener implements Listener {
     private void edit(Player p, SudoUser user, Block b) {
         if (b.getState() instanceof Sign) {
             Sign sign = (Sign) b.getState();
-            boolean found = false;
-            for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
-                if (entry.getValue().getSign().equals(sign)) {
-                    p.performCommand("ss edit " + entry.getKey());
-                    found = true;
-                }
-            }
-            if (!found) {
+            String name = Util.findSign(sign);
+            if (name != null) {
+                p.performCommand("ss edit " + name);
+            } else {
                 Util.sudoSignsMessage(p, ChatColor.RED, "This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create <name>" + ChatColor.RED + " instead.", null);
             }
         } else {
@@ -167,16 +173,12 @@ public class SignListener implements Listener {
     private void delete(Player p, SudoUser user, Block b) {
         if (b.getState() instanceof Sign) {
             Sign sign = (Sign) b.getState();
-            String name = null;
-            for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
-                if (entry.getValue().getSign().equals(sign)) {
-                    name = entry.getKey();
-                }
-            }
-            if (name == null) {
+            String name = Util.findSign(sign);
+            if (name != null) {
+                p.performCommand("ss delete " + name);
                 Util.sudoSignsMessage(p, ChatColor.RED, "This is not a SudoSign!", null);
             } else {
-                p.performCommand("ss delete " + name);
+                Util.sudoSignsMessage(p, ChatColor.RED, "This is not a SudoSign!", null);
             }
         } else {
             Util.sudoSignsMessage(p, ChatColor.RED,"A sign wasn't clicked! Cancelling...", null);
@@ -187,14 +189,10 @@ public class SignListener implements Listener {
     private void view(Player p, SudoUser user, Block b) {
         if (b.getState() instanceof Sign) {
             Sign sign = (Sign) b.getState();
-            boolean found = false;
-            for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
-                if (entry.getValue().getSign().equals(sign)) {
-                    p.performCommand("ss view " + entry.getKey());
-                    found = true;
-                }
-            }
-            if (!found) {
+            String name = Util.findSign(sign);
+            if (name != null) {
+                p.performCommand("ss view " + name);
+            } else {
                 Util.sudoSignsMessage(p, ChatColor.RED, "This is not a SudoSign. Use " + ChatColor.GRAY + "/ss create <name>" + ChatColor.RED + " instead.", null);
             }
         } else {

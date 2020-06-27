@@ -63,7 +63,7 @@ public class MessagesMenu {
         if (SudoSigns.version.contains("1.13")) {
             signItem = new ItemStack(Material.valueOf("SIGN"));
         } else {
-            signItem = new ItemStack(Material.OAK_SIGN);
+            signItem = new ItemStack(Material.BIRCH_SIGN);
         }        ItemMeta signMeta = signItem.getItemMeta();
         signMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Messages");
         signItem.setItemMeta(signMeta);

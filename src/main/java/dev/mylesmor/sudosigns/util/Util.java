@@ -1,9 +1,12 @@
 package dev.mylesmor.sudosigns.util;
 
+import dev.mylesmor.sudosigns.SudoSigns;
+import dev.mylesmor.sudosigns.data.SudoSign;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,5 +53,16 @@ public class Util {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(name);
         return matcher.matches();
+    }
+
+    public static String findSign(Sign s) {
+        String found = null;
+        for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
+            Sign sign = entry.getValue().getSign();
+            if (sign != null && sign.equals(s)) {
+                found = entry.getKey();
+            }
+        }
+        return found;
     }
 }

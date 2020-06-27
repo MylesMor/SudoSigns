@@ -76,11 +76,11 @@ public class MainMenu {
         }
 
         if (p.hasPermission(Permissions.VIEW_MESSAGE)) {
-            ItemStack signBlock = null;
+            ItemStack signBlock;
             if (SudoSigns.version.contains("1.13")) {
                 signBlock = new ItemStack(Material.valueOf("SIGN"));
             } else {
-                signBlock = new ItemStack(Material.OAK_SIGN);
+                signBlock = new ItemStack(Material.BIRCH_SIGN);
             }
             ItemMeta signMeta = signBlock.getItemMeta();
             signMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Messages");

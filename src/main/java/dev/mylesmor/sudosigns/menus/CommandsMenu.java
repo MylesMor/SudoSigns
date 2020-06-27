@@ -97,7 +97,6 @@ public class CommandsMenu {
             menu.setItem(i, book);
             i++;
         }
-
         i = 19;
         for (SignCommand sc : sign.getConsoleCommands()) {
             if (i > 35) break;

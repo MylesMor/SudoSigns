@@ -176,9 +176,11 @@ public class SudoSign {
     }
 
     public Sign getSign() {
-        Location loc = new Location(Bukkit.getWorld(worldName), x, y, z);
-        if (loc.getBlock().getState() instanceof Sign) {
-            return (Sign) loc.getBlock().getState();
+        if (worldName != null) {
+            Location loc = new Location(Bukkit.getWorld(worldName), x, y, z);
+            if (loc.getBlock().getState() instanceof Sign) {
+                return (Sign) loc.getBlock().getState();
+            }
         }
         Bukkit.getLogger().warning("Failed to locate sign " + name + "!");
         return null;
