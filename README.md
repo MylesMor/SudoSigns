@@ -12,7 +12,7 @@ This allows you to perform actions on SudoSigns such as:
 For in-depth details on the command, permissions and features of this plugin, visit the [Wiki](https://github.com/MylesMor/SudoSigns/wiki)!
 
 ## Installation
-1. Download the Spigot plugin [HERE](https://spigot.com/LINK).
+1. Download the Spigot plugin [HERE](https://www.spigotmc.org/resources/sudosigns-commands-messages-on-signs.80758/).
 2. Place the JAR file inside your `./plugins` directory.
 3. Reload or restart the server.
 
