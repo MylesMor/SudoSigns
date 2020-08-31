@@ -1,7 +1,8 @@
 name: SudoSigns
-version: 1.0
+version: 1.0.1
 author: MylesMor
 main: dev.mylesmor.sudosigns.SudoSigns
+softdepend: [Multiverse-Core]
 api-version: 1.13
 commands:
   sudosigns:
