@@ -7,13 +7,16 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InvalidEntriesManager {
+    /**
+      * The class for managing invalid sign entries in the config.
+      * @author MylesMor
+      * @author https://mylesmor.dev
+     */
 
     ArrayList<String> invalidEntries = new ArrayList<>();
     ConfigManager configManager;
@@ -28,6 +31,11 @@ public class InvalidEntriesManager {
         this.config = config;
     }
 
+    /**
+     * Attempts to a fix an invalid entry by placing a sign in the correct position.
+     * @param s The sign's name.
+     * @return True if sign successfully fixed, otherwise False.
+     */
     private boolean fixEntry(String s) {
         try {
             ConfigurationSection locSec = config.getConfigurationSection("signs." + s + ".location");
@@ -84,7 +92,11 @@ public class InvalidEntriesManager {
         invalidEntries.add(entry);
     }
 
-
+    /**
+     * Retrieves the invalid sign's text from the config.
+     * @param name Name of the sign.
+     * @return The sign's message or null if not found.
+     */
     public List<String> getSignText(String name) {
         List<String> signSec = config.getStringList("signs." + name + ".text");
         for (String item : signSec) {
@@ -96,7 +108,12 @@ public class InvalidEntriesManager {
         return null;
     }
 
-
+    /**
+     * Removes a sign's entry in the config.
+     * @param name Name of the sign.
+     * @param all True if all invalid entries should be purged, or False for just one.
+     * @return The sign's message or null if not found.
+     */
     public boolean purgeInvalidEntry(String name, boolean all) {
         if (all) {
             for (String s : invalidEntries) {

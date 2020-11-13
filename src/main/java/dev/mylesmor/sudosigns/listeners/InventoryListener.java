@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
@@ -42,7 +43,7 @@ public class InventoryListener implements Listener {
                                 checkForMainMenuClicks(editor, m);
                                 break;
                             case COMMANDS:
-                                checkForCommandsClicks(p, editor, m, itemName);
+                                checkForCommandsClicks(p, editor, m, e.getCurrentItem());
                                 break;
                             case PERMISSIONS:
                                 checkForPermissionsClicks(p, editor, m, itemName);
@@ -54,11 +55,15 @@ public class InventoryListener implements Listener {
                                 choosePermissionType(editor, m);
                                 break;
                             case MESSAGES:
-                                if (e.getCurrentItem().getItemMeta().getLore() != null) {
-                                    checkForMessagesClicks(p, editor, m, e.getCurrentItem().getItemMeta().getLore().get(0).replace("§", "&"));
-                                } else {
-                                    checkForMessagesClicks(p, editor, m, null);
-                                }
+                                checkForMessagesClicks(p, editor, m, e.getCurrentItem());
+                                break;
+                            case COMMAND_OPTIONS:
+                                checkForCommandOptionClicks(p, editor, m, itemName);
+                                break;
+                            case MESSAGE_OPTIONS:
+                                checkForMessageOptionClicks(p, editor, m, itemName);
+                                break;
+
                         }
                     }
                 }
@@ -111,27 +116,51 @@ public class InventoryListener implements Listener {
                 break;
             case BIRCH_SIGN:
                 editor.goToMessages();
+                break;
         }
     }
 
     /**
-     * Checks for GUI clicks in the Commands menu.
+     * Checks for GUI clicks in the Command Options menu.
      * @param editor The SignEditor class of the particular user.
      * @param m The material clicked on in the menu.
-     * @param itemName The name of the item clicked.
+     * @param item The ItemStack of the clicked item.
      */
-    public void checkForCommandsClicks(Player p, SignEditor editor, Material m, String itemName) {
+    public void checkForCommandsClicks(Player p, SignEditor editor, Material m, ItemStack item) {
         switch (m) {
             case WRITABLE_BOOK:
                 editor.getCommandsMenu().prepareCommand();
                 break;
             case BOOK:
-                if (p.hasPermission(Permissions.DELETE_COMMAND)) {
-                    editor.getCommandsMenu().deleteCommand(ChatColor.stripColor(itemName));
+                if (p.hasPermission(Permissions.COMMAND_OPTIONS)) {
+                    editor.goToCommandOptionsMenu(item);
                 }
                 break;
             case ARROW:
                 editor.goToMain();
+                break;
+        }
+    }
+
+    /**
+     * Checks for GUI clicks in the Command Options menu.
+     * @param editor The SignEditor class of the particular user.
+     * @param m The material clicked on in the menu.
+     * @param itemName The name of the item clicked.
+     */
+    public void checkForCommandOptionClicks(Player p, SignEditor editor, Material m, String itemName) {
+        switch (m) {
+            case CLOCK:
+                editor.getCommandOptionsMenu().addDelay();
+                break;
+            case BARRIER:
+                if (p.hasPermission(Permissions.DELETE_COMMAND)) {
+                    editor.getCommandOptionsMenu().deleteCommand();
+                }
+                break;
+            case ARROW:
+                editor.goToCommands();
+                break;
         }
     }
 
@@ -141,18 +170,41 @@ public class InventoryListener implements Listener {
      * @param m The material clicked on in the menu.
      * @param itemName The name of the item clicked.
      */
-    public void checkForMessagesClicks(Player p, SignEditor editor, Material m, String itemName) {
+    public void checkForMessageOptionClicks(Player p, SignEditor editor, Material m, String itemName) {
+        switch (m) {
+            case CLOCK:
+                editor.getMessageOptionsMenu().addDelay();
+                break;
+            case BARRIER:
+                if (p.hasPermission(Permissions.DELETE_MESSAGE)) {
+                    editor.getMessageOptionsMenu().deleteMessage();
+                }
+                break;
+            case ARROW:
+                editor.goToMessages();
+                break;
+        }
+    }
+
+    /**
+     * Checks for GUI clicks in the Commands menu.
+     * @param editor The SignEditor class of the particular user.
+     * @param m The material clicked on in the menu.
+     * @param item The ItemStack of the clicked item.
+     */
+    public void checkForMessagesClicks(Player p, SignEditor editor, Material m, ItemStack item) {
         switch (m) {
             case WRITABLE_BOOK:
                 editor.getMessagesMenu().prepareMessage();
                 break;
             case BOOK:
-                if (p.hasPermission(Permissions.DELETE_MESSAGE)) {
-                    editor.getMessagesMenu().deleteMessage(itemName.substring(4));
+                if (p.hasPermission(Permissions.MESSAGE_OPTIONS)) {
+                    editor.goToMessageOptionsMenu(item);
                 }
                 break;
             case ARROW:
                 editor.goToMain();
+                break;
         }
     }
 
@@ -166,6 +218,7 @@ public class InventoryListener implements Listener {
                 break;
             case ARROW:
                 editor.goToPermissions();
+                break;
         }
     }
 

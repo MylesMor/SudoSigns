@@ -25,11 +25,13 @@ public final class Permissions {
     public static final String ADD_COMMAND = "sudosigns.command.add";
     public static final String DELETE_COMMAND = "sudosigns.command.delete";
     public static final String CONSOLE_COMMAND = "sudosigns.command.console";
+    public static final String COMMAND_OPTIONS = "sudosigns.command.options";
     public static final String VIEW_PERMISSION = "sudosigns.permission.view";
     public static final String ADD_PERMISSION = "sudosigns.permission.add";
     public static final String DELETE_PERMISSION = "sudosigns.permission.delete";
     public static final String VIEW_MESSAGE = "sudosigns.message.view";
     public static final String ADD_MESSAGE = "sudosigns.message.add";
     public static final String DELETE_MESSAGE = "sudosigns.message.delete";
+    public static final String MESSAGE_OPTIONS = "sudosigns.message.options";
 
 }

@@ -69,6 +69,7 @@ public class SudoUser {
     public void addTextInput(PlayerInput type) {
         this.textInput = true;
         this.inputType = type;
+
     }
 
     public void removeTextInput() {

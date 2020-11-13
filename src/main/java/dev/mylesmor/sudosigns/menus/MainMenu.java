@@ -32,8 +32,6 @@ public class MainMenu {
     public void goToMainMenu() {
         createMainMenu();
         p.openInventory(menu);
-        editor.setCurrentPage(PAGE);
-
     }
 
     private void createMainMenu() {

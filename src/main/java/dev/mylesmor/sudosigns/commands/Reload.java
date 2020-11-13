@@ -21,7 +21,7 @@ public class Reload {
     public static void reload(Player p, String[] args) {
         if (p.hasPermission(Permissions.RELOAD)) {
             Util.sudoSignsMessage(p, ChatColor.GRAY, "Reloading config...", null);
-
+            SudoSigns.signs.clear();
             if (SudoSigns.config.loadCustomConfig()) {
                 ArrayList<String> invalidSigns = SudoSigns.config.loadSigns();
                 if (invalidSigns != null) {

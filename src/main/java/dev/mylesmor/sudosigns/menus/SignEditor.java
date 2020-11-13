@@ -27,6 +27,8 @@ public class SignEditor {
     private MainMenu mainMenu;
     private PermissionsMenu permMenu;
     private CommandsMenu commandsMenu;
+    private CommandOptionsMenu commandOptionsMenu;
+    private MessageOptionsMenu messageOptionsMenu;
     private MessagesMenu messagesMenu;
     private GUIPage currentPage;
 
@@ -45,27 +47,42 @@ public class SignEditor {
 
     public void setCurrentPage(GUIPage page) {
         currentPage = page;
-
     }
 
     public void goToMain() {
         if (mainMenu == null) mainMenu = new MainMenu(p, sign, this);
+        setCurrentPage(GUIPage.MAIN);
         mainMenu.goToMainMenu();
     }
 
     public void goToPermissions() {
         if (permMenu == null) permMenu = new PermissionsMenu(su, p, sign, this);
+        setCurrentPage(GUIPage.PERMISSIONS);
         permMenu.goToPermissionsMenu();
     }
 
     public void goToCommands() {
         if (commandsMenu == null) commandsMenu = new CommandsMenu(su, p, sign, this);
+        setCurrentPage(GUIPage.COMMANDS);
         commandsMenu.goToCommandsMenu();
     }
 
     public void goToMessages() {
         if (messagesMenu == null) messagesMenu = new MessagesMenu(su, p, sign, this);
+        setCurrentPage(GUIPage.MESSAGES);
         messagesMenu.goToMessagesMenu();
+    }
+
+    public void goToCommandOptionsMenu(ItemStack item) {
+        commandOptionsMenu = new CommandOptionsMenu(su, p, sign, item, this);
+        setCurrentPage(GUIPage.COMMAND_OPTIONS);
+        commandOptionsMenu.goToCommandOptionsMenu();
+    }
+
+    public void goToMessageOptionsMenu(ItemStack item) {
+        messageOptionsMenu = new MessageOptionsMenu(su, p, sign, item, this);
+        setCurrentPage(GUIPage.MESSAGE_OPTIONS);
+        messageOptionsMenu.goToMessageOptionsMenu();
     }
 
     public MainMenu getMainMenu() {
@@ -80,9 +97,18 @@ public class SignEditor {
         return commandsMenu;
     }
 
+    public CommandOptionsMenu getCommandOptionsMenu() {
+        return commandOptionsMenu;
+    }
+
     public MessagesMenu getMessagesMenu() {
         return messagesMenu;
     }
+
+    public MessageOptionsMenu getMessageOptionsMenu() {
+        return messageOptionsMenu;
+    }
+
 
     public void endEditor() {
         Util.sudoSignsMessage(p, ChatColor.GRAY, "Changes saved to sign %NAME%.", sign.getName());
@@ -114,7 +140,7 @@ public class SignEditor {
                 SudoSigns.signs.remove(found.getKey());
                 SudoSigns.signs.put(s, sign);
                 Util.sudoSignsMessage(p, ChatColor.GRAY, "Sign successfully renamed to %NAME%.", s);
-                SudoSigns.config.saveToFile(found.getValue(), true, p);
+                SudoSigns.config.saveSign(found.getValue(), true, p);
                 SudoSigns.config.deleteSign(found.getKey());
             }
         }

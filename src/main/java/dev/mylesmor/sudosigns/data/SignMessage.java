@@ -1,28 +1,21 @@
 package dev.mylesmor.sudosigns.data;
 
-import dev.mylesmor.sudosigns.data.PlayerInput;
+public class SignMessage {
 
-/**
- * The SignCommand class for storing sign command data.
- * @author MylesMor
- * @author https://mylesmor.dev
- */
-public class SignCommand {
-
-    private String command;
+    private String message;
     private PlayerInput type;
     private int number;
     private double delay;
 
-    public SignCommand(int number, String cmd, double delay, PlayerInput type) {
+    public SignMessage(int number, String message, double delay, PlayerInput type) {
         this.number = number;
-        command = cmd;
+        this.message = message;
         this.type = type;
         this.delay = delay;
     }
 
-    public String getCommand() {
-        return command;
+    public String getMessage() {
+        return message;
     }
 
     public PlayerInput getType() {
@@ -38,5 +31,4 @@ public class SignCommand {
     public void setDelay(double delay) {
         this.delay = delay;
     }
-
 }

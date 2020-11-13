@@ -77,6 +77,38 @@ public class ChatListener implements Listener {
                         }
                         handle(e, true, null, editor, user, edit -> editor.getMessagesMenu().addMessage(ChatColor.stripColor(e.getMessage())), editor::goToMessages);
                         break;
+                    case COMMAND_DELAY:
+                        if (e.getMessage().equalsIgnoreCase("cancel")) {
+                            handle(e, true, "Cancelled!", editor, user, null, editor::goToCommands);
+                            return;
+                        }
+                        double delay = 0;
+                        try {
+                             delay = Double.parseDouble(ChatColor.stripColor(e.getMessage()));
+                        } catch (NumberFormatException nfe) {
+                            e.setCancelled(true);
+                            Util.sudoSignsMessage(p, ChatColor.RED, "Please enter a valid number!", "");
+                            return;
+                        }
+                        double finalDelay = delay;
+                        handle(e, true, null, editor, user, edit -> editor.getCommandOptionsMenu().setDelay(finalDelay), editor::goToCommands);
+                        break;
+                    case MESSAGE_DELAY:
+                        if (e.getMessage().equalsIgnoreCase("cancel")) {
+                            handle(e, true, "Cancelled!", editor, user, null, editor::goToMessages);
+                            return;
+                        }
+                        double messageDelay = 0;
+                        try {
+                            messageDelay = Double.parseDouble(ChatColor.stripColor(e.getMessage()));
+                        } catch (NumberFormatException nfe) {
+                            e.setCancelled(true);
+                            Util.sudoSignsMessage(p, ChatColor.RED, "Please enter a valid number!", "");
+                            return;
+                        }
+                        double finalMessageDelay = messageDelay;
+                        handle(e, true, null, editor, user, edit -> editor.getMessageOptionsMenu().setDelay(finalMessageDelay), editor::goToMessages);
+                        break;
                 }
 
             }

@@ -46,6 +46,7 @@ public class PermissionsMenu {
         for (int i = 0; i < menu.getSize(); i++) {
             menu.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
         }
+
         ItemStack arrow = new ItemStack(Material.ARROW);
         ItemMeta arrowMeta = arrow.getItemMeta();
         arrowMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "BACK");
@@ -127,10 +128,10 @@ public class PermissionsMenu {
         if (provided) {
             if (perm == null) {
                 sign.addPermission("sudosigns.sign." + sign.getName());
-                SudoSigns.config.addPermissionToConfig(sign, "sudosigns.sign." + sign.getName());
+                SudoSigns.config.addPermission(sign, "sudosigns.sign." + sign.getName());
                 goToPermissionsMenu();
             } else {
-                SudoSigns.config.addPermissionToConfig(sign, perm);
+                SudoSigns.config.addPermission(sign, perm);
                 sign.addPermission(perm);
             }
         } else {
@@ -142,7 +143,7 @@ public class PermissionsMenu {
 
     public void deletePermission(String perm) {
         sign.removePermission(perm);
-        SudoSigns.config.deletePermissionFromConfig(sign, perm);
+        SudoSigns.config.deletePermission(sign, perm);
         goToPermissionsMenu();
     }
 

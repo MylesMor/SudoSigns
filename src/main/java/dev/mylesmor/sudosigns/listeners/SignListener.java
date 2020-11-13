@@ -109,7 +109,7 @@ public class SignListener implements Listener {
                 SignEditor editor = new SignEditor(p, SudoSigns.signs.get(user.getPassThru()), user);
                 user.setEditor(editor);
             }
-            SudoSigns.config.saveToFile(SudoSigns.signs.get(user.getPassThru()), true, p);
+            SudoSigns.config.saveSign(SudoSigns.signs.get(user.getPassThru()), true, p);
         } else {
             Util.sudoSignsMessage(p, ChatColor.RED, "A sign wasn't clicked! Cancelling...", null);
             user.setCreate(false);
@@ -130,7 +130,7 @@ public class SignListener implements Listener {
             }
             SudoSigns.signs.get(user.getPassThru()).setSign(newSign);
             SudoSigns.signs.get(user.getPassThru()).addLines();
-            SudoSigns.config.saveToFile(SudoSigns.signs.get(user.getPassThru()), true, p);
+            SudoSigns.config.saveSign(SudoSigns.signs.get(user.getPassThru()), true, p);
             Util.sudoSignsMessage(p, ChatColor.GRAY, "Sign has been copied to sign %NAME% successfully!", user.getPassThru());
         } else {
             Util.sudoSignsMessage(p, ChatColor.RED, "A sign wasn't clicked! Cancelling...", null);
@@ -249,6 +249,8 @@ public class SignListener implements Listener {
             }
         }
     }
+
+    // The following events all attempt to prevent a SudoSign being broken
 
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent e) {

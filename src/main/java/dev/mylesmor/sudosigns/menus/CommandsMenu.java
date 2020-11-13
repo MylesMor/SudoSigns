@@ -10,10 +10,12 @@ import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +41,6 @@ public class CommandsMenu {
     public void goToCommandsMenu() {
         createCommandsMenu();
         p.openInventory(menu);
-        editor.setCurrentPage(PAGE);
-
     }
 
     private void createCommandsMenu() {
@@ -72,24 +72,38 @@ public class CommandsMenu {
         head.setItemMeta(headMeta);
 
         List<String> lore = new ArrayList<>();
+        NamespacedKey key = new NamespacedKey(SudoSigns.sudoSignsPlugin, "command-number");
 
-        // Populates spaces with commands.
-        int i = 1;
+        ArrayList<SignCommand> orderedSignCommands = new ArrayList<>();
         for (Map.Entry<SignCommand, Boolean> entry : sign.getPlayerCommands().entrySet()) {
-            SignCommand sc = entry.getKey();
+                SignCommand sc = entry.getKey();
+                if (orderedSignCommands.size() == 0) {
+                    orderedSignCommands.add(sc);
+                    continue;
+                }
+                if (orderedSignCommands.get(0).getDelay() >= sc.getDelay()) {
+                    orderedSignCommands.add(0, sc);
+                }
+            }
+
+            // Populates spaces with commands.
+        int i = 1;
+        for (SignCommand sc : orderedSignCommands) {
             if (i > 26) break;
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
-            if (entry.getValue()) {
+            if (sc.getType() == PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS) {
                 lore.add(ChatColor.YELLOW + "Player Command with Permissions (player is granted OP for this command only).");
             } else {
                 lore.add(ChatColor.YELLOW + "Player Command");
             }
             bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + "/" + sc.getCommand());
-            if (p.hasPermission(Permissions.DELETE_COMMAND)) {
+            lore.add(ChatColor.GRAY + "Delay: " + ChatColor.RED + (sc.getDelay() / 1000) + "s");
+            if (p.hasPermission(Permissions.COMMAND_OPTIONS)) {
                 lore.add("");
-                lore.add(ChatColor.RED + "Click to delete!");
+                lore.add(ChatColor.GREEN + "Click for options!");
             }
+            bookMeta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, sc.getNumber());
             bookMeta.setLore(lore);
             lore.clear();
             book.setItemMeta(bookMeta);
@@ -97,16 +111,30 @@ public class CommandsMenu {
             menu.setItem(i, book);
             i++;
         }
-        i = 19;
+
+        orderedSignCommands = new ArrayList<>();
         for (SignCommand sc : sign.getConsoleCommands()) {
+            if (orderedSignCommands.size() == 0) {
+                orderedSignCommands.add(sc);
+                continue;
+            }
+            if (orderedSignCommands.get(0).getDelay() >= sc.getDelay()) {
+                orderedSignCommands.add(0, sc);
+            }
+        }
+
+        i = 19;
+        for (SignCommand sc : orderedSignCommands) {
             if (i > 35) break;
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
             bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + "/" + sc.getCommand());
-            if (p.hasPermission(Permissions.DELETE_COMMAND)) {
+            lore.add(ChatColor.GRAY + "Delay: " + ChatColor.RED + (sc.getDelay() / 1000) + "s");
+            if (p.hasPermission(Permissions.COMMAND_OPTIONS)) {
                 lore.add("");
-                lore.add(ChatColor.RED + "Click to delete!");
+                lore.add(ChatColor.GREEN + "Click for options!");
             }
+            bookMeta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, sc.getNumber());
             bookMeta.setLore(lore);
             lore.clear();
             book.setItemMeta(bookMeta);
@@ -170,34 +198,6 @@ public class CommandsMenu {
         p.openInventory(choiceInv);
     }
 
-    public void deleteCommand(String cmd) {
-        SignCommand found = null;
-        for (SignCommand c : sign.getConsoleCommands()) {
-            if (c.getCommand().equals(cmd)) {
-                found = c;
-                SudoSigns.config.deleteCommandFromConfig(sign, c, PlayerInput.CONSOLE_COMMAND);
-            }
-        }
-        if (found != null) {
-            sign.deleteConsoleCommand(found);
-        }
-        found = null;
-        for (Map.Entry<SignCommand, Boolean> entry : sign.getPlayerCommands().entrySet()) {
-            SignCommand command = entry.getKey();
-            if (command.getCommand().equals(cmd.replace("/", ""))) {
-                found = command;
-                if (entry.getValue()) {
-                    SudoSigns.config.deleteCommandFromConfig(sign, command, PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS);
-                } else {
-                    SudoSigns.config.deleteCommandFromConfig(sign, command, PlayerInput.PLAYER_COMMAND);
-                }
-            }
-        }
-        if (found != null) {
-            sign.deletePlayerCommand(found);
-        }
-        goToCommandsMenu();
-    }
 
     public void chooseCommandType(PlayerInput type) {
         p.closeInventory();
@@ -207,7 +207,7 @@ public class CommandsMenu {
     }
 
     public void addCommand(String cmd, PlayerInput type) {
-        SignCommand command = new SignCommand(cmd, type);
+        SignCommand command = new SignCommand(sign.getNextCommandNumber(), cmd, 0, type);
         switch (type) {
             case CONSOLE_COMMAND:
                 sign.addConsoleCommand(command);
@@ -219,9 +219,9 @@ public class CommandsMenu {
                 sign.addPlayerCommand(command, true);
                 break;
         }
-        SudoSigns.config.addCommandToConfig(sign, command, type);
+        SudoSigns.config.addCommand(sign, command, type);
         Util.sudoSignsMessage(p, ChatColor.GRAY, "Command added successfully!", null);
-        goToCommandsMenu();
+        editor.goToCommands();
     }
 
 }

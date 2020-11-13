@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ public class SudoSign {
     private HashMap<SignCommand, Boolean> playerCommands = new HashMap<>();
     private ArrayList<SignCommand> consoleCommands = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
-    private ArrayList<String> messages = new ArrayList<>();
+    private ArrayList<SignMessage> messages = new ArrayList<>();
     private ArrayList<String> text = new ArrayList<>();
     private String worldName;
     private double x;
@@ -48,7 +49,6 @@ public class SudoSign {
 
     public void addPlayerCommand(SignCommand sc, boolean permissions) {
         playerCommands.put(sc, permissions);
-
     }
 
     public List<String> getText() {
@@ -92,11 +92,11 @@ public class SudoSign {
         return permissions;
     }
 
-    public void addMessage(String s) {
+    public void addMessage(SignMessage s) {
         messages.add(s);
     }
 
-    public void removeMessage(String s) {
+    public void removeMessage(SignMessage s) {
         messages.remove(s);
     }
 
@@ -107,9 +107,9 @@ public class SudoSign {
         this.messages = s.getMessages();
     }
 
-    public ArrayList<String> getMessages() { return messages; }
+    public ArrayList<SignMessage> getMessages() { return messages; }
 
-    public void setMessages(ArrayList<String> messages) { this.messages = messages; }
+    public void setMessages(ArrayList<SignMessage> messages) { this.messages = messages; }
 
 
     public void setPlayerCommands(HashMap<SignCommand, Boolean> playerCommands) {
@@ -144,27 +144,51 @@ public class SudoSign {
             }
         }
         if (hasPermission) {
-            for (String s : messages) {
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', s).replaceAll("(?i)%PLAYER%", p.getName()));
+            for (SignMessage sm : messages) {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        p.sendMessage(ChatColor.translateAlternateColorCodes('&', sm.getMessage()).replaceAll("(?i)%PLAYER%", p.getName()));
+
+                    }
+                }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (sm.getDelay()/50));
             }
             for (Map.Entry<SignCommand, Boolean> entry : playerCommands.entrySet()) {
                 String cmd = entry.getKey().getCommand().replaceAll("(?i)%PLAYER%", p.getName());
                 if (entry.getValue()) {
-                    try {
-                        p.setOp(true);
-                        p.performCommand(cmd);
-                        p.setOp(false);
-                    } catch (Exception ignored) { }
-                    finally {
-                        p.setOp(false);
-                    }
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                if (p.isOp()) {
+                                    p.performCommand(cmd);
+                                    return;
+                                }
+                                try {
+                                    p.setOp(true);
+                                    Bukkit.getServer().dispatchCommand(p, cmd);
+                                } catch (Exception ignored) {
+                                } finally {
+                                    p.setOp(false);
+                                }
+                            }
+                        }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (entry.getKey().getDelay()/50));
                 } else {
-                    p.performCommand(cmd);
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            p.performCommand(cmd);
+                        }
+                    }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (entry.getKey().getDelay()/50));
                 }
             }
             for (SignCommand sc : consoleCommands) {
                 String cmd = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                    }
+                }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (sc.getDelay()/50));
             }
         } else {
             p.sendMessage(ChatColor.RED + "You don't have permission to do this!");
@@ -183,6 +207,48 @@ public class SudoSign {
             }
         }
         Bukkit.getLogger().warning("Failed to locate sign " + name + "!");
+        return null;
+    }
+
+    public int getNextCommandNumber() {
+        int number = 0;
+        for (SignCommand c: consoleCommands) {
+            number = Math.max(c.getNumber(), number);
+        }
+        for(Map.Entry<SignCommand, Boolean> entry : playerCommands.entrySet()) {
+            number = Math.max(entry.getKey().getNumber(), number);
+        }
+        return number+1;
+    }
+
+    public int getNextMessageNumber() {
+        int number = 0;
+        for (SignMessage m : messages) {
+            number = Math.max(m.getNumber(), number);
+        }
+        return number+1;
+    }
+
+    public SignMessage getSignMessageByNumber(int number) {
+        for (SignMessage sm: messages) {
+            if (sm.getNumber() == number) {
+                return sm;
+            }
+        }
+        return null;
+    }
+
+    public SignCommand getSignCommandByNumber(int number) {
+        for (SignCommand c: consoleCommands) {
+            if (c.getNumber() == number) {
+                return c;
+            }
+        }
+        for(Map.Entry<SignCommand, Boolean> entry : playerCommands.entrySet()) {
+            if (entry.getKey().getNumber() == number) {
+                return entry.getKey();
+            }
+        }
         return null;
     }
 }

@@ -12,4 +12,6 @@ public enum PlayerInput {
     RENAME,
     PERMISSION,
     MESSAGE,
+    COMMAND_DELAY,
+    MESSAGE_DELAY
 }

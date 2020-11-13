@@ -1,22 +1,23 @@
 package dev.mylesmor.sudosigns.menus;
 
 import dev.mylesmor.sudosigns.SudoSigns;
-import dev.mylesmor.sudosigns.data.PlayerInput;
-import dev.mylesmor.sudosigns.data.SignCommand;
-import dev.mylesmor.sudosigns.data.SudoSign;
-import dev.mylesmor.sudosigns.data.SudoUser;
+import dev.mylesmor.sudosigns.data.*;
 import dev.mylesmor.sudosigns.util.Permissions;
 import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class MessagesMenu {
 
@@ -38,7 +39,6 @@ public class MessagesMenu {
     public void goToMessagesMenu() {
         createMessagesMenu();
         p.openInventory(menu);
-        editor.setCurrentPage(PAGE);
     }
 
     private void createMessagesMenu() {
@@ -70,18 +70,27 @@ public class MessagesMenu {
 
         List<String> lore = new ArrayList<>();
 
+        NamespacedKey key = new NamespacedKey(SudoSigns.sudoSignsPlugin, "message-number");
+
+        ArrayList<SignMessage> orderedSignMessages = sign.getMessages();
+        orderedSignMessages.sort(Comparator.comparing(SignMessage::getDelay));
+
         int i = 1;
-        for (String message : sign.getMessages()) {
+        for (SignMessage sm : orderedSignMessages) {
             if (i > 35) break;
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
-            if (p.hasPermission(Permissions.DELETE_MESSAGE)) {
-                bookMeta.setDisplayName(ChatColor.RED + "Click to delete!");
-            } else {
-                bookMeta.setDisplayName(ChatColor.LIGHT_PURPLE + "Message:");
-            }
             lore.clear();
-            lore.add("" + ChatColor.RESET + ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', message));
+            bookMeta.setDisplayName(ChatColor.LIGHT_PURPLE + "Message:");
+            lore.add("" + ChatColor.RESET + ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', sm.getMessage()));
+            lore.add("");
+            lore.add("");
+            lore.add(ChatColor.GRAY + "Delay: " + ChatColor.RED + (sm.getDelay() / 1000) + "s");
+            if (p.hasPermission(Permissions.MESSAGE_OPTIONS)) {
+                lore.add("");
+                lore.add(ChatColor.GREEN + "Click for options!");
+            }
+            bookMeta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, sm.getNumber());
             bookMeta.setLore(lore);
             book.setItemMeta(bookMeta);
             if (i == 9 || i == 18 || i == 27) i++;
@@ -97,26 +106,15 @@ public class MessagesMenu {
     }
 
     public void addMessage(String message) {
-        SudoSigns.config.addMessageToConfig(sign, message);
-        sign.addMessage(message);
+        SignMessage signMessage = new SignMessage(sign.getNextMessageNumber(), message, 0, PlayerInput.MESSAGE);
+        SudoSigns.config.addMessage(sign, signMessage);
+        sign.addMessage(signMessage);
     }
 
     public void prepareMessage() {
         p.closeInventory();
         p.sendMessage(Util.prefix + ChatColor.GRAY + " Please enter in chat the message which will be shown. Use the " + ChatColor.GOLD + "& " + ChatColor.GRAY + "symbol for chat colour codes and the phrase" + ChatColor.GOLD + " %PLAYER% " + ChatColor.GRAY + "for the player who clicked the sign. To cancel type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
         su.addTextInput(PlayerInput.MESSAGE);
-    }
-
-    public void deleteMessage(String message) {
-        String found = null;
-        for (String m : sign.getMessages()) {
-            if (message.equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', m))) {
-                found = m;
-            }
-        }
-        sign.removeMessage(found);
-        SudoSigns.config.deleteMessageFromConfig(sign, found);
-        goToMessagesMenu();
     }
 
     

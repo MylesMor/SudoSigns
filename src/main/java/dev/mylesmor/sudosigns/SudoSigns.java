@@ -43,6 +43,7 @@ public class SudoSigns extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         sudoSignsPlugin = this;
         config = new ConfigManager();
+        config.loadModules();
         this.getCommand("sudosigns").setExecutor(new Commands());
 
     }
