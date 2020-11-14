@@ -224,9 +224,6 @@ public class InventoryListener implements Listener {
 
     public void chooseCommandType(SignEditor editor, Material m, String itemName) {
         switch (m) {
-            case CHAIN_COMMAND_BLOCK:
-                editor.getCommandsMenu().chooseCommandType(PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS);
-                break;
             case PLAYER_HEAD:
                 editor.getCommandsMenu().chooseCommandType(PlayerInput.PLAYER_COMMAND);
                 break;

@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class SudoSign {
 
-    private HashMap<SignCommand, Boolean> playerCommands = new HashMap<>();
+    private ArrayList<SignCommand> playerCommands = new ArrayList<>();
     private ArrayList<SignCommand> consoleCommands = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
     private ArrayList<SignMessage> messages = new ArrayList<>();
@@ -47,8 +47,8 @@ public class SudoSign {
         this.name = name;
     }
 
-    public void addPlayerCommand(SignCommand sc, boolean permissions) {
-        playerCommands.put(sc, permissions);
+    public void addPlayerCommand(SignCommand sc) {
+        playerCommands.add(sc);
     }
 
     public List<String> getText() {
@@ -112,7 +112,7 @@ public class SudoSign {
     public void setMessages(ArrayList<SignMessage> messages) { this.messages = messages; }
 
 
-    public void setPlayerCommands(HashMap<SignCommand, Boolean> playerCommands) {
+    public void setPlayerCommands(ArrayList<SignCommand> playerCommands) {
         this.playerCommands = playerCommands;
     }
 
@@ -124,7 +124,7 @@ public class SudoSign {
         this.permissions = permissions;
     }
 
-    public HashMap<SignCommand, Boolean> getPlayerCommands() {
+    public ArrayList<SignCommand> getPlayerCommands() {
         return playerCommands;
     }
 
@@ -149,38 +149,17 @@ public class SudoSign {
                     @Override
                     public void run() {
                         p.sendMessage(ChatColor.translateAlternateColorCodes('&', sm.getMessage()).replaceAll("(?i)%PLAYER%", p.getName()));
-
                     }
                 }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (sm.getDelay()/50));
             }
-            for (Map.Entry<SignCommand, Boolean> entry : playerCommands.entrySet()) {
-                String cmd = entry.getKey().getCommand().replaceAll("(?i)%PLAYER%", p.getName());
-                if (entry.getValue()) {
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                if (p.isOp()) {
-                                    p.performCommand(cmd);
-                                    return;
-                                }
-                                try {
-                                    p.setOp(true);
-                                    Bukkit.getServer().dispatchCommand(p, cmd);
-                                } catch (Exception ignored) {
-                                } finally {
-                                    p.setOp(false);
-                                }
-                            }
-                        }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (entry.getKey().getDelay()/50));
-                } else {
+            for (SignCommand sc : playerCommands) {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            p.performCommand(cmd);
+                            p.performCommand(sc.getCommand());
                         }
-                    }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (entry.getKey().getDelay()/50));
+                    }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (sc.getDelay()/50));
                 }
-            }
             for (SignCommand sc : consoleCommands) {
                 String cmd = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());
                 new BukkitRunnable() {
@@ -215,8 +194,8 @@ public class SudoSign {
         for (SignCommand c: consoleCommands) {
             number = Math.max(c.getNumber(), number);
         }
-        for(Map.Entry<SignCommand, Boolean> entry : playerCommands.entrySet()) {
-            number = Math.max(entry.getKey().getNumber(), number);
+        for(SignCommand sc: playerCommands) {
+            number = Math.max(sc.getNumber(), number);
         }
         return number+1;
     }
@@ -244,9 +223,9 @@ public class SudoSign {
                 return c;
             }
         }
-        for(Map.Entry<SignCommand, Boolean> entry : playerCommands.entrySet()) {
-            if (entry.getKey().getNumber() == number) {
-                return entry.getKey();
+        for(SignCommand sc: playerCommands) {
+            if (sc.getNumber() == number) {
+                return sc;
             }
         }
         return null;

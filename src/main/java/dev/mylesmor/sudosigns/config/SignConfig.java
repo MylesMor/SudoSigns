@@ -52,19 +52,13 @@ public class SignConfig {
                         SudoSign ss = new SudoSign(key);
                         ss.setSign(sign);
                         List<Map<?, ?>> pCommands = signConfig.getMapList("signs." + key + ".player-commands");
-                        List<Map<?, ?>> opCommands = signConfig.getMapList("signs." + key + ".op-commands");
                         List<Map<?, ?>> cCommands = signConfig.getMapList("signs." + key + ".console-commands");
                         List<String> permissions = signConfig.getStringList("signs." + key + ".permissions");
                         List<Map<?, ?>> messages = signConfig.getMapList("signs." + key + ".messages");
                         int number = 0;
                         for (Map<?, ?> sc : pCommands) {
                             for (Map.Entry<?, ?> cmd : sc.entrySet()) {
-                                ss.addPlayerCommand(new SignCommand(number++, (String) cmd.getKey(), (Double) cmd.getValue(), PlayerInput.PLAYER_COMMAND), false);
-                            }
-                        }
-                        for (Map<?, ?> sc : opCommands) {
-                            for (Map.Entry<?, ?> cmd : sc.entrySet()) {
-                                ss.addPlayerCommand(new SignCommand(number++, (String) cmd.getKey(), (Double) cmd.getValue(), PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS), true);
+                                ss.addPlayerCommand(new SignCommand(number++, (String) cmd.getKey(), (Double) cmd.getValue(), PlayerInput.PLAYER_COMMAND));
                             }
                         }
                         for (Map<?, ?> sc : cCommands) {

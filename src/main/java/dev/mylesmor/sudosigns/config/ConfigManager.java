@@ -135,6 +135,8 @@ public class ConfigManager {
             name = key;
             List<String> pCommands = signConfig.getStringList("signs." + key + ".player-commands");
             List<String> opCommands = signConfig.getStringList("signs." + key + ".op-commands");
+            pCommands.addAll(opCommands);
+            signConfig.set("signs." + key + ".op-commands", null);
             List<String> cCommands = signConfig.getStringList("signs." + key + ".console-commands");
             List<String> messages = signConfig.getStringList("signs." + key + ".messages");
             if (pCommands.size() == 0 && opCommands.size() == 0 && cCommands.size() == 0 && messages.size() == 0) {
@@ -153,19 +155,7 @@ public class ConfigManager {
                 } catch (Exception ignored) {
                 }
             }
-            if (opCommands.size() != 0) {
-                try {
-                    ArrayList<HashMap<String, Double>> mapList = new ArrayList<>();
-                    HashMap<String, Double> map = new HashMap<>();
-                    for (String cmd : opCommands) {
-                        map.put(cmd, 0.0);
-                        mapList.add(map);
-                        map = new HashMap<>();
-                    }
-                    signConfig.set("signs." + name + ".op-commands", mapList);
-                } catch (Exception ignored) {
-                }
-            }
+            signConfig.set("signs." + key + ".op-commands", null);
             if (cCommands.size() != 0) {
                 try {
                     ArrayList<HashMap<String, Double>> mapList = new ArrayList<>();

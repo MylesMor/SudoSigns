@@ -29,7 +29,7 @@ public class ChatListener implements Listener {
         if (user != null) {
             if (user.isTextInput() && user.isEditing()) {
                 e.setCancelled(true);
-                if (user.getInputType() == PlayerInput.CONSOLE_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS) {
+                if (user.getInputType() == PlayerInput.CONSOLE_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND) {
                     user.getEditor().getCommandsMenu().addCommand(e.getMessage().substring(1), user.getInputType());
                     user.removeTextInput();
                 } else {
@@ -48,7 +48,7 @@ public class ChatListener implements Listener {
             if (user.isTextInput() && user.isEditing()) {
                 SignEditor editor = user.getEditor();
                 switch (user.getInputType()) {
-                    case PLAYER_COMMAND: case CONSOLE_COMMAND: case PLAYER_COMMAND_WITH_PERMISSIONS:
+                    case PLAYER_COMMAND: case CONSOLE_COMMAND:
                         if (e.getMessage().equalsIgnoreCase("cancel")) {
                             handle(e, true, "Cancelled!", editor, user, null, editor::goToCommands);
                             return;

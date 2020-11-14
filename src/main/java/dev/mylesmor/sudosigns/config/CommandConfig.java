@@ -31,13 +31,6 @@ public class CommandConfig {
                     pCmds.add(map);
                     signConfig.set("signs." + s.getName() + ".player-commands", pCmds);
                     break;
-                case PLAYER_COMMAND_WITH_PERMISSIONS:
-                    List<Map<?, ?>> opCmds = signConfig.getMapList("signs." + s.getName() + ".op-commands");
-                    map = new HashMap<>();
-                    map.put(cmd.getCommand(), cmd.getDelay());
-                    opCmds.add(map);
-                    signConfig.set("signs." + s.getName() + ".op-commands", opCmds);
-                    break;
                 case CONSOLE_COMMAND:
                     List<Map<?, ?>> cCmds = signConfig.getMapList("signs." + s.getName() + ".console-commands");
                     map = new HashMap<>();
@@ -75,21 +68,6 @@ public class CommandConfig {
             signConfig.set("signs." + s.getName() + ".player-commands", mapList);
         } else if (type.equals(PlayerInput.CONSOLE_COMMAND)) {
             List<Map<?, ?>> mapList = signConfig.getMapList("signs." + s.getName() + ".console-commands");
-            Map<?, ?> found = null;
-            for (Map<?, ?> map : mapList) {
-                for (Map.Entry<?, ?> cmds : map.entrySet()) {
-                    if (cmds.getKey().equals(cmd.getCommand()) && (Double) cmds.getValue() == oldDelay) {
-                        found = map;
-                        break;
-                    }
-                }
-            }
-            if (found != null) {
-                mapList.remove(found);
-            }
-            signConfig.set("signs." + s.getName() + ".console-commands", mapList);
-        } else if (type.equals(PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS)) {
-            List<Map<?, ?>> mapList = signConfig.getMapList("signs." + s.getName() + ".op-commands");
             Map<?, ?> found = null;
             for (Map<?, ?> map : mapList) {
                 for (Map.Entry<?, ?> cmds : map.entrySet()) {
