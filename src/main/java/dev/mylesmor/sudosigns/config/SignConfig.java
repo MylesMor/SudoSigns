@@ -168,4 +168,13 @@ public class SignConfig {
 
     }
 
+    public void editText(String name, int lineNumber, String newText) {
+        if (signConfig.isConfigurationSection("signs." + name + "")) {
+            List<String> text = signConfig.getStringList("signs." + name + ".text");
+            text.set(lineNumber-1, newText);
+            signConfig.set("signs." + name + ".text", text);
+        }
+        configManager.save();
+    }
+
 }

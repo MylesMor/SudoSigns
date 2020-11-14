@@ -109,10 +109,32 @@ public class ChatListener implements Listener {
                         double finalMessageDelay = messageDelay;
                         handle(e, true, null, editor, user, edit -> editor.getMessageOptionsMenu().setDelay(finalMessageDelay), editor::goToMessages);
                         break;
+                    case EDIT_TEXT1:
+                        if (checkEditText(e.getMessage())) {
+                            handle(e, true, null, editor, user, edit -> editor.getMainMenu().editText(1, e.getMessage()), editor::goToMain);
+                        }
+                    case EDIT_TEXT2:
+                        if (checkEditText(e.getMessage())) {
+                            handle(e, true, null, editor, user, edit -> editor.getMainMenu().editText(2, e.getMessage()), editor::goToMain);
+                        }
+                    case EDIT_TEXT3:
+                        if (checkEditText(e.getMessage())) {
+                            handle(e, true, null, editor, user, edit -> editor.getMainMenu().editText(3, e.getMessage()), editor::goToMain);
+                        }
+                    case EDIT_TEXT4:
+                        if (checkEditText(e.getMessage())) {
+                            handle(e, true, null, editor, user, edit -> editor.getMainMenu().editText(4, e.getMessage()), editor::goToMain);
+                        }
+
                 }
 
             }
         }
+    }
+
+    private boolean checkEditText(String message) {
+        //TODO: Add edit text test.
+        return true;
     }
 
     private void handle(AsyncPlayerChatEvent e, boolean cancel, String message, SignEditor editor, SudoUser user, Consumer<SignEditor> eventConsumer, Runnable finalAction) {

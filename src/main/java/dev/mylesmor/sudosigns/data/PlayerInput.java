@@ -12,5 +12,9 @@ public enum PlayerInput {
     PERMISSION,
     MESSAGE,
     COMMAND_DELAY,
-    MESSAGE_DELAY
+    MESSAGE_DELAY,
+    EDIT_TEXT1,
+    EDIT_TEXT2,
+    EDIT_TEXT3,
+    EDIT_TEXT4,
 }

@@ -111,4 +111,8 @@ public class MainMenu {
                 break;
         }
     }
+
+    public void editText(int lineNumber, String message) {
+        //TODO
+    }
 }
