@@ -102,11 +102,11 @@ public class InventoryListener implements Listener {
             }
         }
         switch (m) {
-            case BOOK:
+            case NAME_TAG:
                 editor.prepareRename();
                 break;
-            case OAK_SIGN:
-                editor.editSignText();
+            case WRITABLE_BOOK:
+                editor.editSignNumber();
                 break;
             case BARRIER:
                 editor.goToPermissions();

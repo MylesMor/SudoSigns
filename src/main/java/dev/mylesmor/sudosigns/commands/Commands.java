@@ -51,7 +51,6 @@ public class Commands implements CommandExecutor {
                         command.accept(p, null);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
                     Util.sudoSignsMessage(p, ChatColor.RED, "Invalid command!" + ChatColor.GRAY + " Type " + ChatColor.LIGHT_PURPLE + "/ss help " + ChatColor.GRAY + "for a list of commands.", null);
                 }
         }

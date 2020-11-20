@@ -62,9 +62,15 @@ public class SudoSign {
             String line = lines[i];
             text.add(line.replaceAll("§", "&"));
             line = ChatColor.translateAlternateColorCodes('&', line);
-            //line = ChatColor.translateAlternateColorCodes('§', line);
             sign.setLine(i, line);
         }
+        sign.update();
+    }
+
+    public void editLine(int lineNumber, String message) {
+        Sign sign = getSign();
+        String line = ChatColor.translateAlternateColorCodes('&', message);
+        sign.setLine(lineNumber, line);
         sign.update();
     }
 

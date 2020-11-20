@@ -1,11 +1,14 @@
 package dev.mylesmor.sudosigns.menus;
 
 import dev.mylesmor.sudosigns.SudoSigns;
+import dev.mylesmor.sudosigns.data.PlayerInput;
 import dev.mylesmor.sudosigns.data.SudoSign;
 import dev.mylesmor.sudosigns.util.Permissions;
+import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -22,6 +25,7 @@ public class MainMenu {
     private SudoSign sign;
     private SignEditor editor;
     private Player p;
+    private int lineNumber = 0;
 
     public MainMenu(Player p, SudoSign sign, SignEditor editor) {
         this.sign = sign;
@@ -41,9 +45,17 @@ public class MainMenu {
             menu.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
         }
         if (p.hasPermission(Permissions.RENAME)) {
-            ItemStack book = new ItemStack(Material.BOOK);
+            ItemStack nametag = new ItemStack(Material.NAME_TAG);
+            ItemMeta ntMeta = nametag.getItemMeta();
+            ntMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Rename Sign");
+            nametag.setItemMeta(ntMeta);
+            items.add(nametag);
+        }
+
+        if (p.hasPermission(Permissions.EDIT_TEXT)) {
+            ItemStack book = new ItemStack(Material.WRITABLE_BOOK);
             ItemMeta bookMeta = book.getItemMeta();
-            bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Rename Sign");
+            bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Edit Sign Text");
             book.setItemMeta(bookMeta);
             items.add(book);
         }
@@ -90,7 +102,14 @@ public class MainMenu {
             items.add(signBlock);
         }
 
+
         switch (items.size()) {
+            case 5:
+                menu.setItem(11, items.get(0));
+                menu.setItem(13, items.get(1));
+                menu.setItem(15, items.get(2));
+                menu.setItem(29, items.get(3));
+                menu.setItem(31, items.get(4));
             case 4:
                 menu.setItem(11, items.get(0));
                 menu.setItem(13, items.get(1));
@@ -112,7 +131,15 @@ public class MainMenu {
         }
     }
 
-    public void editText(int lineNumber, String message) {
-        //TODO
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+        p.sendMessage(Util.prefix + ChatColor.GRAY + " Please enter the new text (maximum 15 characters), using " + ChatColor.GOLD + "& " + ChatColor.GRAY + "for colour codes. Type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + " to cancel.");
+        SudoSigns.users.get(p.getUniqueId()).addTextInput(PlayerInput.EDIT_TEXT);
+    }
+
+    public void setText(String message) {
+        p.sendMessage(Util.prefix + ChatColor.GREEN + " Line " + lineNumber + " has been set to: " + ChatColor.translateAlternateColorCodes('&', message));
+        sign.editLine(lineNumber-1, message);
+        SudoSigns.config.editSignText(sign.getName(), lineNumber, message);
     }
 }

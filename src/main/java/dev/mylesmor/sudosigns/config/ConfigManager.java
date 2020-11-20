@@ -64,6 +64,10 @@ public class ConfigManager {
         signConfigManager.deleteSign(name);
     }
 
+    public void editSignText(String name, int lineNumber, String message) {
+        signConfigManager.editText(name, lineNumber, message);
+    }
+
     public void addMessage(SudoSign s, SignMessage sm) {
         messageConfig.addMessageToConfig(s, sm);
     }
@@ -132,14 +136,13 @@ public class ConfigManager {
         Set<String> signSection = signConfig.getConfigurationSection("signs").getKeys(false);
         String name = null;
         for (String key : signSection) {
+            signConfig.set("signs." + key + ".op-commands", null);
             name = key;
             List<String> pCommands = signConfig.getStringList("signs." + key + ".player-commands");
-            List<String> opCommands = signConfig.getStringList("signs." + key + ".op-commands");
-            pCommands.addAll(opCommands);
-            signConfig.set("signs." + key + ".op-commands", null);
             List<String> cCommands = signConfig.getStringList("signs." + key + ".console-commands");
             List<String> messages = signConfig.getStringList("signs." + key + ".messages");
-            if (pCommands.size() == 0 && opCommands.size() == 0 && cCommands.size() == 0 && messages.size() == 0) {
+            if (pCommands.size() == 0 && cCommands.size() == 0 && messages.size() == 0) {
+                save();
                 continue;
             }
             if (pCommands.size() != 0) {

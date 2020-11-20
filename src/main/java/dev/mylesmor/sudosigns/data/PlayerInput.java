@@ -13,8 +13,6 @@ public enum PlayerInput {
     MESSAGE,
     COMMAND_DELAY,
     MESSAGE_DELAY,
-    EDIT_TEXT1,
-    EDIT_TEXT2,
-    EDIT_TEXT3,
-    EDIT_TEXT4,
+    EDIT_TEXT_NUMBER,
+    EDIT_TEXT
 }

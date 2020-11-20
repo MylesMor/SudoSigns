@@ -115,8 +115,10 @@ public class SignEditor {
     }
 
 
-    public void editSignText() {
-        //TODO: Add editing of sign text.
+    public void editSignNumber() {
+        p.sendMessage(Util.prefix + ChatColor.GRAY + " Please enter the line you'd like to edit (1-4) or type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
+        su.addTextInput(PlayerInput.EDIT_TEXT_NUMBER);
+        p.closeInventory();
     }
 
     public void prepareRename() {

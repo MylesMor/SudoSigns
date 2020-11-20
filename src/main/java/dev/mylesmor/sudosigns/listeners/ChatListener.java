@@ -109,22 +109,39 @@ public class ChatListener implements Listener {
                         double finalMessageDelay = messageDelay;
                         handle(e, true, null, editor, user, edit -> editor.getMessageOptionsMenu().setDelay(finalMessageDelay), editor::goToMessages);
                         break;
-                    case EDIT_TEXT1:
-                        if (checkEditText(e.getMessage())) {
-                            handle(e, true, null, editor, user, edit -> editor.getMainMenu().editText(1, e.getMessage()), editor::goToMain);
+                    case EDIT_TEXT_NUMBER:
+                        if (e.getMessage().equalsIgnoreCase("cancel")) {
+                            handle(e, true, "Cancelled!", editor, user, null, editor::goToMessages);
+                            return;
                         }
-                    case EDIT_TEXT2:
-                        if (checkEditText(e.getMessage())) {
-                            handle(e, true, null, editor, user, edit -> editor.getMainMenu().editText(2, e.getMessage()), editor::goToMain);
+                        int lineNumber = 0;
+                        try {
+                            lineNumber = Integer.parseInt(ChatColor.stripColor(e.getMessage()));
+                        } catch (NumberFormatException nfe) {
+                            e.setCancelled(true);
+                            Util.sudoSignsMessage(p, ChatColor.RED, "Please enter a valid number between 1-4!", "");
+                            return;
                         }
-                    case EDIT_TEXT3:
-                        if (checkEditText(e.getMessage())) {
-                            handle(e, true, null, editor, user, edit -> editor.getMainMenu().editText(3, e.getMessage()), editor::goToMain);
+                        if (lineNumber < 1 || lineNumber > 4) {
+                            e.setCancelled(true);
+                            Util.sudoSignsMessage(p, ChatColor.RED, "Please enter a valid number between 1-4!", "");
+                            return;
                         }
-                    case EDIT_TEXT4:
-                        if (checkEditText(e.getMessage())) {
-                            handle(e, true, null, editor, user, edit -> editor.getMainMenu().editText(4, e.getMessage()), editor::goToMain);
+                        final int finalLineNumber = lineNumber;
+                        handle(e, true, null, editor, user, edit -> editor.getMainMenu().setLineNumber(finalLineNumber), null);
+                        break;
+                    case EDIT_TEXT:
+                        if (e.getMessage().equalsIgnoreCase("cancel")) {
+                            handle(e, true, "Cancelled!", editor, user, null, editor::goToMessages);
+                            return;
                         }
+                        if (e.getMessage().length() > 15) {
+                            e.setCancelled(true);
+                            Util.sudoSignsMessage(p, ChatColor.RED, "The message can't be greater than 15 characters!", "");
+                            return;
+                        }
+                        handle(e, true, null, editor, user, edit -> editor.getMainMenu().setText(e.getMessage()), editor::goToMain);
+                        break;
 
                 }
 
@@ -132,16 +149,13 @@ public class ChatListener implements Listener {
         }
     }
 
-    private boolean checkEditText(String message) {
-        //TODO: Add edit text test.
-        return true;
-    }
-
     private void handle(AsyncPlayerChatEvent e, boolean cancel, String message, SignEditor editor, SudoUser user, Consumer<SignEditor> eventConsumer, Runnable finalAction) {
         if (cancel) e.setCancelled(true);
         if (message != null) Util.sudoSignsMessage(e.getPlayer(), ChatColor.RED, message, null);
         if (eventConsumer != null) Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, () -> eventConsumer.accept(editor));
         user.removeTextInput();
-        Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, finalAction);
+        if (finalAction != null) {
+            Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, finalAction);
+        }
     }
 }

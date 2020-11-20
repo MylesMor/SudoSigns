@@ -28,7 +28,7 @@ public class Run {
             name = args[0];
             if (SudoSigns.signs.containsKey(name)) {
                 SudoSign sign = SudoSigns.signs.get(name);
-                Util.sudoSignsMessage(p, ChatColor.GRAY, "Executing " + ChatColor.LIGHT_PURPLE + sign.getMessages().size() + ChatColor.GRAY + " messages and " + ChatColor.LIGHT_PURPLE + (sign.getPlayerCommands().size() + sign.getConsoleCommands().size()) + ChatColor.GRAY + " commands...", null);
+                Util.sudoSignsMessage(p, ChatColor.GRAY, "Executing " + ChatColor.LIGHT_PURPLE + sign.getMessages().size() + ChatColor.GRAY + " message(s) and " + ChatColor.LIGHT_PURPLE + (sign.getPlayerCommands().size() + sign.getConsoleCommands().size()) + ChatColor.GRAY + " command(s)...", null);
                 SudoSigns.signs.get(name).executeCommands(p);
             } else {
                 Util.sudoSignsMessage(p, ChatColor.RED,  "A sign with name %NAME% doesn't exist!", name);
