@@ -3,11 +3,13 @@
 # SudoSigns
 A Spigot plugin used to run commands by interacting with a sign. Some inspiration for commands has been taken from [Nokorbis' Command Signs](https://www.spigotmc.org/resources/command-signs.10512/), but all the code is my own, and I have also implemented a convenient inventory-based GUI. 
 This allows you to perform actions on SudoSigns such as:
-* Renaming the SudoSign
+* Editing the sign's text
 * Adding permissions that a player must have to run the sign's commands
 * Adding either player or console commands to a sign
 * Adding messages which are shown to the player
 * Use colour codes (`&`) on the sign for coloured text
+* Adding delays to commands/messages
+* (Vault Economy) Setting the price of running a sign
 
 For in-depth details on the command, permissions and features of this plugin, visit the [Wiki](https://github.com/MylesMor/SudoSigns/wiki)!
 
@@ -29,4 +31,4 @@ In your issue report, please include as much information as possible including:
 
 ## Upcoming Features
 These features will be available in future updates!
-* Edit the sign's text from the GUI menu.
+* None currently planned, send me suggestions!
