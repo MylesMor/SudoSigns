@@ -14,5 +14,6 @@ public enum PlayerInput {
     COMMAND_DELAY,
     MESSAGE_DELAY,
     EDIT_TEXT_NUMBER,
-    EDIT_TEXT
+    EDIT_TEXT,
+    SET_PRICE,
 }

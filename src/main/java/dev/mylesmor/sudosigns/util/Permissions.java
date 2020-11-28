@@ -34,5 +34,7 @@ public final class Permissions {
     public static final String DELETE_MESSAGE = "sudosigns.message.delete";
     public static final String MESSAGE_OPTIONS = "sudosigns.message.options";
     public static final String EDIT_TEXT = "sudosigns.text.edit";
+    public static final String VIEW_PRICE = "sudosigns.price.view";
+    public static final String SET_PRICE = "sudosigns.price.set";
 
 }

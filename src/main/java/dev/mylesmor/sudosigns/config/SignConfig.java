@@ -55,6 +55,12 @@ public class SignConfig {
                         List<Map<?, ?>> cCommands = signConfig.getMapList("signs." + key + ".console-commands");
                         List<String> permissions = signConfig.getStringList("signs." + key + ".permissions");
                         List<Map<?, ?>> messages = signConfig.getMapList("signs." + key + ".messages");
+                        try {
+                            ss.setPrice((Double) signConfig.get("signs." + key + ".price"));
+                        } catch (Exception e) {
+                            Bukkit.getLogger().info("Invalid price for sign " + name + "! Default to 0.");
+                            ss.setPrice(0.0);
+                        }
                         int number = 0;
                         for (Map<?, ?> sc : pCommands) {
                             for (Map.Entry<?, ?> cmd : sc.entrySet()) {
@@ -136,6 +142,7 @@ public class SignConfig {
                 ArrayList<String> lines = new ArrayList<>();
                 lines.addAll(s.getText());
                 signConfig.set("signs." + name + ".text", lines);
+                signConfig.set("signs." + name + ".price", 0.0);
                 ConfigurationSection locSec = signConfig.createSection("signs." + name + ".location");
                 String world = s.getSign().getWorld().getName();
                 double x = s.getSign().getLocation().getX();
@@ -178,4 +185,10 @@ public class SignConfig {
         configManager.save();
     }
 
+    public void setPrice(String name, double price) {
+        if (signConfig.isConfigurationSection("signs." + name + "")) {
+            signConfig.set("signs." + name + ".price", price);
+        }
+        configManager.save();
+    }
 }

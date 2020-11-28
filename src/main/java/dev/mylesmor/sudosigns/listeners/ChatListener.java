@@ -142,7 +142,22 @@ public class ChatListener implements Listener {
                         }
                         handle(e, true, null, editor, user, edit -> editor.getMainMenu().setText(e.getMessage()), editor::goToMain);
                         break;
-
+                    case SET_PRICE:
+                        if (e.getMessage().equalsIgnoreCase("cancel")) {
+                            handle(e, true, "Cancelled!", editor, user, null, editor::goToMessages);
+                            return;
+                        }
+                        double price = 0;
+                        try {
+                            price = Double.parseDouble(ChatColor.stripColor(e.getMessage()));
+                        } catch (NumberFormatException nfe) {
+                            e.setCancelled(true);
+                            Util.sudoSignsMessage(p, ChatColor.RED, "Please enter a valid number!", "");
+                            return;
+                        }
+                        double finalPrice = price;
+                        handle(e, true, null, editor, user, edit -> editor.getMainMenu().setPrice(finalPrice), editor::goToMain);
+                        break;
                 }
 
             }

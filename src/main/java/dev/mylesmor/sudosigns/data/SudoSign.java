@@ -1,6 +1,8 @@
 package dev.mylesmor.sudosigns.data;
 
 import dev.mylesmor.sudosigns.SudoSigns;
+import dev.mylesmor.sudosigns.util.Util;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -25,6 +27,7 @@ public class SudoSign {
     private ArrayList<String> permissions = new ArrayList<>();
     private ArrayList<SignMessage> messages = new ArrayList<>();
     private ArrayList<String> text = new ArrayList<>();
+    private double price = 0;
     private String worldName;
     private double x;
     private double y;
@@ -111,6 +114,7 @@ public class SudoSign {
         this.playerCommands = s.getPlayerCommands();
         this.consoleCommands = s.getConsoleCommands();
         this.messages = s.getMessages();
+        this.price = s.getPrice();
     }
 
     public ArrayList<SignMessage> getMessages() { return messages; }
@@ -138,6 +142,14 @@ public class SudoSign {
         return consoleCommands;
     }
 
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
     /**
      * Executes all of the commands attached to the sign, if the player has the required permissions.
      * @param p The player who is running the sign.
@@ -150,6 +162,22 @@ public class SudoSign {
             }
         }
         if (hasPermission) {
+            if (SudoSigns.econ != null) {
+                EconomyResponse r = SudoSigns.econ.withdrawPlayer(p, price);
+                if (!r.transactionSuccess()) {
+                    if (price == 1.0) {
+                        Util.sudoSignsMessage(p, ChatColor.RED, "You don't have enough money to run this sign! This sign costs " + ChatColor.GOLD + SudoSigns.econ.currencyNameSingular() + price + ChatColor.RED + ".", null);
+                    } else {
+                        Util.sudoSignsMessage(p, ChatColor.RED, "You don't have enough money to run this sign! This sign costs " + ChatColor.GOLD + SudoSigns.econ.currencyNamePlural() + price + ChatColor.RED + ".", null);
+                    }
+                    return;
+                }
+                if (price == 1.0) {
+                    Util.sudoSignsMessage(p, ChatColor.GREEN, ChatColor.GOLD + SudoSigns.econ.currencyNameSingular() + price + ChatColor.GREEN + " has been withdrawn from your account.", null);
+                } else {
+                    Util.sudoSignsMessage(p, ChatColor.GREEN, ChatColor.GOLD + SudoSigns.econ.currencyNamePlural() + price + ChatColor.GREEN + " has been withdrawn from your account.", null);
+                }
+            }
             for (SignMessage sm : messages) {
                 new BukkitRunnable() {
                     @Override

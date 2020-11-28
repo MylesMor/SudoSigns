@@ -84,6 +84,10 @@ public class ConfigManager {
         commandConfig.deleteCommandFromConfig(s, sm, type, oldDelay);
     }
 
+    public void setPrice(String name, double price) {
+        signConfigManager.setPrice(name, price);
+    }
+
     public void addPermission(SudoSign s, String permission) {
         permissionConfig.addPermissionToConfig(s, permission);
     }
@@ -137,6 +141,7 @@ public class ConfigManager {
         String name = null;
         for (String key : signSection) {
             signConfig.set("signs." + key + ".op-commands", null);
+            signConfig.set("signs." + key + ".price", 0.0);
             name = key;
             List<String> pCommands = signConfig.getStringList("signs." + key + ".player-commands");
             List<String> cCommands = signConfig.getStringList("signs." + key + ".console-commands");

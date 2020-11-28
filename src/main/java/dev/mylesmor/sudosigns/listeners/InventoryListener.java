@@ -117,6 +117,9 @@ public class InventoryListener implements Listener {
             case BIRCH_SIGN:
                 editor.goToMessages();
                 break;
+            case GOLD_NUGGET:
+                editor.getMainMenu().prepareSetPrice();
+                break;
         }
     }
 
