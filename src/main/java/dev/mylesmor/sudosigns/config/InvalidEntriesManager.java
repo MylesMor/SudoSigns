@@ -64,7 +64,6 @@ public class InvalidEntriesManager {
                     b.setBlockData(facing);
                 }
                 Sign newSign = (Sign) b.getState();
-                Bukkit.getLogger().warning(w.getBlockAt(loc).getBlockData().toString());
                 List<String> lines = getSignText(s);
                 int i = 0;
                 for (String line : lines) {

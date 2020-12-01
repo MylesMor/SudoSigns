@@ -27,6 +27,10 @@ public class SignConfig {
         this.signConfig = configManager.getSignConfig();
     }
 
+    public void setSignConfig(FileConfiguration signConfig) {
+        this.signConfig = signConfig;
+    }
+
     /**
      * Loads the signs from the config.
      * @return True if successful, false if not
@@ -97,6 +101,7 @@ public class SignConfig {
         }
         configManager.getInvalidEntriesManager().setInvalidEntries(invalidSigns);
         SudoSigns.signs = tempSigns;
+        SudoSigns.invalidSigns = invalidSigns;
         return invalidSigns;
     }
 
@@ -105,8 +110,8 @@ public class SignConfig {
      * @param name The name of the sign.
      */
     public void deleteSign(String name) {
-        if (signConfig.isConfigurationSection("signs." + name + "")) {
-            signConfig.set("signs." + name + "", null);
+        if (signConfig.isSet("signs." + name)) {
+            signConfig.set("signs." + name, null);
         }
         configManager.save();
     }
@@ -164,6 +169,7 @@ public class SignConfig {
                 signConfig.createSection("signs." + name + ".messages");
                 signConfig.createSection("signs." + name + ".player-commands");
                 signConfig.createSection("signs." + name + ".console-commands");
+                configManager.save();
             }
         } catch (Exception e) {
             if (p != null) {

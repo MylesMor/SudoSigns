@@ -32,7 +32,6 @@ public class ConfigManager {
 
 
     public ConfigManager() {
-        createCustomConfig();
         loadCustomConfig();
         loadModules();
     }
@@ -112,9 +111,12 @@ public class ConfigManager {
     }
 
     public boolean loadCustomConfig() {
-        signConfig = new YamlConfiguration();
+        createCustomConfig();
         try {
-            signConfig.load(signConfigFile);
+            signConfig = YamlConfiguration.loadConfiguration(signConfigFile);
+            if (signConfigManager != null) {
+                signConfigManager.setSignConfig(signConfig);
+            }
             if (!signConfig.isConfigurationSection("signs")) {
                 signConfig.createSection("signs");
                 save();
@@ -128,7 +130,7 @@ public class ConfigManager {
                 save();
                 fixConfig();
             }
-        } catch (IOException | InvalidConfigurationException e) {
+        } catch (Exception e) {
             Bukkit.getLogger().warning("[SUDOSIGNS] Failed to initialise signs.yml!");
             e.printStackTrace();
             return false;

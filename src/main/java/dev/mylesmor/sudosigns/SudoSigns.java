@@ -1,6 +1,7 @@
 package dev.mylesmor.sudosigns;
 
 import dev.mylesmor.sudosigns.commands.Commands;
+import dev.mylesmor.sudosigns.commands.SudoSignsTabCompleter;
 import dev.mylesmor.sudosigns.config.ConfigManager;
 import dev.mylesmor.sudosigns.data.SudoSign;
 import dev.mylesmor.sudosigns.data.SudoUser;
@@ -27,6 +28,8 @@ import java.util.function.BiConsumer;
 public class SudoSigns extends JavaPlugin {
 
     public static Map<String, SudoSign> signs = new HashMap<>();
+    public static ArrayList<String> invalidSigns = new ArrayList<>();
+
     public static Map<UUID, SudoUser> users = new HashMap<>();
 
     public static ConfigManager config;
@@ -60,6 +63,7 @@ public class SudoSigns extends JavaPlugin {
         config = new ConfigManager();
         config.loadModules();
         this.getCommand("sudosigns").setExecutor(new Commands());
+        this.getCommand("sudosigns").setTabCompleter(new SudoSignsTabCompleter());
     }
 
     public boolean setupEconomy() {
