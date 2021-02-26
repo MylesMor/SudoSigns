@@ -43,9 +43,7 @@ public class SudoSigns extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (!setupEconomy()) {
-            Bukkit.getLogger().warning("[SUDOSIGNS] Vault not found, sign prices disabled...");
-        }
+        setupEconomy();
         new UpdateChecker(this, 80758).getVersion(version -> {
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
                 Bukkit.getLogger().info("[SUDOSIGNS] SudoSigns is up-to-date.");
@@ -68,10 +66,12 @@ public class SudoSigns extends JavaPlugin {
 
     public boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            Bukkit.getLogger().warning("[SUDOSIGNS] Vault not found, sign prices disabled...");
             return false;
         }
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
+            Bukkit.getLogger().warning("[SUDOSIGNS] No compatible economy plugin found, sign prices disabled...");
             return false;
         }
         econ = rsp.getProvider();

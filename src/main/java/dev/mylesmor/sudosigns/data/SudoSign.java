@@ -173,9 +173,9 @@ public class SudoSign {
                     return;
                 }
                 if (price == 1.0) {
-                    Util.sudoSignsMessage(p, ChatColor.GREEN, ChatColor.GOLD + SudoSigns.econ.currencyNameSingular() + price + ChatColor.GREEN + " has been withdrawn from your account.", null);
-                } else {
-                    Util.sudoSignsMessage(p, ChatColor.GREEN, ChatColor.GOLD + SudoSigns.econ.currencyNamePlural() + price + ChatColor.GREEN + " has been withdrawn from your account.", null);
+                    Util.sudoSignsMessage(p, ChatColor.GREEN, ChatColor.GOLD + SudoSigns.econ.currencyNameSingular() + price + ChatColor.GREEN + " has been withdrawn from your balance.", null);
+                } else if (price != 0.0) {
+                    Util.sudoSignsMessage(p, ChatColor.GREEN, ChatColor.GOLD + SudoSigns.econ.currencyNamePlural() + price + ChatColor.GREEN + " has been withdrawn from your balance.", null);
                 }
             }
             for (SignMessage sm : messages) {
