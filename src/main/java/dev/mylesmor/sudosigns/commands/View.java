@@ -40,6 +40,12 @@ public class View {
                 } else {
                     Util.sudoSignsMessage(p, ChatColor.GRAY,"Location: " + ChatColor.LIGHT_PURPLE + locString, null);
                 }
+                if (sign.getPrice() == 1.0) {
+                    Util.sudoSignsMessage(p, ChatColor.GRAY, "Price: " + ChatColor.LIGHT_PURPLE + SudoSigns.econ.currencyNameSingular() + sign.getPrice(), null);
+                } else {
+                    Util.sudoSignsMessage(p, ChatColor.GRAY, "Price: " + ChatColor.LIGHT_PURPLE + SudoSigns.econ.currencyNamePlural() + sign.getPrice(), null);
+                }
+                Util.sudoSignsMessage(p, ChatColor.GRAY, "Price: " + ChatColor.LIGHT_PURPLE + sign.getMessages().size(), null);
                 Util.sudoSignsMessage(p, ChatColor.GRAY, "Messages: " + ChatColor.LIGHT_PURPLE + sign.getMessages().size(), null);
                 Util.sudoSignsMessage(p, ChatColor.GRAY, "Permissions: " + ChatColor.LIGHT_PURPLE + sign.getPermissions().size(), null);
                 Util.sudoSignsMessage(p, ChatColor.GRAY,"Player Commands: " + ChatColor.LIGHT_PURPLE + sign.getPlayerCommands().size(), null);

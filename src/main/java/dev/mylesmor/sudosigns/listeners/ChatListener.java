@@ -29,7 +29,7 @@ public class ChatListener implements Listener {
         if (user != null) {
             if (user.isTextInput() && user.isEditing()) {
                 e.setCancelled(true);
-                if (user.getInputType() == PlayerInput.CONSOLE_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS) {
+                if (user.getInputType() == PlayerInput.CONSOLE_COMMAND || user.getInputType() == PlayerInput.PLAYER_COMMAND) {
                     user.getEditor().getCommandsMenu().addCommand(e.getMessage().substring(1), user.getInputType());
                     user.removeTextInput();
                 } else {
@@ -48,7 +48,7 @@ public class ChatListener implements Listener {
             if (user.isTextInput() && user.isEditing()) {
                 SignEditor editor = user.getEditor();
                 switch (user.getInputType()) {
-                    case PLAYER_COMMAND: case CONSOLE_COMMAND: case PLAYER_COMMAND_WITH_PERMISSIONS:
+                    case PLAYER_COMMAND: case CONSOLE_COMMAND:
                         if (e.getMessage().equalsIgnoreCase("cancel")) {
                             handle(e, true, "Cancelled!", editor, user, null, editor::goToCommands);
                             return;
@@ -109,6 +109,60 @@ public class ChatListener implements Listener {
                         double finalMessageDelay = messageDelay;
                         handle(e, true, null, editor, user, edit -> editor.getMessageOptionsMenu().setDelay(finalMessageDelay), editor::goToMessages);
                         break;
+                    case EDIT_TEXT_NUMBER:
+                        if (e.getMessage().equalsIgnoreCase("cancel")) {
+                            handle(e, true, "Cancelled!", editor, user, null, editor::goToMessages);
+                            return;
+                        }
+                        int lineNumber = 0;
+                        try {
+                            lineNumber = Integer.parseInt(ChatColor.stripColor(e.getMessage()));
+                        } catch (NumberFormatException nfe) {
+                            e.setCancelled(true);
+                            Util.sudoSignsMessage(p, ChatColor.RED, "Please enter a valid number between 1-4!", "");
+                            return;
+                        }
+                        if (lineNumber < 1 || lineNumber > 4) {
+                            e.setCancelled(true);
+                            Util.sudoSignsMessage(p, ChatColor.RED, "Please enter a valid number between 1-4!", "");
+                            return;
+                        }
+                        final int finalLineNumber = lineNumber;
+                        handle(e, true, null, editor, user, edit -> editor.getMainMenu().setLineNumber(finalLineNumber), null);
+                        break;
+                    case EDIT_TEXT:
+                        if (e.getMessage().equalsIgnoreCase("cancel")) {
+                            handle(e, true, "Cancelled!", editor, user, null, editor::goToMessages);
+                            return;
+                        }
+                        if (e.getMessage().length() > 15) {
+                            e.setCancelled(true);
+                            Util.sudoSignsMessage(p, ChatColor.RED, "The message can't be greater than 15 characters!", "");
+                            return;
+                        }
+                        handle(e, true, null, editor, user, edit -> editor.getMainMenu().setText(e.getMessage()), editor::goToMain);
+                        break;
+                    case SET_PRICE:
+                        if (e.getMessage().equalsIgnoreCase("cancel")) {
+                            handle(e, true, "Cancelled!", editor, user, null, editor::goToMessages);
+                            return;
+                        }
+                        double price;
+                        try {
+                            price = Double.parseDouble(ChatColor.stripColor(e.getMessage()));
+                        } catch (NumberFormatException nfe) {
+                            e.setCancelled(true);
+                            Util.sudoSignsMessage(p, ChatColor.RED, "Please enter a valid number!", "");
+                            return;
+                        }
+                        if (price < 0) {
+                            e.setCancelled(true);
+                            Util.sudoSignsMessage(p, ChatColor.RED, "Please enter 0 or a positive number!", "");
+                            return;
+                        }
+                        double finalPrice = price;
+                        handle(e, true, null, editor, user, edit -> editor.getMainMenu().setPrice(finalPrice), editor::goToMain);
+                        break;
                 }
 
             }
@@ -120,6 +174,8 @@ public class ChatListener implements Listener {
         if (message != null) Util.sudoSignsMessage(e.getPlayer(), ChatColor.RED, message, null);
         if (eventConsumer != null) Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, () -> eventConsumer.accept(editor));
         user.removeTextInput();
-        Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, finalAction);
+        if (finalAction != null) {
+            Bukkit.getScheduler().runTask(SudoSigns.sudoSignsPlugin, finalAction);
+        }
     }
 }

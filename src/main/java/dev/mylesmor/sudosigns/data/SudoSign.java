@@ -1,6 +1,8 @@
 package dev.mylesmor.sudosigns.data;
 
 import dev.mylesmor.sudosigns.SudoSigns;
+import dev.mylesmor.sudosigns.util.Util;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -20,11 +22,12 @@ import java.util.Map;
  */
 public class SudoSign {
 
-    private HashMap<SignCommand, Boolean> playerCommands = new HashMap<>();
+    private ArrayList<SignCommand> playerCommands = new ArrayList<>();
     private ArrayList<SignCommand> consoleCommands = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
     private ArrayList<SignMessage> messages = new ArrayList<>();
     private ArrayList<String> text = new ArrayList<>();
+    private double price = 0;
     private String worldName;
     private double x;
     private double y;
@@ -47,8 +50,8 @@ public class SudoSign {
         this.name = name;
     }
 
-    public void addPlayerCommand(SignCommand sc, boolean permissions) {
-        playerCommands.put(sc, permissions);
+    public void addPlayerCommand(SignCommand sc) {
+        playerCommands.add(sc);
     }
 
     public List<String> getText() {
@@ -62,9 +65,15 @@ public class SudoSign {
             String line = lines[i];
             text.add(line.replaceAll("§", "&"));
             line = ChatColor.translateAlternateColorCodes('&', line);
-            //line = ChatColor.translateAlternateColorCodes('§', line);
             sign.setLine(i, line);
         }
+        sign.update();
+    }
+
+    public void editLine(int lineNumber, String message) {
+        Sign sign = getSign();
+        String line = ChatColor.translateAlternateColorCodes('&', message);
+        sign.setLine(lineNumber, line);
         sign.update();
     }
 
@@ -105,6 +114,7 @@ public class SudoSign {
         this.playerCommands = s.getPlayerCommands();
         this.consoleCommands = s.getConsoleCommands();
         this.messages = s.getMessages();
+        this.price = s.getPrice();
     }
 
     public ArrayList<SignMessage> getMessages() { return messages; }
@@ -112,7 +122,7 @@ public class SudoSign {
     public void setMessages(ArrayList<SignMessage> messages) { this.messages = messages; }
 
 
-    public void setPlayerCommands(HashMap<SignCommand, Boolean> playerCommands) {
+    public void setPlayerCommands(ArrayList<SignCommand> playerCommands) {
         this.playerCommands = playerCommands;
     }
 
@@ -124,12 +134,20 @@ public class SudoSign {
         this.permissions = permissions;
     }
 
-    public HashMap<SignCommand, Boolean> getPlayerCommands() {
+    public ArrayList<SignCommand> getPlayerCommands() {
         return playerCommands;
     }
 
     public ArrayList<SignCommand> getConsoleCommands() {
         return consoleCommands;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public double getPrice() {
+        return price;
     }
 
     /**
@@ -144,43 +162,38 @@ public class SudoSign {
             }
         }
         if (hasPermission) {
+            if (SudoSigns.econ != null) {
+                EconomyResponse r = SudoSigns.econ.withdrawPlayer(p, price);
+                if (!r.transactionSuccess()) {
+                    if (price == 1.0) {
+                        Util.sudoSignsMessage(p, ChatColor.RED, "You don't have enough money to run this sign! This sign costs " + ChatColor.GOLD + SudoSigns.econ.currencyNameSingular() + price + ChatColor.RED + ".", null);
+                    } else {
+                        Util.sudoSignsMessage(p, ChatColor.RED, "You don't have enough money to run this sign! This sign costs " + ChatColor.GOLD + SudoSigns.econ.currencyNamePlural() + price + ChatColor.RED + ".", null);
+                    }
+                    return;
+                }
+                if (price == 1.0) {
+                    Util.sudoSignsMessage(p, ChatColor.GREEN, ChatColor.GOLD + SudoSigns.econ.currencyNameSingular() + price + ChatColor.GREEN + " has been withdrawn from your balance.", null);
+                } else if (price != 0.0) {
+                    Util.sudoSignsMessage(p, ChatColor.GREEN, ChatColor.GOLD + SudoSigns.econ.currencyNamePlural() + price + ChatColor.GREEN + " has been withdrawn from your balance.", null);
+                }
+            }
             for (SignMessage sm : messages) {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
                         p.sendMessage(ChatColor.translateAlternateColorCodes('&', sm.getMessage()).replaceAll("(?i)%PLAYER%", p.getName()));
-
                     }
                 }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (sm.getDelay()/50));
             }
-            for (Map.Entry<SignCommand, Boolean> entry : playerCommands.entrySet()) {
-                String cmd = entry.getKey().getCommand().replaceAll("(?i)%PLAYER%", p.getName());
-                if (entry.getValue()) {
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                if (p.isOp()) {
-                                    p.performCommand(cmd);
-                                    return;
-                                }
-                                try {
-                                    p.setOp(true);
-                                    Bukkit.getServer().dispatchCommand(p, cmd);
-                                } catch (Exception ignored) {
-                                } finally {
-                                    p.setOp(false);
-                                }
-                            }
-                        }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (entry.getKey().getDelay()/50));
-                } else {
+            for (SignCommand sc : playerCommands) {
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            p.performCommand(cmd);
+                            p.performCommand(sc.getCommand());
                         }
-                    }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (entry.getKey().getDelay()/50));
+                    }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (sc.getDelay()/50));
                 }
-            }
             for (SignCommand sc : consoleCommands) {
                 String cmd = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());
                 new BukkitRunnable() {
@@ -215,8 +228,8 @@ public class SudoSign {
         for (SignCommand c: consoleCommands) {
             number = Math.max(c.getNumber(), number);
         }
-        for(Map.Entry<SignCommand, Boolean> entry : playerCommands.entrySet()) {
-            number = Math.max(entry.getKey().getNumber(), number);
+        for(SignCommand sc: playerCommands) {
+            number = Math.max(sc.getNumber(), number);
         }
         return number+1;
     }
@@ -244,9 +257,9 @@ public class SudoSign {
                 return c;
             }
         }
-        for(Map.Entry<SignCommand, Boolean> entry : playerCommands.entrySet()) {
-            if (entry.getKey().getNumber() == number) {
-                return entry.getKey();
+        for(SignCommand sc: playerCommands) {
+            if (sc.getNumber() == number) {
+                return sc;
             }
         }
         return null;

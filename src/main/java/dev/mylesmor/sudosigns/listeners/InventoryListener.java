@@ -102,11 +102,11 @@ public class InventoryListener implements Listener {
             }
         }
         switch (m) {
-            case BOOK:
+            case NAME_TAG:
                 editor.prepareRename();
                 break;
-            case OAK_SIGN:
-                editor.editSignText();
+            case WRITABLE_BOOK:
+                editor.editSignNumber();
                 break;
             case BARRIER:
                 editor.goToPermissions();
@@ -116,6 +116,9 @@ public class InventoryListener implements Listener {
                 break;
             case BIRCH_SIGN:
                 editor.goToMessages();
+                break;
+            case GOLD_NUGGET:
+                editor.getMainMenu().prepareSetPrice();
                 break;
         }
     }
@@ -224,9 +227,6 @@ public class InventoryListener implements Listener {
 
     public void chooseCommandType(SignEditor editor, Material m, String itemName) {
         switch (m) {
-            case CHAIN_COMMAND_BLOCK:
-                editor.getCommandsMenu().chooseCommandType(PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS);
-                break;
             case PLAYER_HEAD:
                 editor.getCommandsMenu().chooseCommandType(PlayerInput.PLAYER_COMMAND);
                 break;

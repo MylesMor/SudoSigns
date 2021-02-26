@@ -32,7 +32,6 @@ public class ConfigManager {
 
 
     public ConfigManager() {
-        createCustomConfig();
         loadCustomConfig();
         loadModules();
     }
@@ -64,6 +63,10 @@ public class ConfigManager {
         signConfigManager.deleteSign(name);
     }
 
+    public void editSignText(String name, int lineNumber, String message) {
+        signConfigManager.editText(name, lineNumber, message);
+    }
+
     public void addMessage(SudoSign s, SignMessage sm) {
         messageConfig.addMessageToConfig(s, sm);
     }
@@ -78,6 +81,10 @@ public class ConfigManager {
 
     public void deleteCommand(SudoSign s, SignCommand sm, PlayerInput type, double oldDelay) {
         commandConfig.deleteCommandFromConfig(s, sm, type, oldDelay);
+    }
+
+    public void setPrice(String name, double price) {
+        signConfigManager.setPrice(name, price);
     }
 
     public void addPermission(SudoSign s, String permission) {
@@ -104,9 +111,12 @@ public class ConfigManager {
     }
 
     public boolean loadCustomConfig() {
-        signConfig = new YamlConfiguration();
+        createCustomConfig();
         try {
-            signConfig.load(signConfigFile);
+            signConfig = YamlConfiguration.loadConfiguration(signConfigFile);
+            if (signConfigManager != null) {
+                signConfigManager.setSignConfig(signConfig);
+            }
             if (!signConfig.isConfigurationSection("signs")) {
                 signConfig.createSection("signs");
                 save();
@@ -120,7 +130,7 @@ public class ConfigManager {
                 save();
                 fixConfig();
             }
-        } catch (IOException | InvalidConfigurationException e) {
+        } catch (Exception e) {
             Bukkit.getLogger().warning("[SUDOSIGNS] Failed to initialise signs.yml!");
             e.printStackTrace();
             return false;
@@ -132,12 +142,14 @@ public class ConfigManager {
         Set<String> signSection = signConfig.getConfigurationSection("signs").getKeys(false);
         String name = null;
         for (String key : signSection) {
+            signConfig.set("signs." + key + ".op-commands", null);
+            signConfig.set("signs." + key + ".price", 0.0);
             name = key;
             List<String> pCommands = signConfig.getStringList("signs." + key + ".player-commands");
-            List<String> opCommands = signConfig.getStringList("signs." + key + ".op-commands");
             List<String> cCommands = signConfig.getStringList("signs." + key + ".console-commands");
             List<String> messages = signConfig.getStringList("signs." + key + ".messages");
-            if (pCommands.size() == 0 && opCommands.size() == 0 && cCommands.size() == 0 && messages.size() == 0) {
+            if (pCommands.size() == 0 && cCommands.size() == 0 && messages.size() == 0) {
+                save();
                 continue;
             }
             if (pCommands.size() != 0) {
@@ -153,19 +165,7 @@ public class ConfigManager {
                 } catch (Exception ignored) {
                 }
             }
-            if (opCommands.size() != 0) {
-                try {
-                    ArrayList<HashMap<String, Double>> mapList = new ArrayList<>();
-                    HashMap<String, Double> map = new HashMap<>();
-                    for (String cmd : opCommands) {
-                        map.put(cmd, 0.0);
-                        mapList.add(map);
-                        map = new HashMap<>();
-                    }
-                    signConfig.set("signs." + name + ".op-commands", mapList);
-                } catch (Exception ignored) {
-                }
-            }
+            signConfig.set("signs." + key + ".op-commands", null);
             if (cCommands.size() != 0) {
                 try {
                     ArrayList<HashMap<String, Double>> mapList = new ArrayList<>();

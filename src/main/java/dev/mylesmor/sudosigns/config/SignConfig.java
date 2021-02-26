@@ -27,6 +27,10 @@ public class SignConfig {
         this.signConfig = configManager.getSignConfig();
     }
 
+    public void setSignConfig(FileConfiguration signConfig) {
+        this.signConfig = signConfig;
+    }
+
     /**
      * Loads the signs from the config.
      * @return True if successful, false if not
@@ -52,19 +56,19 @@ public class SignConfig {
                         SudoSign ss = new SudoSign(key);
                         ss.setSign(sign);
                         List<Map<?, ?>> pCommands = signConfig.getMapList("signs." + key + ".player-commands");
-                        List<Map<?, ?>> opCommands = signConfig.getMapList("signs." + key + ".op-commands");
                         List<Map<?, ?>> cCommands = signConfig.getMapList("signs." + key + ".console-commands");
                         List<String> permissions = signConfig.getStringList("signs." + key + ".permissions");
                         List<Map<?, ?>> messages = signConfig.getMapList("signs." + key + ".messages");
+                        try {
+                            ss.setPrice((Double) signConfig.get("signs." + key + ".price"));
+                        } catch (Exception e) {
+                            Bukkit.getLogger().info("Invalid price for sign " + name + "! Default to 0.");
+                            ss.setPrice(0.0);
+                        }
                         int number = 0;
                         for (Map<?, ?> sc : pCommands) {
                             for (Map.Entry<?, ?> cmd : sc.entrySet()) {
-                                ss.addPlayerCommand(new SignCommand(number++, (String) cmd.getKey(), (Double) cmd.getValue(), PlayerInput.PLAYER_COMMAND), false);
-                            }
-                        }
-                        for (Map<?, ?> sc : opCommands) {
-                            for (Map.Entry<?, ?> cmd : sc.entrySet()) {
-                                ss.addPlayerCommand(new SignCommand(number++, (String) cmd.getKey(), (Double) cmd.getValue(), PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS), true);
+                                ss.addPlayerCommand(new SignCommand(number++, (String) cmd.getKey(), (Double) cmd.getValue(), PlayerInput.PLAYER_COMMAND));
                             }
                         }
                         for (Map<?, ?> sc : cCommands) {
@@ -97,6 +101,7 @@ public class SignConfig {
         }
         configManager.getInvalidEntriesManager().setInvalidEntries(invalidSigns);
         SudoSigns.signs = tempSigns;
+        SudoSigns.invalidSigns = invalidSigns;
         return invalidSigns;
     }
 
@@ -105,8 +110,8 @@ public class SignConfig {
      * @param name The name of the sign.
      */
     public void deleteSign(String name) {
-        if (signConfig.isConfigurationSection("signs." + name + "")) {
-            signConfig.set("signs." + name + "", null);
+        if (signConfig.isSet("signs." + name)) {
+            signConfig.set("signs." + name, null);
         }
         configManager.save();
     }
@@ -142,6 +147,7 @@ public class SignConfig {
                 ArrayList<String> lines = new ArrayList<>();
                 lines.addAll(s.getText());
                 signConfig.set("signs." + name + ".text", lines);
+                signConfig.set("signs." + name + ".price", 0.0);
                 ConfigurationSection locSec = signConfig.createSection("signs." + name + ".location");
                 String world = s.getSign().getWorld().getName();
                 double x = s.getSign().getLocation().getX();
@@ -163,6 +169,7 @@ public class SignConfig {
                 signConfig.createSection("signs." + name + ".messages");
                 signConfig.createSection("signs." + name + ".player-commands");
                 signConfig.createSection("signs." + name + ".console-commands");
+                configManager.save();
             }
         } catch (Exception e) {
             if (p != null) {
@@ -174,4 +181,20 @@ public class SignConfig {
 
     }
 
+    public void editText(String name, int lineNumber, String newText) {
+        if (signConfig.isConfigurationSection("signs." + name + "")) {
+            List<String> text = signConfig.getStringList("signs." + name + ".text");
+            Bukkit.getLogger().info(Integer.toString(text.size()));
+            text.set(lineNumber-1, newText);
+            signConfig.set("signs." + name + ".text", text);
+        }
+        configManager.save();
+    }
+
+    public void setPrice(String name, double price) {
+        if (signConfig.isConfigurationSection("signs." + name + "")) {
+            signConfig.set("signs." + name + ".price", price);
+        }
+        configManager.save();
+    }
 }

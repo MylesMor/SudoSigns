@@ -7,11 +7,13 @@ package dev.mylesmor.sudosigns.data;
  */
 public enum PlayerInput {
     PLAYER_COMMAND,
-    PLAYER_COMMAND_WITH_PERMISSIONS,
     CONSOLE_COMMAND,
     RENAME,
     PERMISSION,
     MESSAGE,
     COMMAND_DELAY,
-    MESSAGE_DELAY
+    MESSAGE_DELAY,
+    EDIT_TEXT_NUMBER,
+    EDIT_TEXT,
+    SET_PRICE,
 }

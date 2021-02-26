@@ -112,10 +112,7 @@ public class CommandOptionsMenu {
         if (sc.getType() == PlayerInput.CONSOLE_COMMAND) {
             SudoSigns.config.deleteCommand(sign, sc, PlayerInput.CONSOLE_COMMAND, sc.getDelay());
             sign.deleteConsoleCommand(sc);
-        } else if (sc.getType() == PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS) {
-            SudoSigns.config.deleteCommand(sign, sc, PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS, sc.getDelay());
-            sign.deletePlayerCommand(sc);
-        } else {
+        } else if (sc.getType() == PlayerInput.PLAYER_COMMAND) {
             SudoSigns.config.deleteCommand(sign, sc, PlayerInput.PLAYER_COMMAND, sc.getDelay());
             sign.deletePlayerCommand(sc);
         }

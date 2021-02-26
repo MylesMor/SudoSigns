@@ -20,9 +20,10 @@ public class List {
     public static void list(Player p, String[] args) {
         if (p.hasPermission(Permissions.LIST)) {
             if (SudoSigns.signs.size() == 0) {
-                Util.sudoSignsMessage(p, ChatColor.GRAY, "No SudoSigns were found!", null);
+                Util.sudoSignsMessage(p, ChatColor.RED, "No SudoSigns were found!", null);
                 return;
             }
+            Util.sudoSignsMessage(p, ChatColor.GRAY, "Listing all SudoSigns...", null);
             for (Map.Entry<String, SudoSign> entry : SudoSigns.signs.entrySet()) {
                 String message = Util.getSelectString(p, entry.getKey());
                 p.spigot().sendMessage(ComponentSerializer.parse(message));

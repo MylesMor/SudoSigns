@@ -1,10 +1,7 @@
 package dev.mylesmor.sudosigns.menus;
 
 import dev.mylesmor.sudosigns.SudoSigns;
-import dev.mylesmor.sudosigns.data.PlayerInput;
-import dev.mylesmor.sudosigns.data.SignCommand;
-import dev.mylesmor.sudosigns.data.SudoSign;
-import dev.mylesmor.sudosigns.data.SudoUser;
+import dev.mylesmor.sudosigns.data.*;
 import dev.mylesmor.sudosigns.util.Permissions;
 import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.Bukkit;
@@ -18,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -74,29 +72,16 @@ public class CommandsMenu {
         List<String> lore = new ArrayList<>();
         NamespacedKey key = new NamespacedKey(SudoSigns.sudoSignsPlugin, "command-number");
 
-        ArrayList<SignCommand> orderedSignCommands = new ArrayList<>();
-        for (Map.Entry<SignCommand, Boolean> entry : sign.getPlayerCommands().entrySet()) {
-                SignCommand sc = entry.getKey();
-                if (orderedSignCommands.size() == 0) {
-                    orderedSignCommands.add(sc);
-                    continue;
-                }
-                if (orderedSignCommands.get(0).getDelay() >= sc.getDelay()) {
-                    orderedSignCommands.add(0, sc);
-                }
-            }
+        ArrayList<SignCommand> orderedSignCommands = sign.getPlayerCommands();
+        orderedSignCommands.sort(Comparator.comparing(SignCommand::getDelay));
 
-            // Populates spaces with commands.
+        // Populates spaces with commands.
         int i = 1;
         for (SignCommand sc : orderedSignCommands) {
             if (i > 26) break;
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
-            if (sc.getType() == PlayerInput.PLAYER_COMMAND_WITH_PERMISSIONS) {
-                lore.add(ChatColor.YELLOW + "Player Command with Permissions (player is granted OP for this command only).");
-            } else {
-                lore.add(ChatColor.YELLOW + "Player Command");
-            }
+            lore.add(ChatColor.YELLOW + "Player Command");
             bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + "/" + sc.getCommand());
             lore.add(ChatColor.GRAY + "Delay: " + ChatColor.RED + (sc.getDelay() / 1000) + "s");
             if (p.hasPermission(Permissions.COMMAND_OPTIONS)) {
@@ -112,22 +97,15 @@ public class CommandsMenu {
             i++;
         }
 
-        orderedSignCommands = new ArrayList<>();
-        for (SignCommand sc : sign.getConsoleCommands()) {
-            if (orderedSignCommands.size() == 0) {
-                orderedSignCommands.add(sc);
-                continue;
-            }
-            if (orderedSignCommands.get(0).getDelay() >= sc.getDelay()) {
-                orderedSignCommands.add(0, sc);
-            }
-        }
+        orderedSignCommands = sign.getConsoleCommands();
+        orderedSignCommands.sort(Comparator.comparing(SignCommand::getDelay));
 
         i = 19;
         for (SignCommand sc : orderedSignCommands) {
             if (i > 35) break;
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
+            lore.add(ChatColor.YELLOW + "Console Command");
             bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + "/" + sc.getCommand());
             lore.add(ChatColor.GRAY + "Delay: " + ChatColor.RED + (sc.getDelay() / 1000) + "s");
             if (p.hasPermission(Permissions.COMMAND_OPTIONS)) {
@@ -169,26 +147,14 @@ public class CommandsMenu {
         headMeta.setLore(lore);
         head.setItemMeta(headMeta);
 
-        ItemStack chainCmdBlock = new ItemStack(Material.CHAIN_COMMAND_BLOCK);
-        ItemMeta chainCmdBlockItemMeta = chainCmdBlock.getItemMeta();
-        lore.clear();
-        lore.add(ChatColor.YELLOW + "The player is granted operator for this command only.");
-        lore.add("");
-        lore.add(ChatColor.RED + "THIS IS DISCOURAGED FOR SECURITY REASONS");
-        lore.add(ChatColor.RED + "ONLY USE IF CONSOLE COMMAND CANNOT BE USED.");
-        chainCmdBlockItemMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Player Command with Permissions");
-        chainCmdBlockItemMeta.setLore(lore);
-        chainCmdBlock.setItemMeta(chainCmdBlockItemMeta);
-
         ItemStack cmdBlock = new ItemStack(Material.COMMAND_BLOCK);
         ItemMeta cmdBlockMeta = cmdBlock.getItemMeta();
         cmdBlockMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Console Command");
         cmdBlock.setItemMeta(cmdBlockMeta);
 
         if (p.hasPermission(Permissions.CONSOLE_COMMAND)) {
-            choiceInv.setItem(20, head);
-            choiceInv.setItem(22, chainCmdBlock);
-            choiceInv.setItem(24, cmdBlock);
+            choiceInv.setItem(21, head);
+            choiceInv.setItem(23, cmdBlock);
         } else {
             choiceInv.setItem(22, head);
         }
@@ -213,10 +179,7 @@ public class CommandsMenu {
                 sign.addConsoleCommand(command);
                 break;
             case PLAYER_COMMAND:
-                sign.addPlayerCommand(command, false);
-                break;
-            case PLAYER_COMMAND_WITH_PERMISSIONS:
-                sign.addPlayerCommand(command, true);
+                sign.addPlayerCommand(command);
                 break;
         }
         SudoSigns.config.addCommand(sign, command, type);
