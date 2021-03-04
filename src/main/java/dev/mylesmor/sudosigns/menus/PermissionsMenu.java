@@ -9,10 +9,12 @@ import dev.mylesmor.sudosigns.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,20 +67,24 @@ public class PermissionsMenu {
             menu.setItem(40, bookQuill);
         }
 
-
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.RED + "Click to delete!");
+        NamespacedKey key = new NamespacedKey(SudoSigns.sudoSignsPlugin, "permission");
 
         int i = 1;
         for (String perm : sign.getPermissions()) {
             if (i > 35) break;
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
-            bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + perm);
+            bookMeta.setDisplayName("" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Permission");
+            lore.add("");
+            lore.add("" + ChatColor.RESET + ChatColor.GOLD + perm);
             if (p.hasPermission(Permissions.DELETE_PERMISSION)) {
                 lore.add("");
-                bookMeta.setLore(lore);
+                lore.add("");
+                lore.add("" + ChatColor.RED + ChatColor.BOLD + "Click to delete!");
             }
+            bookMeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, perm);
+            bookMeta.setLore(lore);
             book.setItemMeta(bookMeta);
             if (i == 9 || i == 18 || i == 27) i++;
             menu.setItem(i, book);

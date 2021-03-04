@@ -39,11 +39,13 @@ public class SudoSigns extends JavaPlugin {
     public static String version;
 
     public static Economy econ = null;
+    public static boolean papi = false;
 
 
     @Override
     public void onEnable() {
         setupEconomy();
+        setupPapi();
         new UpdateChecker(this, 80758).getVersion(version -> {
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
                 Bukkit.getLogger().info("[SUDOSIGNS] SudoSigns is up-to-date.");
@@ -64,6 +66,10 @@ public class SudoSigns extends JavaPlugin {
         this.getCommand("sudosigns").setTabCompleter(new SudoSignsTabCompleter());
     }
 
+    /**
+     * Setup Vault economy if compatible plugins found.
+     * @return Vault Economy object or null.
+     */
     public boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             Bukkit.getLogger().warning("[SUDOSIGNS] Vault not found, sign prices disabled...");
@@ -78,9 +84,17 @@ public class SudoSigns extends JavaPlugin {
         return true;
     }
 
+    /**
+     * Allow PlaceholderAPI to be used if plugin found.
+     */
+    public void setupPapi() {
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            Bukkit.getLogger().warning("[SUDOSIGNS] PlaceholderAPI found! Integration enabled.");
+            papi = true;
+        }
+    }
+
 
     @Override
-    public void onDisable() {
-
-    }
+    public void onDisable() { }
 }

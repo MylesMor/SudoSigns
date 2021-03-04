@@ -81,11 +81,12 @@ public class MessagesMenu {
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
             lore.clear();
-            bookMeta.setDisplayName(ChatColor.LIGHT_PURPLE + "Message:");
+            bookMeta.setDisplayName("" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Message");
+            lore.add("");
             lore.add("" + ChatColor.RESET + ChatColor.WHITE + ChatColor.translateAlternateColorCodes('&', sm.getMessage()));
             lore.add("");
             lore.add("");
-            lore.add(ChatColor.GRAY + "Delay: " + ChatColor.RED + (sm.getDelay() / 1000) + "s");
+            lore.add("" + ChatColor.GRAY + ChatColor.BOLD + "Delay: " + ChatColor.RED + (sm.getDelay() / 1000) + "s");
             if (p.hasPermission(Permissions.MESSAGE_OPTIONS)) {
                 lore.add("");
                 lore.add(ChatColor.GREEN + "Click for options!");
@@ -113,7 +114,14 @@ public class MessagesMenu {
 
     public void prepareMessage() {
         p.closeInventory();
-        p.sendMessage(Util.prefix + ChatColor.GRAY + " Please enter in chat the message which will be shown. Use the " + ChatColor.GOLD + "& " + ChatColor.GRAY + "symbol for chat colour codes and the phrase" + ChatColor.GOLD + " %PLAYER% " + ChatColor.GRAY + "for the player who clicked the sign. To cancel type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
+        p.sendMessage(Util.prefix);
+        p.sendMessage("" + ChatColor.GREEN + ChatColor.BOLD + "* " + ChatColor.GRAY + "Please enter the message in chat.");
+        p.sendMessage("" + ChatColor.GREEN + ChatColor.BOLD + "* " + ChatColor.GRAY + "Use the " + ChatColor.GOLD + "& " + ChatColor.GRAY + "symbol for chat colour codes.");
+        p.sendMessage("" + ChatColor.GREEN + ChatColor.BOLD + "* " + ChatColor.GRAY + ChatColor.GOLD + "%PLAYER%" + ChatColor.GRAY + " will be replaced with the player's name.");
+        if (SudoSigns.papi) {
+            p.sendMessage("" + ChatColor.GREEN + ChatColor.BOLD + "* " + ChatColor.GRAY + "You can also use " + ChatColor.GOLD + "PlaceHolderAPI" + ChatColor.GRAY + " placeholders.");
+        }
+        p.sendMessage("" + ChatColor.GREEN + ChatColor.BOLD + "* " + ChatColor.GRAY + "To cancel type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
         su.addTextInput(PlayerInput.MESSAGE);
     }
 

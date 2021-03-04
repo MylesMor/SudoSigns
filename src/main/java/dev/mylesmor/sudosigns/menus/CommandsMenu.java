@@ -81,9 +81,12 @@ public class CommandsMenu {
             if (i > 26) break;
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
-            lore.add(ChatColor.YELLOW + "Player Command");
-            bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + "/" + sc.getCommand());
-            lore.add(ChatColor.GRAY + "Delay: " + ChatColor.RED + (sc.getDelay() / 1000) + "s");
+            bookMeta.setDisplayName("" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Player Command");
+            lore.add("");
+            lore.add("" + ChatColor.RESET + ChatColor.GOLD + "/" + sc.getCommand());
+            lore.add("");
+            lore.add("");
+            lore.add("" + ChatColor.GRAY + ChatColor.BOLD + "Delay: " + ChatColor.RED + (sc.getDelay() / 1000) + "s");
             if (p.hasPermission(Permissions.COMMAND_OPTIONS)) {
                 lore.add("");
                 lore.add(ChatColor.GREEN + "Click for options!");
@@ -105,9 +108,12 @@ public class CommandsMenu {
             if (i > 35) break;
             ItemStack book = new ItemStack(Material.BOOK);
             ItemMeta bookMeta = book.getItemMeta();
-            lore.add(ChatColor.YELLOW + "Console Command");
-            bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.GOLD + "/" + sc.getCommand());
-            lore.add(ChatColor.GRAY + "Delay: " + ChatColor.RED + (sc.getDelay() / 1000) + "s");
+            bookMeta.setDisplayName("" + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Console Command");
+            lore.add("");
+            lore.add("" + ChatColor.RESET + ChatColor.GOLD + "/" + sc.getCommand());
+            lore.add("");
+            lore.add("");
+            lore.add("" + ChatColor.GRAY + ChatColor.BOLD + "Delay: " + ChatColor.RED + (sc.getDelay() / 1000) + "s");
             if (p.hasPermission(Permissions.COMMAND_OPTIONS)) {
                 lore.add("");
                 lore.add(ChatColor.GREEN + "Click for options!");
@@ -167,8 +173,13 @@ public class CommandsMenu {
 
     public void chooseCommandType(PlayerInput type) {
         p.closeInventory();
-        p.sendMessage(Util.prefix + ChatColor.GRAY + " Please enter the full command in chat with the beginning /. The phrase" + ChatColor.GOLD + " %PLAYER%" + ChatColor.GRAY +
-                " will be replaced with the player who clicked the sign. To cancel, type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
+        p.sendMessage(Util.prefix);
+        p.sendMessage("" + ChatColor.GREEN + ChatColor.BOLD +  "* " + ChatColor.GRAY + "Please enter the full command in chat beginning with " + ChatColor.GOLD + "/" + ChatColor.GRAY + ".");
+        p.sendMessage("" + ChatColor.GREEN + ChatColor.BOLD + "* " + ChatColor.GRAY + ChatColor.GOLD + "%PLAYER%" + ChatColor.GRAY + " will be replaced with the player's name.");
+        if (SudoSigns.papi) {
+            p.sendMessage("" + ChatColor.GREEN + ChatColor.BOLD +  "* " + ChatColor.GRAY + "You can also use " + ChatColor.GOLD + "PlaceHolderAPI" + ChatColor.GRAY + " placeholders.");
+        }
+        p.sendMessage("" + ChatColor.GREEN + ChatColor.BOLD +  "* " + ChatColor.GRAY + "To cancel type " + ChatColor.RED + "CANCEL" + ChatColor.GRAY + ".");
         su.addTextInput(type);
     }
 

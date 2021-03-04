@@ -31,6 +31,7 @@ public class SignEditor {
     private MessageOptionsMenu messageOptionsMenu;
     private MessagesMenu messagesMenu;
     private GUIPage currentPage;
+    private boolean edited = false;
 
     public SignEditor(Player p, SudoSign s, SudoUser su) {
         this.su = su;
@@ -111,6 +112,7 @@ public class SignEditor {
 
 
     public void endEditor() {
+        //TODO: Find out whether they actually edited the sign
         Util.sudoSignsMessage(p, ChatColor.GRAY, "Changes saved to sign %NAME%.", sign.getName());
     }
 

@@ -8,6 +8,7 @@ import dev.mylesmor.sudosigns.util.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,6 +16,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Objects;
 
@@ -46,7 +49,7 @@ public class InventoryListener implements Listener {
                                 checkForCommandsClicks(p, editor, m, e.getCurrentItem());
                                 break;
                             case PERMISSIONS:
-                                checkForPermissionsClicks(p, editor, m, itemName);
+                                checkForPermissionsClicks(p, editor, m, e.getCurrentItem());
                                 break;
                             case CHOOSE_COMMAND:
                                 chooseCommandType(editor, m, itemName);
@@ -246,13 +249,17 @@ public class InventoryListener implements Listener {
      * Checks for GUI clicks in the Permissions menu.
      * @param editor The SignEditor class of the particular user.
      * @param m The material clicked on in the menu.
-     * @param itemName The name of the item clicked.
+     * @param item The ItemStack of the item clicked.
      */
-    public void checkForPermissionsClicks(Player p, SignEditor editor, Material m, String itemName) {
+    public void checkForPermissionsClicks(Player p, SignEditor editor, Material m, ItemStack item) {
         switch (m) {
             case BOOK:
                 if (p.hasPermission(Permissions.DELETE_PERMISSION)) {
-                    editor.getPermMenu().deletePermission(ChatColor.stripColor(itemName));
+                    ItemMeta itemMeta = item.getItemMeta();
+                    NamespacedKey key = new NamespacedKey(SudoSigns.sudoSignsPlugin, "permission");
+                    if (itemMeta != null) {
+                        editor.getPermMenu().deletePermission(itemMeta.getPersistentDataContainer().get(key, PersistentDataType.STRING));
+                    }
                 }
                 break;
             case WRITABLE_BOOK:

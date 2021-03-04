@@ -47,7 +47,7 @@ public class MainMenu {
         if (p.hasPermission(Permissions.RENAME)) {
             ItemStack nametag = new ItemStack(Material.NAME_TAG);
             ItemMeta ntMeta = nametag.getItemMeta();
-            ntMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Rename Sign");
+            ntMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Rename Sign");
             nametag.setItemMeta(ntMeta);
             items.add(nametag);
         }
@@ -55,7 +55,7 @@ public class MainMenu {
         if (p.hasPermission(Permissions.EDIT_TEXT)) {
             ItemStack book = new ItemStack(Material.WRITABLE_BOOK);
             ItemMeta bookMeta = book.getItemMeta();
-            bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Edit Sign Text");
+            bookMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Edit Sign Text");
             book.setItemMeta(bookMeta);
             items.add(book);
         }
@@ -63,7 +63,7 @@ public class MainMenu {
         if (p.hasPermission(Permissions.VIEW_PERMISSION)) {
             ItemStack barrier = new ItemStack(Material.BARRIER);
             ItemMeta barrierMeta = barrier.getItemMeta();
-            barrierMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Permissions");
+            barrierMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Permissions");
             List<String> lore = new ArrayList<>();
             lore.add(ChatColor.YELLOW + "Players must have all permissions");
             lore.add(ChatColor.YELLOW + "listed in this section to be able");
@@ -80,7 +80,7 @@ public class MainMenu {
             lore.add(ChatColor.YELLOW + "Commands listed here will be executed");
             lore.add(ChatColor.YELLOW + "when a player uses the sign.");
             cmdBlockMeta.setLore(lore);
-            cmdBlockMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Commands");
+            cmdBlockMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Commands");
             cmdBlock.setItemMeta(cmdBlockMeta);
             items.add(cmdBlock);
         }
@@ -93,7 +93,7 @@ public class MainMenu {
                 signBlock = new ItemStack(Material.BIRCH_SIGN);
             }
             ItemMeta signMeta = signBlock.getItemMeta();
-            signMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Messages");
+            signMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + ChatColor.BOLD +  "Messages");
             List<String> lore = new ArrayList<>();
             lore.add(ChatColor.YELLOW + "Messages listed here will be shown");
             lore.add(ChatColor.YELLOW + "to the player when they use the sign.");
@@ -108,19 +108,20 @@ public class MainMenu {
                     ItemStack goldNugget = new ItemStack(Material.GOLD_NUGGET);
                     ItemMeta goldNuggetItemMeta = goldNugget.getItemMeta();
                     List<String> lore = new ArrayList<>();
-                    lore.add(ChatColor.YELLOW + "The cost to use this sign.");
+                    lore.add(ChatColor.YELLOW + "Set the price to use this sign.");
                     lore.add(ChatColor.YELLOW + "");
                     if (sign.getPrice() == 1.0) {
-                        lore.add(ChatColor.GRAY + SudoSigns.econ.currencyNameSingular() + ChatColor.RED + sign.getPrice());
+                        lore.add("" + ChatColor.GRAY + ChatColor.BOLD + "Price: " + ChatColor.GRAY + SudoSigns.econ.currencyNameSingular() + ChatColor.RED + sign.getPrice());
                     } else {
-                        lore.add(ChatColor.GRAY + SudoSigns.econ.currencyNamePlural() + ChatColor.RED + sign.getPrice());
+                        lore.add("" + ChatColor.GRAY + ChatColor.BOLD + "Price: " + ChatColor.GRAY + SudoSigns.econ.currencyNamePlural() + ChatColor.RED + sign.getPrice());
                     }
                     if (p.hasPermission(Permissions.SET_PRICE)) {
                         lore.add(ChatColor.YELLOW + "");
+                        lore.add("");
                         lore.add(ChatColor.GREEN + "Click to edit!");
                     }
                     goldNuggetItemMeta.setLore(lore);
-                    goldNuggetItemMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + "Price");
+                    goldNuggetItemMeta.setDisplayName("" + ChatColor.RESET + ChatColor.LIGHT_PURPLE + ChatColor.BOLD + "Price");
                     goldNugget.setItemMeta(goldNuggetItemMeta);
                     items.add(goldNugget);
                 }

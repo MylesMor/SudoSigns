@@ -2,6 +2,7 @@ package dev.mylesmor.sudosigns.data;
 
 import dev.mylesmor.sudosigns.SudoSigns;
 import dev.mylesmor.sudosigns.util.Util;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -178,28 +179,45 @@ public class SudoSign {
                     Util.sudoSignsMessage(p, ChatColor.GREEN, ChatColor.GOLD + SudoSigns.econ.currencyNamePlural() + price + ChatColor.GREEN + " has been withdrawn from your balance.", null);
                 }
             }
+            // Queue Sign messages
             for (SignMessage sm : messages) {
+                String messageString = sm.getMessage().replaceAll("(?i)%PLAYER%", p.getName());
+                if (SudoSigns.papi) {
+                    messageString = PlaceholderAPI.setPlaceholders(p, messageString);
+                }
+                String finalMessageString = messageString;
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        p.sendMessage(ChatColor.translateAlternateColorCodes('&', sm.getMessage()).replaceAll("(?i)%PLAYER%", p.getName()));
+                        p.sendMessage(ChatColor.translateAlternateColorCodes('&', finalMessageString));
                     }
                 }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (sm.getDelay()/50));
             }
+            // Queue Sign player commands
             for (SignCommand sc : playerCommands) {
-                    new BukkitRunnable() {
+                String commandString = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());
+                if (SudoSigns.papi) {
+                    commandString = PlaceholderAPI.setPlaceholders(p, commandString);
+                }
+                String finalCommandString = commandString;
+                new BukkitRunnable() {
                         @Override
                         public void run() {
-                            p.performCommand(sc.getCommand());
+                            p.performCommand(finalCommandString);
                         }
                     }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (sc.getDelay()/50));
                 }
+            // Queue Sign console commands
             for (SignCommand sc : consoleCommands) {
-                String cmd = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());
+                String commandString = sc.getCommand().replaceAll("(?i)%PLAYER%", p.getName());
+                if (SudoSigns.papi) {
+                    commandString = PlaceholderAPI.setPlaceholders(p, commandString);
+                }
+                String finalCommandString = commandString;
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCommandString);
                     }
                 }.runTaskLater(SudoSigns.sudoSignsPlugin, (long) (sc.getDelay()/50));
             }
