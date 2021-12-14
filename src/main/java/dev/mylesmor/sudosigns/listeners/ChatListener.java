@@ -135,7 +135,7 @@ public class ChatListener implements Listener {
                             handle(e, true, "Cancelled!", editor, user, null, editor::goToMessages);
                             return;
                         }
-                        if (e.getMessage().length() > 15) {
+                        if (e.getMessage().replaceAll("&([0-9]|[a-g]|[k-o]|r)", "").length() > 15) {
                             e.setCancelled(true);
                             Util.sudoSignsMessage(p, ChatColor.RED, "The message can't be greater than 15 characters!", "");
                             return;
